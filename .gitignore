@@ -1,3 +1,7 @@
 *.pdf
 *~
 .DS_Store
+*.tsv
+*.csv
+analysis-PHI.R
+output.txt
