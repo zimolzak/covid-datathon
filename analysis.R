@@ -1,13 +1,9 @@
 library(ggplot2)
 library(dplyr)
-
 #                                                                            #
 
 pathname = "/Users/ajz/Desktop/covid-2/Random_COVID_PAT.tsv"
-
 X = read.csv(pathname, sep="\t", stringsAsFactors = FALSE)
-cov_tests_only = X[X$LAB == "SARS-COV-2", ]
-table(cov_tests_only$ORD_VALUE)
 
 D = 
 X %>% 
@@ -23,14 +19,24 @@ mutate(result = case_when(
 	ORD_VALUE == "PRESUMPTIVE POSITIVE" ~ 0.5
 	))
 
+#### outputs
+
+cat("\nCount of COVID test results, by raw result ORD_VALUE\n")
+D %>%
+  group_by(ORD_VALUE) %>%
+  summarise(n=n())
+
+cat("\nCount of COVID test results, by ENC_TYPE\n")
 D %>%
   group_by(ENC_TYPE) %>%
   summarise(n=n())
 
+cat("\nCount of COVID test results, by aggregated result\n")
 D %>%
   group_by(result) %>%
   summarise(n=n())
 
+cat("\nCount of COVID test results, by patient\n")
 D %>%
   group_by(PAT_ID) %>%
   summarise(n=n())
