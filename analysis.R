@@ -1,7 +1,7 @@
 library(ggplot2)
 library(dplyr)
 
-X = read.csv("/Users/ajz/Desktop/covid-datathon/Random_COVID_PAT.tsv", sep="\t", stringsAsFactors = FALSE)
+X = read.csv("/Users/ajz/Desktop/covid-2/Random_COVID_PAT.tsv", sep="\t", stringsAsFactors = FALSE)
 cov_tests_only = X[X$LAB == "SARS-COV-2", ]
 table(cov_tests_only$ORD_VALUE)
 
