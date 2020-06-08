@@ -47,3 +47,10 @@ D %>%
 #    filter(IDENTITY_TYPE_ID == 0)
 
 # one_patient
+
+#### Whole new data layout
+
+path = "/Users/ajz/Desktop/covid-2/"
+
+## define strings for filenames
+## load in txt/TSV files
