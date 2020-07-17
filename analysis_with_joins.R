@@ -29,4 +29,4 @@ filter(DISP_NAME == "SpO2") %>%
 mutate(value_numeric = as.numeric(MEAS_VALUE))
 
 ggplot(pulseox, aes(value_numeric)) + geom_histogram(binwidth=1) + xlab('Pulse oximetry (%)') + ylab('Count') + scale_x_continuous(breaks = seq(90,100,2))
-ggsave("pulseox_histogram.png")
+#ggsave("pulseox_histogram.png")
