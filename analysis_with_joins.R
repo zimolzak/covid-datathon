@@ -3,6 +3,7 @@ library(dplyr)
 #                                                                         80 #
 
 path = "/Users/ajz/Documents/local-git/covid_datathon/"
+setwd(path)
 
 f_patient = "PATIENT.txt"
 f_problems = "PAT_PRBL_LIST.txt"
@@ -27,6 +28,5 @@ flowsheet %>%
 filter(DISP_NAME == "SpO2") %>%
 mutate(value_numeric = as.numeric(MEAS_VALUE))
 
-qplot(pulseox$value_numeric) + xlab('Pulse oximetry (%)') + ylab('Count')
-ggplot(pulseox, aes(value_numeric)) + geom_density()
-ggplot(pulseox, aes(value_numeric)) + geom_histogram(binwidth=1)
+ggplot(pulseox, aes(value_numeric)) + geom_histogram(binwidth=1) + xlab('Pulse oximetry (%)') + ylab('Count') + scale_x_continuous(breaks = seq(90,100,2))
+ggsave("pulseox_histogram.png")
