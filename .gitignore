@@ -4,9 +4,11 @@
 *.tsv
 *.csv
 analysis-PHI.R
+old_output.txt
 output.txt
 PATIENT.txt
 PAT_ENC_DX.txt
 PAT_ORDERS_PROCEDURES.txt
 PAT_PRBL_LIST.txt
 Pat_FlowSheet_PulseOx.txt
+*.png
