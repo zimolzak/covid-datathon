@@ -21,3 +21,12 @@ problems  = read.csv(paste(path, f_problems,  sep=''), sep="\t", stringsAsFactor
 visits    = read.csv(paste(path, f_visits,    sep=''), sep="\t", stringsAsFactors = FALSE)
 flowsheet = read.csv(paste(path, f_flowsheet, sep=''), sep="\t", stringsAsFactors = FALSE)
 tests     = read.csv(paste(path, f_tests,     sep=''), sep="\t", stringsAsFactors = FALSE)
+
+pulseox =
+flowsheet %>%
+filter(DISP_NAME == "SpO2") %>%
+mutate(value_numeric = as.numeric(MEAS_VALUE))
+
+qplot(pulseox$value_numeric) + xlab('Pulse oximetry (%)') + ylab('Count')
+ggplot(pulseox, aes(value_numeric)) + geom_density()
+ggplot(pulseox, aes(value_numeric)) + geom_histogram(binwidth=1)
