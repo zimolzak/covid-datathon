@@ -45,20 +45,3 @@ D %>%
 #D %>%
 #    filter(PAT_ID == "Z1111111") %>% # TODO - fake number
 #    filter(IDENTITY_TYPE_ID == 0)
-
-
-
-
-#### Whole new data layout ########
-
-path = "/Users/ajz/Desktop/covid-2/"
-
-## define strings for filenames
-## load in txt/TSV files
-
-
-# PATIENT.txt               # id, mrn, name, dob, age
-# PAT_PRBL_LIST.txt         # id, prob number, date, dx name, icd10
-# PAT_ENC_DX.txt            # id, date, encType, bp, dx_icd
-# Pat_FlowSheet_PulseOx.txt # id, value, time, name (survey question or SpO2)
-# PAT_ORDERS_PROCEDURES.txt # id, date, proc name, result date, ORDER_COMPONENT, ORD_VALUE_TEXT, ord val numeric
