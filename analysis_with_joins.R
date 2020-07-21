@@ -33,3 +33,53 @@ ggplot(pulseox, aes(value_numeric)) + geom_histogram(binwidth=1) + xlab('Pulse o
 
 # %>%  inner_join(table, by = id)
 # %>%  inner_join(table)
+
+
+
+
+####### JOIN
+
+covids =
+tests %>%
+filter(ORDER_COMPONENT == "SARS-COV-2") %>%
+select(PAT_ID, PROC_ID, ORDER_RESULT_LINE, RESULT_DATE, ORDER_DATE, ORDER_COMPONENT, ORD_VALUE_TEXT, ORD_VALUE_NUMERIC)
+
+# todo - idea: convert dates from char to date, and plot latency over time
+
+table(covids$ORD_VALUE_NUMERIC) # confirm that numeric is useless
+freq = table(tests$ORDER_COMPONENT)
+head(sort(freq, decreasing = TRUE), n = 100) # top few order components
+# popular: bmp, cmp, cbc, lipid, a1c, tsh, "case report", ua, "diagnosis", "gross", sars-cov-2, ft4, comment, microsc, ...
+
+# CORONAVIRUS 229E # 3
+# CORONAVIRUS HKU1 # 3
+# CORONAVIRUS NL63 # 3
+# CORONAVIRUS OC43
+# SARS-COV-2 ANTIBODY,IGG
+
+table(covids$ORD_VALUE_TEXT)
+
+covids_tbj =
+covids %>%
+select(PAT_ID, ORDER_DATE, ORD_VALUE_TEXT) %>%
+mutate(covid_result = case_when(
+        ORD_VALUE_TEXT == "NEGATIVE" | ORD_VALUE_TEXT == "Negative" |
+                ORD_VALUE_TEXT == "NOT DETECTED" | ORD_VALUE_TEXT == "Not Detected" ~ 0,
+        ORD_VALUE_TEXT == "POSITIVE" | ORD_VALUE_TEXT == "Positive" |
+                ORD_VALUE_TEXT == "DETECTED" | ORD_VALUE_TEXT == "Detected" ~ 1,
+        ORD_VALUE_TEXT == "PRESUMPTIVE POSITIVE" ~ 0.5
+        ))
+
+table(covids_tbj$covid_result)
+
+covids_pulseox =
+covids_tbj %>%
+inner_join(pulseox)
+# doh a lot of pulse ox not synchronous
+
+class(covids_pulseox$ENTRY_TIME) # doh, character
+
+
+
+
+ggplot(covids_pulseox, aes(x=value_numeric, fill=as.factor(covid_result))) + geom_histogram(binwidth=1) + xlab('Pulse oximetry (%)') + ylab('Count') + scale_x_continuous(breaks = seq(90,100,2))
