@@ -11,7 +11,7 @@ old_output.txt: old_monolithic_analysis.R Random_COVID_PAT.tsv
 	Rscript old_monolithic_analysis.R > $@
 
 Rplots.pdf: analysis_with_joins.R $(infiles)
-	Rscript analysis_with_joins.R
+	Rscript analysis_with_joins.R > Routputs.txt
 
 upload:
 	cp thoughts.pdf /Users/ajz/Box\ Sync/COVID_DATATHON

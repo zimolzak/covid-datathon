@@ -46,8 +46,11 @@ select(PAT_ID, PROC_ID, ORDER_RESULT_LINE, RESULT_DATE, ORDER_DATE, ORDER_COMPON
 
 # todo - idea: convert dates from char to date, and plot latency over time
 
+cat("confirm that numeric is useless----")
 table(covids$ORD_VALUE_NUMERIC) # confirm that numeric is useless
 freq = table(tests$ORDER_COMPONENT)
+
+cat("top few order components----")
 head(sort(freq, decreasing = TRUE), n = 100) # top few order components
 # popular: bmp, cmp, cbc, lipid, a1c, tsh, "case report", ua, "diagnosis", "gross", sars-cov-2, ft4, comment, microsc, ...
 
@@ -57,6 +60,7 @@ head(sort(freq, decreasing = TRUE), n = 100) # top few order components
 # CORONAVIRUS OC43
 # SARS-COV-2 ANTIBODY,IGG
 
+cat("covids ORD_VALUE_TEXT ----")
 table(covids$ORD_VALUE_TEXT)
 
 covids_tbj =
@@ -70,6 +74,7 @@ mutate(covid_result = case_when(
         ORD_VALUE_TEXT == "PRESUMPTIVE POSITIVE" ~ 0.5
         ))
 
+cat("covids_tbj covid_result (consolidated) ----")
 table(covids_tbj$covid_result)
 
 covids_pulseox =
@@ -77,6 +82,7 @@ covids_tbj %>%
 inner_join(pulseox)
 # doh a lot of pulse ox not synchronous
 
+cat("class of covids_pulseox ENTRY_TIME ----\n")
 class(covids_pulseox$ENTRY_TIME) # doh, character
 
 
