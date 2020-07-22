@@ -89,6 +89,8 @@ table(covids$cov_result_txt)
 cat("covids covid_result (consolidated) ----")
 table(covids$covid_result)
 
+qplot(data=covids, x=covid_ord_dt, y=latency)
+
 
 
 
@@ -114,7 +116,7 @@ cat("table of nearby spo2 and covid----\n")
 nearby =
 covids_pulseox %>%
 filter(-30 < covid_spo2_diff & covid_spo2_diff < 30) %>%
-select(covid_ord_dt, covid_result, spo2_value_numeric, spo2_date, covid_spo2_diff)
+select(spo2_date, covid_ord_dt, covid_result, spo2_value_numeric, covid_spo2_diff)
 
 nearby
 
