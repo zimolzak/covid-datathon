@@ -23,6 +23,11 @@ visits    = read.csv(paste(path, f_visits,    sep=''), sep="\t", stringsAsFactor
 flowsheet = read.csv(paste(path, f_flowsheet, sep=''), sep="\t", stringsAsFactors = FALSE)
 tests     = read.csv(paste(path, f_tests,     sep=''), sep="\t", stringsAsFactors = FALSE)
 
+
+
+
+#### derived datasets pulseox ####
+
 pulseox =
 flowsheet %>%
 filter(DISP_NAME == "SpO2") %>%
@@ -31,20 +36,15 @@ mutate(value_numeric = as.numeric(MEAS_VALUE))
 ggplot(pulseox, aes(value_numeric)) + geom_histogram(binwidth=1) + xlab('Pulse oximetry (%)') + ylab('Count') + scale_x_continuous(breaks = seq(90,100,2))
 #ggsave("pulseox_histogram.png")
 
-# %>%  inner_join(table, by = id)
-# %>%  inner_join(table)
 
 
 
-
-####### JOIN
+#### derived datasets from PAT_ORDERS_PROCEDURES ####
 
 covids =
 tests %>%
 filter(ORDER_COMPONENT == "SARS-COV-2") %>%
 select(PAT_ID, PROC_ID, ORDER_RESULT_LINE, RESULT_DATE, ORDER_DATE, ORDER_COMPONENT, ORD_VALUE_TEXT, ORD_VALUE_NUMERIC)
-
-# todo - idea: convert dates from char to date, and plot latency over time
 
 cat("confirm that numeric is useless----")
 table(covids$ORD_VALUE_NUMERIC) # confirm that numeric is useless
@@ -54,6 +54,7 @@ cat("top few order components----")
 head(sort(freq, decreasing = TRUE), n = 100) # top few order components
 # popular: bmp, cmp, cbc, lipid, a1c, tsh, "case report", ua, "diagnosis", "gross", sars-cov-2, ft4, comment, microsc, ...
 
+# other interesting stuff
 # CORONAVIRUS 229E # 3
 # CORONAVIRUS HKU1 # 3
 # CORONAVIRUS NL63 # 3
@@ -62,6 +63,8 @@ head(sort(freq, decreasing = TRUE), n = 100) # top few order components
 
 cat("covids ORD_VALUE_TEXT ----")
 table(covids$ORD_VALUE_TEXT)
+
+# consolidate and drop more columns, prep for join
 
 covids_tbj =
 covids %>%
@@ -77,16 +80,24 @@ mutate(covid_result = case_when(
 cat("covids_tbj covid_result (consolidated) ----")
 table(covids_tbj$covid_result)
 
+# todo - idea: convert dates from char to date, and plot latency over time
+
+
+
+
+####### JOIN
+
 covids_pulseox =
 covids_tbj %>%
 inner_join(pulseox)
+
+# %>%
+#mutate(spo2_entry_time = ENTRY_TIME, covid_order_date = ORDER_DATE, covid_value = ORD_VALUE_TEXT) %>%
+#select()
 # doh a lot of pulse ox not synchronous
 
 cat("class of covids_pulseox ENTRY_TIME ----\n")
 class(covids_pulseox$ENTRY_TIME) # doh, character
-
-
-
 
 ggplot(covids_pulseox, aes(x=value_numeric, fill=as.factor(covid_result))) + geom_histogram(binwidth=1) + xlab('Pulse oximetry (%)') + ylab('Count') + scale_x_continuous(breaks = seq(90,100,2))
 
