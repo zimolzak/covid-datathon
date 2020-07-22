@@ -96,7 +96,20 @@ table(covids$covid_result)
 
 covids_pulseox =
 covids %>%
-inner_join(pulseox)
+inner_join(pulseox) %>%
+mutate(covid_spo2_diff = covid_ord_dt - spo2_date)
+
+qplot(covids_pulseox$covid_spo2_diff)
+cat("table of time betw pulse ox & covid test----")
+table(covids_pulseox$covid_spo2_diff)
+cat("dim pulseox----\n")
+dim(pulseox)
+cat("dim covids----\n")
+dim(covids)
+cat("dim covids_pulseox----\n")
+dim(covids_pulseox)
+
+# %>% filter()
 
 ggplot(covids_pulseox, aes(x=spo2_value_numeric, fill=as.factor(covid_result))) + geom_histogram(binwidth=1) + xlab('Pulse oximetry (%)') + ylab('Count') + scale_x_continuous(breaks = seq(90,100,2))
 
