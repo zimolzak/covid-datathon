@@ -23,35 +23,9 @@ visits    = read.csv(paste(path, f_visits,    sep=''), sep="\t", stringsAsFactor
 flowsheet = read.csv(paste(path, f_flowsheet, sep=''), sep="\t", stringsAsFactors = FALSE)
 tests     = read.csv(paste(path, f_tests,     sep=''), sep="\t", stringsAsFactors = FALSE)
 
+cat("number of patients----\n")
+dim(patient)
 
-
-
-#### derived datasets pulseox ####
-
-pulseox =
-flowsheet %>%
-filter(DISP_NAME == "SpO2") %>%
-mutate(spo2_value_numeric = as.numeric(MEAS_VALUE)) %>%
-rename(spo2_value_text = MEAS_VALUE) %>%
-mutate(spo2_date = as.Date(ENTRY_TIME, '%m-%d-%Y')) %>%
-rename(spo2_datetime_text = ENTRY_TIME)
-
-
-ggplot(pulseox, aes(spo2_value_numeric)) + geom_histogram(binwidth=1) + xlab('Pulse oximetry (%)') + ylab('Count') + scale_x_continuous(breaks = seq(90,100,2))
-#ggsave("pulseox_histogram.png")
-
-
-
-
-#### derived datasets from PAT_ORDERS_PROCEDURES ####
-
-covids =
-tests %>%
-filter(ORDER_COMPONENT == "SARS-COV-2") %>%
-select(PAT_ID, PROC_ID, ORDER_RESULT_LINE, RESULT_DATE, ORDER_DATE, ORDER_COMPONENT, ORD_VALUE_TEXT, ORD_VALUE_NUMERIC)
-
-cat("confirm that numeric is useless----")
-table(covids$ORD_VALUE_NUMERIC) # confirm that numeric is useless
 freq = table(tests$ORDER_COMPONENT)
 
 cat("top few order components----")
@@ -65,26 +39,55 @@ head(sort(freq, decreasing = TRUE), n = 100) # top few order components
 # CORONAVIRUS OC43
 # SARS-COV-2 ANTIBODY,IGG
 
-cat("covids ORD_VALUE_TEXT ----")
-table(covids$ORD_VALUE_TEXT)
 
-# consolidate and drop more columns, prep for join
 
-covids_tbj =
-covids %>%
-select(PAT_ID, ORDER_DATE, ORD_VALUE_TEXT) %>%
+
+#### derived datasets pulseox ####
+
+pulseox =
+flowsheet %>%
+filter(DISP_NAME == "SpO2") %>%
+mutate(spo2_value_numeric = as.numeric(MEAS_VALUE)) %>%
+rename(spo2_value_text = MEAS_VALUE) %>%
+mutate(spo2_date = as.Date(ENTRY_TIME, '%m-%d-%Y')) %>%
+rename(spo2_datetime_text = ENTRY_TIME)
+
+ggplot(pulseox, aes(spo2_value_numeric)) + geom_histogram(binwidth=1) + xlab('Pulse oximetry (%)') + ylab('Count') + scale_x_continuous(breaks = seq(90,100,2))
+
+qplot(pulseox$spo2_date)
+
+
+
+
+#### derived datasets from PAT_ORDERS_PROCEDURES ####
+
+covids =
+tests %>%
+filter(ORDER_COMPONENT == "SARS-COV-2") %>%
+select(PAT_ID, PROC_ID, RESULT_DATE, ORDER_DATE, ORDER_COMPONENT, ORD_VALUE_TEXT, ORD_VALUE_NUMERIC) %>%
+mutate(covid_res_dt = as.Date(RESULT_DATE, '%m-%d-%Y'), covid_ord_dt = as.Date(ORDER_DATE, '%m-%d-%Y')) %>%
+rename(cov_res_dt_txt = RESULT_DATE, cov_ord_dt_txt = ORDER_DATE) %>%
+mutate(latency = covid_res_dt - covid_ord_dt) %>%
 mutate(covid_result = case_when(
         ORD_VALUE_TEXT == "NEGATIVE" | ORD_VALUE_TEXT == "Negative" |
                 ORD_VALUE_TEXT == "NOT DETECTED" | ORD_VALUE_TEXT == "Not Detected" ~ 0,
         ORD_VALUE_TEXT == "POSITIVE" | ORD_VALUE_TEXT == "Positive" |
                 ORD_VALUE_TEXT == "DETECTED" | ORD_VALUE_TEXT == "Detected" ~ 1,
         ORD_VALUE_TEXT == "PRESUMPTIVE POSITIVE" ~ 0.5
-        ))
+        )) %>%
+rename(cov_result_txt = ORD_VALUE_TEXT)
 
-cat("covids_tbj covid_result (consolidated) ----")
-table(covids_tbj$covid_result)
+qplot(covids$latency)
+qplot(covids$covid_ord_dt)
 
-# todo - idea: convert dates from char to date, and plot latency over time
+cat("confirm that numeric is useless----")
+table(covids$ORD_VALUE_NUMERIC) # confirm that numeric is useless
+
+cat("covids ORD_VALUE_TEXT ----")
+table(covids$cov_result_txt)
+
+cat("covids covid_result (consolidated) ----")
+table(covids$covid_result)
 
 
 
@@ -92,13 +95,8 @@ table(covids_tbj$covid_result)
 ####### JOIN
 
 covids_pulseox =
-covids_tbj %>%
-inner_join(pulseox) %>%
-rename(covid_order_date = ORDER_DATE, covid_value = ORD_VALUE_TEXT)
-# doh a lot of pulse ox not synchronous
-
-cat("class of covids_pulseox ENTRY_TIME ----\n")
-class(covids_pulseox$spo2_entry_time) # doh, character
+covids %>%
+inner_join(pulseox)
 
 ggplot(covids_pulseox, aes(x=spo2_value_numeric, fill=as.factor(covid_result))) + geom_histogram(binwidth=1) + xlab('Pulse oximetry (%)') + ylab('Count') + scale_x_continuous(breaks = seq(90,100,2))
 
