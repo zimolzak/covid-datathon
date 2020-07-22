@@ -32,7 +32,10 @@ pulseox =
 flowsheet %>%
 filter(DISP_NAME == "SpO2") %>%
 mutate(spo2_value_numeric = as.numeric(MEAS_VALUE)) %>%
-rename(spo2_value_text = MEAS_VALUE)
+rename(spo2_value_text = MEAS_VALUE) %>%
+mutate(spo2_date = as.Date(ENTRY_TIME, '%m-%d-%Y')) %>%
+rename(spo2_datetime_text = ENTRY_TIME)
+
 
 ggplot(pulseox, aes(spo2_value_numeric)) + geom_histogram(binwidth=1) + xlab('Pulse oximetry (%)') + ylab('Count') + scale_x_continuous(breaks = seq(90,100,2))
 #ggsave("pulseox_histogram.png")
@@ -91,7 +94,7 @@ table(covids_tbj$covid_result)
 covids_pulseox =
 covids_tbj %>%
 inner_join(pulseox) %>%
-rename(spo2_entry_time = ENTRY_TIME, covid_order_date = ORDER_DATE, covid_value = ORD_VALUE_TEXT)
+rename(covid_order_date = ORDER_DATE, covid_value = ORD_VALUE_TEXT)
 # doh a lot of pulse ox not synchronous
 
 cat("class of covids_pulseox ENTRY_TIME ----\n")
