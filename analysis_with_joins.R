@@ -118,6 +118,9 @@ select(covid_ord_dt, covid_result, spo2_value_numeric, spo2_date, covid_spo2_dif
 
 nearby
 
+cat("dim nearby----\n")
+dim(nearby)
+
 #invalid-ish histo
 ggplot(covids_pulseox, aes(x=spo2_value_numeric, fill=as.factor(covid_result))) + geom_histogram(binwidth=1) + xlab('Pulse oximetry (%)') + ylab('Count') + scale_x_continuous(breaks = seq(90,100,2))
 
@@ -127,3 +130,7 @@ ggplot(covids_pulseox, aes(x=spo2_value_numeric, color=as.factor(covid_result)))
 
 ## valid??
 ggplot(nearby, aes(x=spo2_value_numeric, color=as.factor(covid_result))) + geom_freqpoly(binwidth=1) + xlab('Pulse oximetry (%)') + ylab('Count') + scale_x_continuous(breaks = seq(90,100,2))
+
+cat("Wilcoxon Mann Whitney test on rather few samples----")
+wilcox.test(nearby[nearby$covid_result == 0, ]$spo2_value_numeric,
+			nearby[nearby$covid_result == 1, ]$spo2_value_numeric)
