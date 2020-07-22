@@ -136,3 +136,17 @@ ggplot(nearby, aes(x=spo2_value_numeric, color=as.factor(covid_result))) + geom_
 cat("Wilcoxon Mann Whitney test on rather few samples----")
 wilcox.test(nearby[nearby$covid_result == 0, ]$spo2_value_numeric,
 			nearby[nearby$covid_result == 1, ]$spo2_value_numeric)
+
+
+
+## future directions:
+## look for office visit (limit to these only)
+## find out why the 160 patients vs 76 tests??
+## comorbidities
+## basic labs
+## test/retest idea
+
+## BSLMC data pull
+
+## limit ORDERS_PROCEDURES and Flowsheet to 2019+
+## consider limiting ORDERS_PROCEDURES to certain components?
