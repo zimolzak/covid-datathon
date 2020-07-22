@@ -31,9 +31,10 @@ tests     = read.csv(paste(path, f_tests,     sep=''), sep="\t", stringsAsFactor
 pulseox =
 flowsheet %>%
 filter(DISP_NAME == "SpO2") %>%
-mutate(value_numeric = as.numeric(MEAS_VALUE))
+mutate(spo2_value_numeric = as.numeric(MEAS_VALUE)) %>%
+rename(spo2_value_text = MEAS_VALUE)
 
-ggplot(pulseox, aes(value_numeric)) + geom_histogram(binwidth=1) + xlab('Pulse oximetry (%)') + ylab('Count') + scale_x_continuous(breaks = seq(90,100,2))
+ggplot(pulseox, aes(spo2_value_numeric)) + geom_histogram(binwidth=1) + xlab('Pulse oximetry (%)') + ylab('Count') + scale_x_continuous(breaks = seq(90,100,2))
 #ggsave("pulseox_histogram.png")
 
 
@@ -89,17 +90,14 @@ table(covids_tbj$covid_result)
 
 covids_pulseox =
 covids_tbj %>%
-inner_join(pulseox)
-
-# %>%
-#mutate(spo2_entry_time = ENTRY_TIME, covid_order_date = ORDER_DATE, covid_value = ORD_VALUE_TEXT) %>%
-#select()
+inner_join(pulseox) %>%
+rename(spo2_entry_time = ENTRY_TIME, covid_order_date = ORDER_DATE, covid_value = ORD_VALUE_TEXT)
 # doh a lot of pulse ox not synchronous
 
 cat("class of covids_pulseox ENTRY_TIME ----\n")
-class(covids_pulseox$ENTRY_TIME) # doh, character
+class(covids_pulseox$spo2_entry_time) # doh, character
 
-ggplot(covids_pulseox, aes(x=value_numeric, fill=as.factor(covid_result))) + geom_histogram(binwidth=1) + xlab('Pulse oximetry (%)') + ylab('Count') + scale_x_continuous(breaks = seq(90,100,2))
+ggplot(covids_pulseox, aes(x=spo2_value_numeric, fill=as.factor(covid_result))) + geom_histogram(binwidth=1) + xlab('Pulse oximetry (%)') + ylab('Count') + scale_x_continuous(breaks = seq(90,100,2))
 
 #unstacked version
-ggplot(covids_pulseox, aes(x=value_numeric, color=as.factor(covid_result))) + geom_freqpoly(binwidth=1) + xlab('Pulse oximetry (%)') + ylab('Count') + scale_x_continuous(breaks = seq(90,100,2))
+ggplot(covids_pulseox, aes(x=spo2_value_numeric, color=as.factor(covid_result))) + geom_freqpoly(binwidth=1) + xlab('Pulse oximetry (%)') + ylab('Count') + scale_x_continuous(breaks = seq(90,100,2))
