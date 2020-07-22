@@ -123,3 +123,7 @@ ggplot(covids_pulseox, aes(x=spo2_value_numeric, fill=as.factor(covid_result))) 
 
 #unstacked version
 ggplot(covids_pulseox, aes(x=spo2_value_numeric, color=as.factor(covid_result))) + geom_freqpoly(binwidth=1) + xlab('Pulse oximetry (%)') + ylab('Count') + scale_x_continuous(breaks = seq(90,100,2))
+
+
+## valid??
+ggplot(nearby, aes(x=spo2_value_numeric, color=as.factor(covid_result))) + geom_freqpoly(binwidth=1) + xlab('Pulse oximetry (%)') + ylab('Count') + scale_x_continuous(breaks = seq(90,100,2))
