@@ -78,7 +78,7 @@ mutate(covid_result = case_when(
 rename(cov_result_txt = ORD_VALUE_TEXT)
 
 qplot(covids$latency)
-qplot(covids$covid_ord_dt)
+qplot(covids$covid_ord_dt) # TODO color by pos/neg. Also fix the y scale to integer.
 
 cat("confirm that numeric is useless----")
 table(covids$ORD_VALUE_NUMERIC) # confirm that numeric is useless
