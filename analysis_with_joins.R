@@ -78,7 +78,9 @@ mutate(covid_result = case_when(
 rename(cov_result_txt = ORD_VALUE_TEXT)
 
 qplot(covids$latency)
-qplot(covids$covid_ord_dt) # TODO color by pos/neg. Also fix the y scale to integer.
+qplot(covids$covid_ord_dt)
+
+ggplot(covids, aes(x=covid_ord_dt, color=as.factor(covid_result))) + geom_freqpoly(binwidth=7) + xlab('COVID test order date') + ylab('Count') + scale_y_continuous(breaks = seq(0,10,2)) + labs(color="Test result")
 
 cat("confirm that numeric is useless----")
 table(covids$ORD_VALUE_NUMERIC) # confirm that numeric is useless
