@@ -18,3 +18,5 @@ selected
 selected %>%
 select(PROC_ID, PROC_NAME, SHORT_NAME, ORDER_DISPLAY_NAME, BILL_DESC) ->
 names_only
+
+names_only

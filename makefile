@@ -1,4 +1,4 @@
-files = thoughts.pdf Rplots.pdf covid_procs_stlukes.csv
+files = thoughts.pdf Rplots.pdf covid_procs_stlukes.csv validate_procs.txt
 .PHONY: all clean upload
 infiles = PATIENT.txt PAT_ORDERS_PROCEDURES.txt PAT_ENC_DX.txt PAT_PRBL_LIST.txt Pat_FlowSheet_PulseOx.txt
 
@@ -12,6 +12,9 @@ covid_procs_stlukes.csv:  COVID_PROCS_STLUKES.txt txt2csv.pl
 
 Rplots.pdf: analysis_with_joins.R $(infiles)
 	Rscript analysis_with_joins.R > Routputs.txt
+
+validate_procs.txt: validate_covid_procs.R covid_procs_stlukes.csv
+	Rscript $< > $@
 
 clean: 
 	rm -f $(files)
