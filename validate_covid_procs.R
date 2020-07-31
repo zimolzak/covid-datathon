@@ -1,8 +1,9 @@
 library(dplyr)
-path = "/Users/ajz/Desktop/covid_datathon_git/"
-setwd(path)
+PATH = "/Users/ajz/Desktop/covid_datathon_git/"
+
+setwd(PATH)
 f_procs = "covid_procs_stlukes.csv"
-procs = read.csv(paste(path, f_procs, sep=''), stringsAsFactors = FALSE)
+procs = read.csv(paste(PATH, f_procs, sep=''), stringsAsFactors = FALSE)
 
 # TODO - probably don't need the Perl. Can just tell R what NULL means.
 # But it does help me hit spacebar in macOS to skim.

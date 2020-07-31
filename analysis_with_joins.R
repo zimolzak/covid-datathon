@@ -2,8 +2,8 @@ library(ggplot2)
 library(dplyr)
 #                                                                         80 #
 
-path = "/Users/ajz/Desktop/covid_datathon_git/"
-setwd(path)
+PATH = "/Users/ajz/Desktop/covid_datathon_git/"
+setwd(PATH)
 
 f_patient = "PATIENT.txt"
 f_problems = "PAT_PRBL_LIST.txt"
@@ -17,11 +17,11 @@ f_tests = "PAT_ORDERS_PROCEDURES.txt"
 # Pat_FlowSheet_PulseOx.txt # id, value, time, name (survey question or SpO2)
 # PAT_ORDERS_PROCEDURES.txt # id, date, proc name, result date, ORDER_COMPONENT, ORD_VALUE_TEXT, ord val numeric
 
-patient   = read.csv(paste(path, f_patient,   sep=''), sep="\t", stringsAsFactors = FALSE)
-problems  = read.csv(paste(path, f_problems,  sep=''), sep="\t", stringsAsFactors = FALSE)
-visits    = read.csv(paste(path, f_visits,    sep=''), sep="\t", stringsAsFactors = FALSE)
-flowsheet = read.csv(paste(path, f_flowsheet, sep=''), sep="\t", stringsAsFactors = FALSE)
-tests     = read.csv(paste(path, f_tests,     sep=''), sep="\t", stringsAsFactors = FALSE)
+patient   = read.csv(paste(PATH, f_patient,   sep=''), sep="\t", stringsAsFactors = FALSE)
+problems  = read.csv(paste(PATH, f_problems,  sep=''), sep="\t", stringsAsFactors = FALSE)
+visits    = read.csv(paste(PATH, f_visits,    sep=''), sep="\t", stringsAsFactors = FALSE)
+flowsheet = read.csv(paste(PATH, f_flowsheet, sep=''), sep="\t", stringsAsFactors = FALSE)
+tests     = read.csv(paste(PATH, f_tests,     sep=''), sep="\t", stringsAsFactors = FALSE)
 
 cat("number of patients----\n")
 dim(patient)
