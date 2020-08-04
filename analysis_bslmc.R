@@ -24,6 +24,10 @@ table(stluke_lab$PAT_CLASS)
 #422644  12248  54964  23553   5910   5436 
 # Very good that Rory mapped adt_pat_class_c to pat_class and also kept both.
 
+# Emergency 
+# Hospital Outpatient Surgery
+# Inpatient             Inpatient Rehab                 Observation                  Outpatient 
+
 
 ######## NOTES
 
@@ -50,3 +54,15 @@ table(stluke_lab$PAT_CLASS)
 
 # Where will datathon people get their data dictionaries? (Gloria has it: need just a BCM ECA to log in/)
 # Are people going to want to download and do locally: deident???
+
+stluke_lab %>%
+select(PAT_ID, ORDERING_DATE, PROC_NAME, NAME, ORD_VALUE, ORD_NUM_VALUE, PAT_CLASS) %>%
+filter(ORD_VALUE != "NULL" | ORD_NUM_VALUE != "NULL") %>%
+distinct() %>%
+arrange(PAT_ID, ORDERING_DATE) ->
+lab_no_join
+
+# people who touch chart
+# specimen collect TIME not just date
+# mortality !! pat_enc_hosp, also "care name"
+# emp id versus "ser" which is about role / job description
