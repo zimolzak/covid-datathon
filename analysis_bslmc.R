@@ -141,7 +141,7 @@ mutate(covid_boolean = (proportion_pos > 0),
        asthma_boolean = (asthma>0),
        copd_boolean = (copd>0)
 )->
-comorb_covid
+comorb_covid ## A nice and neat table for later
 
 #### explore asthma copd htn
 # the code below looks nicer than table()
@@ -159,6 +159,10 @@ counts_dx %>% filter(grepl("asth", DX_NAME, ignore.case = TRUE))
 counts_dx %>% filter(grepl("hypert", DX_NAME, ignore.case = TRUE)) # filter out pulm htn
 counts_dx %>% filter(grepl("htn", DX_NAME, ignore.case = TRUE)) # not needed
 
+
+
+
+#### Analyses
 # 2 x 2 tables
 
 dm_cov_table = with(comorb_covid, table(covid_boolean, dm_boolean))
@@ -206,6 +210,12 @@ geom_hline(yintercept = 1)
 
 ggsave("Rplots_bslmc.pdf", odds_plot)
 
+
+
+
+
+######## meeeting ########
+
 # still TODO -->
 # 	* inpatient: testing late in admission: rate of this, rate of positives.
 # 	* rate of admissions/ER , by risk factors
@@ -226,7 +236,7 @@ ggsave("Rplots_bslmc.pdf", odds_plot)
 #               ^^^^ ^^^^  !!!!
 
 
-# proc_name = blood gas, arterila  --typo
+# proc_name = blood gas, arterial
 
 cat('\n\nWhat are ABG components----\n')
 lab_no_join %>% filter(PROC_NAME == "BLOOD GAS, ARTERIAL") %>% select(NAME) %>% group_by(NAME) %>% summarise(n())
@@ -292,3 +302,50 @@ oxy_joined
 
 qplot(fio2, po2, color = category, data=oxy_joined) -> ards_scatter
 ggsave("Rplots_bslmc_scatter.pdf", ards_scatter)
+
+# todo exclude old abgs. i got 3 from 2014. rest = 2020.
+
+
+
+
+# now these thingies are looking significant!
+
+comorb_covid %>%
+select(PAT_ID, covid_boolean, dm_boolean, asthma_boolean, copd_boolean) %>%
+full_join(oxy_joined) %>%
+filter(!is.na(covid_comorb_oxy$covid_boolean)) -> # todo count how many na
+covid_comorb_oxy
+
+ggplot(covid_comorb_oxy, aes(fio2, po2, color=category, shape=covid_boolean)) +
+geom_point() ->
+ards_scatter_shape
+
+# po2
+
+ggplot(covid_comorb_oxy, aes(covid_boolean, po2)) +
+geom_boxplot(outlier.shape = NA) +
+geom_jitter(width=0.2) ->
+po2_covid_box
+
+ggplot(covid_comorb_oxy, aes(po2, color=covid_boolean)) +
+geom_density() ->
+po2_covid_density
+
+wilcox.test(covid_comorb_oxy[covid_comorb_oxy$covid_boolean == FALSE, ]$po2,
+			covid_comorb_oxy[covid_comorb_oxy$covid_boolean == TRUE,  ]$po2)
+# p-value = 1.187e-05 , no surprise
+
+# pfr
+
+ggplot(covid_comorb_oxy, aes(covid_boolean, pfr)) +
+geom_boxplot(outlier.shape = NA) +
+geom_jitter(width=0.2) ->
+pfr_covid_box
+
+ggplot(covid_comorb_oxy, aes(pfr, color=covid_boolean)) +
+geom_density() ->
+pfr_covid_density
+
+wilcox.test(covid_comorb_oxy[covid_comorb_oxy$covid_boolean == FALSE, ]$pfr,
+			covid_comorb_oxy[covid_comorb_oxy$covid_boolean == TRUE,  ]$pfr)
+# p-value = 3.161e-05 , also no surprise
