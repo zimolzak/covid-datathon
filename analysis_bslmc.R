@@ -90,8 +90,15 @@ dx %>% count(PAT_ID) %>% arrange(desc(n)) # output - who's "sickest"
 
 dx %>%
 group_by(PAT_ID) %>%
-summarise(dm = sum(grepl("diab", DX_NAME, ignore.case = TRUE))) ->
+summarise(dm     = sum(grepl("diab", DX_NAME, ignore.case = TRUE)),
+	      asthma = sum(grepl("asth", DX_NAME, ignore.case = TRUE)),
+	      copd   = sum(grepl("copd", DX_NAME, ignore.case = TRUE)),) ->
 comorb_count
+
+# TODO - hypertension
+
+
+#### filter & standardize covid results
 
 #table(cov_lab$ORD_VALUE)
 #    Detected     Negative Not Detected     Positive
@@ -125,40 +132,16 @@ cov_lab
 #[1] 45  4
 #> dim(comorb_count)
 #[1] 49  2
-# TODO why is this
+# TODO why is this: some pts w/o covid test??
 
 comorb_count %>%
 full_join(cov_lab) %>%
 mutate(covid_boolean = (proportion_pos > 0),
-	dm_boolean = (dm>0))->
-dm_by_covid
-
-dm_cov_table = with(dm_by_covid, table(covid_boolean, dm_boolean))
-dm_cov_table
-# 4:5 ratio diabetics had + covid
-# 4:32 ratio non-dm had + covid
-
-# trivial stats for the sake of stats
-
-F = fisher.test(dm_cov_table)
-F
-# p-value = 0.03886
-# OR =   6.040232 (0.8439568 45.8211413)
-c(F$conf.int[1], F$estimate, F$conf.int[2])
-
-df = data.frame(est = F$estimate,
-	lower = F$conf.int[1],
-	upper = F$conf.int[2],
-	test_num = factor(c(1))
-)
-
-odds_plot = ggplot(df, aes(test_num, est)) +
-geom_pointrange(aes(ymin = lower, ymax = upper)) +
-scale_y_log10() +
-ylab('Odds ratio') + xlab('') + ggtitle('Odds of COVID +:- in diabetes vs. not')
-
-ggsave("Rplots_bslmc.pdf", odds_plot)
-
+       dm_boolean = (dm>0),
+       asthma_boolean = (asthma>0),
+       copd_boolean = (copd>0)
+)->
+comorb_covid
 
 
 
@@ -171,12 +154,63 @@ summarise(n=n()) %>%
 arrange(desc(n)) ->
 counts_dx
 
+cat('explore:')
 counts_dx %>% filter(grepl("copd", DX_NAME, ignore.case = TRUE))
 counts_dx %>% filter(grepl("obstr", DX_NAME, ignore.case = TRUE)) # not needed
 counts_dx %>% filter(grepl("asth", DX_NAME, ignore.case = TRUE))
 counts_dx %>% filter(grepl("hypert", DX_NAME, ignore.case = TRUE)) # filter out pulm htn
 counts_dx %>% filter(grepl("htn", DX_NAME, ignore.case = TRUE)) # not needed
 
+# 2 x 2 tables
 
-# hyperten
-# copd
+dm_cov_table = with(comorb_covid, table(covid_boolean, dm_boolean))
+# 4:5 ratio diabetics had + covid
+# 4:32 ratio non-dm had + covid
+
+Fd = fisher.test(dm_cov_table)
+# p-value = 0.03886
+# OR =   6.040232 (0.8439568 45.8211413)
+asth_cov_table = with(comorb_covid, table(covid_boolean, asthma_boolean))
+Fa = fisher.test(asth_cov_table)
+# -ast= 36:7, +ast= 1:1
+copd_cov_table = with(comorb_covid, table(covid_boolean, copd_boolean))
+Fc = fisher.test(copd_cov_table)
+# -copd= 34:8, +copd= 3:0
+
+####print stuff
+cat('outputs:')
+dm_cov_table
+Fd
+asth_cov_table
+Fa
+copd_cov_table
+Fc
+
+
+
+#### plots
+# fishers = rbind(Fd, Fa, Fc) # matrix
+fishers = list(Fd, Fa, Fc) # for some reason, need [[1]] ??
+
+df = data.frame()
+
+for (i in seq(3)){
+	temp = data.frame(est = fishers[i][[1]]$estimate,
+		lower = fishers[i][[1]]$conf.int[1],
+		upper = fishers[i][[1]]$conf.int[2],
+		comorb_name = fishers[i][[1]]$data.name
+	)
+	df = rbind(df, temp)
+}
+
+
+
+
+odds_plot = ggplot(fishers, aes(data.name, estimate)) +
+geom_pointrange(aes(ymin = conf.int[1], ymax = conf.int[2])) +
+scale_y_log10() +
+ylab('Odds ratio') + xlab('') + ggtitle('Odds of COVID +:- in diabetes vs. not')
+
+ggsave("Rplots_bslmc.pdf", odds_plot)
+
+
