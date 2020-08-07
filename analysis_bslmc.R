@@ -91,7 +91,7 @@ dx %>% count(PAT_ID) %>% arrange(desc(n)) # output - who's "sickest"
 dx %>%
 group_by(PAT_ID) %>%
 summarise(dm = sum(grepl("diab", DX_NAME, ignore.case = TRUE))) ->
-has_dm
+comorb_count
 
 #table(cov_lab$ORD_VALUE)
 #    Detected     Negative Not Detected     Positive
@@ -123,11 +123,11 @@ cov_lab
 
 #> dim(cov_lab)
 #[1] 45  4
-#> dim(has_dm)
+#> dim(comorb_count)
 #[1] 49  2
 # TODO why is this
 
-has_dm %>%
+comorb_count %>%
 full_join(cov_lab) %>%
 mutate(covid_boolean = (proportion_pos > 0),
 	dm_boolean = (dm>0))->
@@ -152,6 +152,31 @@ df = data.frame(est = F$estimate,
 	test_num = factor(c(1))
 )
 
-odds_plot = ggplot(df, aes(test_num, est)) + geom_pointrange(aes(ymin = lower, ymax = upper)) + scale_y_log10() + ylab('Odds ratio') + xlab('') + ggtitle('Odds of COVID +:- in diabetes vs. not')
+odds_plot = ggplot(df, aes(test_num, est)) +
+geom_pointrange(aes(ymin = lower, ymax = upper)) +
+scale_y_log10() +
+ylab('Odds ratio') + xlab('') + ggtitle('Odds of COVID +:- in diabetes vs. not')
 
 ggsave("Rplots_bslmc.pdf", odds_plot)
+
+
+
+
+#### explore asthma copd htn
+# the code below looks nicer than table()
+dx %>%
+select(DX_NAME) %>%
+group_by(DX_NAME) %>%
+summarise(n=n()) %>%
+arrange(desc(n)) ->
+counts_dx
+
+counts_dx %>% filter(grepl("copd", DX_NAME, ignore.case = TRUE))
+counts_dx %>% filter(grepl("obstr", DX_NAME, ignore.case = TRUE)) # not needed
+counts_dx %>% filter(grepl("asth", DX_NAME, ignore.case = TRUE))
+counts_dx %>% filter(grepl("hypert", DX_NAME, ignore.case = TRUE)) # filter out pulm htn
+counts_dx %>% filter(grepl("htn", DX_NAME, ignore.case = TRUE)) # not needed
+
+
+# hyperten
+# copd
