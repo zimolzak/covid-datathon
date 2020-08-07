@@ -66,3 +66,46 @@ lab_no_join
 # specimen collect TIME not just date
 # mortality !! pat_enc_hosp, also "care name"
 # emp id versus "ser" which is about role / job description
+
+
+
+
+#### 2020-08-07 ####
+
+stluke_lab %>%
+select(PAT_ID, DX_NAME, CURRENT_ICD10_LIST) %>%
+distinct() %>%
+arrange(PAT_ID, CURRENT_ICD10_LIST) ->
+dx
+
+# NOTED_DATE is sometimes == "NULL"
+# but nonetheless, later we should exclude ones that are to recent
+# ^^^^^ TODO
+
+dx %>% count(PAT_ID) %>% arrange(desc(n)) # output - who's "sickest"
+
+dx %>%
+group_by(PAT_ID) %>%
+summarise(dm = sum(grepl("diab", DX_NAME, ignore.case = TRUE))) ->
+has_dm
+
+#table(cov_lab$ORD_VALUE)
+#    Detected     Negative Not Detected     Positive
+#           6           27           24            3
+
+lab_no_join %>%
+filter(grepl("cov", NAME, ignore.case = TRUE) & ! grepl("performing", NAME, ignore.case = TRUE)) %>%
+select(-ORD_NUM_VALUE, -PROC_NAME) %>%
+mutate(cov_result = case_when(
+	ORD_VALUE == "Negative" | ORD_VALUE == "Not Detected" ~ 0,
+	ORD_VALUE == "Positive" | ORD_VALUE == "Detected" ~ 1
+)) %>%
+arrange(PAT_ID)->
+cov_lab
+
+#### finally join diagnoses with covid results!
+
+has_dm %>%
+inner_join(cov_lab) ->
+dm_by_covid
+# 60 rows for about 50 pts
