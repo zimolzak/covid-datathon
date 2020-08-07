@@ -1,6 +1,6 @@
 library(dplyr)
 library(ggplot2)
-library(tidyr)
+#library(tidyr)
 
 PATH = "/Users/ajz/Desktop/covid_datathon_git/"
 FILE = "COVID_1_SLH.tab"
@@ -239,13 +239,15 @@ fio2s
 
 ggplot(fio2s, aes(FIO2)) +
 geom_histogram(binwidth=10) +
-scale_x_continuous(breaks = seq(20, 100, 20))
+scale_x_continuous(breaks = seq(20, 100, 20)) ->
+fio2_histo
+ggsave("Rplots_bslmc_fio2_histo.pdf", fio2_histo)
 
 cat('\n\nSome pts have mult ABGs per date----\n')
 fio2s %>%
 group_by(PAT_ID, ORDERING_DATE) %>%
 summarise(n=n()) %>%
-arrange(desc(n)) 
+arrange(desc(n))
 
 
 
@@ -265,3 +267,28 @@ filter(NAME == "FIO2 (BEAKER)" | NAME =='PO2 ARTERIAL (BEAKER)') %>%
 select(ORDER_PROC_ID, PAT_ID, ORDERING_DATE, NAME, ORD_NUM_VALUE) %>%
 distinct() ->
 oxygenation
+
+# here is where I usually would do tidyr
+
+oxygenation %>%
+filter(NAME == "FIO2 (BEAKER)" ) %>%
+mutate(fio2 = as.numeric(ORD_NUM_VALUE)) %>%
+select(-ORD_NUM_VALUE, -NAME) ->
+fio2_tbj
+
+oxygenation %>%
+filter(NAME =='PO2 ARTERIAL (BEAKER)') %>%
+mutate(po2 = as.numeric(ORD_NUM_VALUE)) %>%
+select(ORDER_PROC_ID, po2) %>%
+full_join(fio2_tbj, by = "ORDER_PROC_ID") %>%
+mutate(pfr = 100 * po2 / fio2,
+	category = case_when(
+		pfr < 200 ~ 'ARDS',
+		(pfr < 300) & (pfr >= 200) ~ 'ALI',
+		pfr >= 300 ~ 'Normal'
+	)
+) ->
+oxy_joined
+
+qplot(fio2, po2, color = category, data=oxy_joined) -> ards_scatter
+ggsave("Rplots_bslmc_scatter.pdf", ards_scatter)
