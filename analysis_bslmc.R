@@ -25,10 +25,12 @@ table(stluke_lab$PAT_CLASS)
 #422644  12248  54964  23553   5910   5436 
 # Very good that Rory mapped adt_pat_class_c to pat_class and also kept both.
 
-# Emergency 
+# Emergency
 # Hospital Outpatient Surgery
-# Inpatient             Inpatient Rehab                 Observation                  Outpatient 
-
+# Inpatient
+# Inpatient Rehab
+# Observation
+# Outpatient
 
 ######## NOTES
 
@@ -72,6 +74,7 @@ lab_no_join
 
 
 #### 2020-08-07 ####
+#### Analyze problem list diagnoses ####
 
 stluke_lab %>%
 select(PAT_ID, DX_NAME, CURRENT_ICD10_LIST) %>%
@@ -149,5 +152,6 @@ df = data.frame(est = F$estimate,
 	test_num = factor(c(1))
 )
 
-p = ggplot(df, aes(test_num, est))
-p + geom_pointrange(aes(ymin = lower, ymax = upper)) + scale_y_log10()
+odds_plot = ggplot(df, aes(test_num, est)) + geom_pointrange(aes(ymin = lower, ymax = upper)) + scale_y_log10() + ylab('Odds ratio') + xlab('') + ggtitle('Odds of COVID +:- in diabetes vs. not')
+
+ggsave("Rplots_bslmc.pdf", odds_plot)
