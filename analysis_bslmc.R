@@ -1,5 +1,6 @@
 library(dplyr)
 library(ggplot2)
+library(tidyr)
 
 PATH = "/Users/ajz/Desktop/covid_datathon_git/"
 FILE = "COVID_1_SLH.tab"
@@ -62,7 +63,7 @@ stluke_lab %>%
 select(PAT_ID, ORDERING_DATE, PROC_NAME, NAME, ORD_VALUE, ORD_NUM_VALUE, PAT_CLASS) %>%
 filter(ORD_VALUE != "NULL" | ORD_NUM_VALUE != "NULL") %>%
 distinct() %>%
-arrange(PAT_ID, ORDERING_DATE) ->
+arrange(PAT_ID, ORDERING_DATE) -> # TODO - maybe should get rid of this arrange(). Maybe select ORDER_PROC_ID too.
 lab_no_join
 
 # people who touch chart
@@ -96,7 +97,6 @@ summarise(dm     = sum(grepl("diab", DX_NAME, ignore.case = TRUE)),
 comorb_count
 
 # TODO - hypertension
-
 
 #### filter & standardize covid results
 
@@ -143,8 +143,6 @@ mutate(covid_boolean = (proportion_pos > 0),
 )->
 comorb_covid
 
-
-
 #### explore asthma copd htn
 # the code below looks nicer than table()
 dx %>%
@@ -154,7 +152,7 @@ summarise(n=n()) %>%
 arrange(desc(n)) ->
 counts_dx
 
-cat('explore:')
+cat('\n\nexplore----\n')
 counts_dx %>% filter(grepl("copd", DX_NAME, ignore.case = TRUE))
 counts_dx %>% filter(grepl("obstr", DX_NAME, ignore.case = TRUE)) # not needed
 counts_dx %>% filter(grepl("asth", DX_NAME, ignore.case = TRUE))
@@ -178,7 +176,7 @@ Fc = fisher.test(copd_cov_table)
 # -copd= 34:8, +copd= 3:0
 
 ####print stuff
-cat('outputs:')
+cat('\n\noutputs----\n')
 dm_cov_table
 Fd
 asth_cov_table
@@ -186,14 +184,11 @@ Fa
 copd_cov_table
 Fc
 
-
-
 #### plots
 # fishers = rbind(Fd, Fa, Fc) # matrix
 fishers = list(Fd, Fa, Fc) # for some reason, need [[1]] ??
 
 df = data.frame()
-
 for (i in seq(3)){
 	temp = data.frame(est = fishers[i][[1]]$estimate,
 		lower = fishers[i][[1]]$conf.int[1],
@@ -203,14 +198,70 @@ for (i in seq(3)){
 	df = rbind(df, temp)
 }
 
-
-
-
-odds_plot = ggplot(fishers, aes(data.name, estimate)) +
-geom_pointrange(aes(ymin = conf.int[1], ymax = conf.int[2])) +
+odds_plot = ggplot(df, aes(comorb_name, est)) +
+geom_pointrange(aes(ymin = lower, ymax = upper)) +
 scale_y_log10() +
-ylab('Odds ratio') + xlab('') + ggtitle('Odds of COVID +:- in diabetes vs. not')
+ylab('Odds ratio') + ggtitle('Odds of COVID +:- in disease vs. not') +
+geom_hline(yintercept = 1)
 
 ggsave("Rplots_bslmc.pdf", odds_plot)
 
+# still TODO -->
+# 	* inpatient: testing late in admission: rate of this, rate of positives.
+# 	* rate of admissions/ER , by risk factors
+#   couple ?s for Rory
 
+#   Highest priorities for future data pulls
+# in hospital mortality
+# pulse ox <-- Would be good, but wait til further notice. (NB we have CPO order status)
+# in absence of SpO2: get ABG & VBG.
+#  For future ref: FIO2 needed too for proper interp.
+# hosp admission disch dx
+# specimen collect time
+# EMP_ID and/or SER
+
+
+# proc_name = "abg" or "blood gas" or...... "venous blood gas" or.......
+# NAME all of : {pH, pCO2, pO2, SaO2, FIO2 !!!!!!, L/min !!!!!, HCO3_art, CO2, base_excess}
+#               ^^^^ ^^^^  !!!!
+
+
+# proc_name = blood gas, arterila  --typo
+
+cat('\n\nWhat are ABG components----\n')
+lab_no_join %>% filter(PROC_NAME == "BLOOD GAS, ARTERIAL") %>% select(NAME) %>% group_by(NAME) %>% summarise(n())
+
+lab_no_join %>%
+filter(PROC_NAME == "BLOOD GAS, ARTERIAL", NAME == "FIO2 (BEAKER)") %>%
+mutate(FIO2 = as.numeric(ORD_NUM_VALUE)) %>%
+select(PAT_ID, ORDERING_DATE, FIO2) ->
+fio2s
+
+ggplot(fio2s, aes(FIO2)) +
+geom_histogram(binwidth=10) +
+scale_x_continuous(breaks = seq(20, 100, 20))
+
+cat('\n\nSome pts have mult ABGs per date----\n')
+fio2s %>%
+group_by(PAT_ID, ORDERING_DATE) %>%
+summarise(n=n()) %>%
+arrange(desc(n)) 
+
+
+
+
+## scatterplot, baby!
+## TODO - this looks like a job for... tidyr! But need to upgrade R.
+
+lab_no_join %>%
+filter(PROC_NAME == "BLOOD GAS, ARTERIAL") %>%
+head()
+
+# found out order_proc_id is the magic key that you want to group them
+stluke_lab %>% filter(PROC_NAME == "BLOOD GAS, ARTERIAL" & (NAME == "FIO2 (BEAKER)" | NAME =='PO2 ARTERIAL (BEAKER)')) %>% select(ORDER_PROC_ID, PAT_ID, ORDERING_DATE, PROC_ID, NAME) %>% unique() %>% head(20)
+
+stluke_lab %>%
+filter(NAME == "FIO2 (BEAKER)" | NAME =='PO2 ARTERIAL (BEAKER)') %>%
+select(ORDER_PROC_ID, PAT_ID, ORDERING_DATE, NAME, ORD_NUM_VALUE) %>%
+distinct() ->
+oxygenation
