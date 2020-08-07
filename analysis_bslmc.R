@@ -1,4 +1,5 @@
 library(dplyr)
+library(ggplot2)
 
 PATH = "/Users/ajz/Desktop/covid_datathon_git/"
 FILE = "COVID_1_SLH.tab"
@@ -101,6 +102,7 @@ mutate(cov_result = case_when(
 	ORD_VALUE == "Positive" | ORD_VALUE == "Detected" ~ 1
 )) ->
 cov_lab_tall
+# 60 rows for about 50 pts, if we use "tall"
 
 # Inspect these because we're about to lose them in a summarise()
 table(cov_lab_tall$NAME) # yes all 60 are the same
@@ -123,6 +125,29 @@ cov_lab
 # TODO why is this
 
 has_dm %>%
-full_join(cov_lab) ->
+full_join(cov_lab) %>%
+mutate(covid_boolean = (proportion_pos > 0),
+	dm_boolean = (dm>0))->
 dm_by_covid
-# 60 rows for about 50 pts, if we use "tall"
+
+dm_cov_table = with(dm_by_covid, table(covid_boolean, dm_boolean))
+dm_cov_table
+# 4:5 ratio diabetics had + covid
+# 4:32 ratio non-dm had + covid
+
+# trivial stats for the sake of stats
+
+F = fisher.test(dm_cov_table)
+F
+# p-value = 0.03886
+# OR =   6.040232 (0.8439568 45.8211413)
+c(F$conf.int[1], F$estimate, F$conf.int[2])
+
+df = data.frame(est = F$estimate,
+	lower = F$conf.int[1],
+	upper = F$conf.int[2],
+	test_num = factor(c(1))
+)
+
+p = ggplot(df, aes(test_num, est))
+p + geom_pointrange(aes(ymin = lower, ymax = upper)) + scale_y_log10()
