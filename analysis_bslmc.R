@@ -99,13 +99,30 @@ select(-ORD_NUM_VALUE, -PROC_NAME) %>%
 mutate(cov_result = case_when(
 	ORD_VALUE == "Negative" | ORD_VALUE == "Not Detected" ~ 0,
 	ORD_VALUE == "Positive" | ORD_VALUE == "Detected" ~ 1
-)) %>%
-arrange(PAT_ID)->
+)) ->
+cov_lab_tall
+
+# Inspect these because we're about to lose them in a summarise()
+table(cov_lab_tall$NAME) # yes all 60 are the same
+table(cov_lab_tall$PAT_CLASS) # ER 9, inp 33, obs 3, outp 15
+
+cov_lab_tall %>%
+group_by(PAT_ID) %>%
+summarise(n_pos = sum(cov_result), n_done = n()) %>%
+mutate (proportion_pos = n_pos / n_done) %>%
+arrange(desc(proportion_pos)) ->
 cov_lab
+# only one has P = 0.5
 
 #### finally join diagnoses with covid results!
 
+#> dim(cov_lab)
+#[1] 45  4
+#> dim(has_dm)
+#[1] 49  2
+# TODO why is this
+
 has_dm %>%
-inner_join(cov_lab) ->
+full_join(cov_lab) ->
 dm_by_covid
-# 60 rows for about 50 pts
+# 60 rows for about 50 pts, if we use "tall"
