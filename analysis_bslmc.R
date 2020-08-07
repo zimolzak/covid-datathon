@@ -349,3 +349,12 @@ pfr_covid_density
 wilcox.test(covid_comorb_oxy[covid_comorb_oxy$covid_boolean == FALSE, ]$pfr,
 			covid_comorb_oxy[covid_comorb_oxy$covid_boolean == TRUE,  ]$pfr)
 # p-value = 3.161e-05 , also no surprise
+
+
+
+
+# pdf()
+# plot1
+# plot2
+# plot3
+# dev.off()
