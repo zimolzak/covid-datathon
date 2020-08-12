@@ -4,6 +4,7 @@ library(ggplot2)
 
 PATH = "/Users/ajz/Desktop/covid_datathon_git/"
 FILE = "COVID_1_SLH.tab"
+# onedrive --> files / covid-19 / covid_datathon / data / slh_data
 
 setwd(PATH)
 stluke_lab = read.csv(paste(PATH, FILE,   sep=''), sep="\t", stringsAsFactors = FALSE)
@@ -66,6 +67,7 @@ distinct() %>%
 arrange(PAT_ID, ORDERING_DATE) -> # TODO - maybe should get rid of this arrange(). Maybe select ORDER_PROC_ID too.
 lab_no_join
 
+# Thoughts about future stuff to pull:
 # people who touch chart
 # specimen collect TIME not just date
 # mortality !! pat_enc_hosp, also "care name"
@@ -208,13 +210,10 @@ scale_y_log10() +
 ylab('Odds ratio') + ggtitle('Odds of COVID +:- in disease vs. not') +
 geom_hline(yintercept = 1)
 
-ggsave("Rplots_bslmc.pdf", odds_plot)
 
 
 
-
-
-######## meeeting ########
+######## Oxygenation, univariate/descriptive ########
 
 # still TODO -->
 # 	* inpatient: testing late in admission: rate of this, rate of positives.
@@ -251,7 +250,6 @@ ggplot(fio2s, aes(FIO2)) +
 geom_histogram(binwidth=10) +
 scale_x_continuous(breaks = seq(20, 100, 20)) ->
 fio2_histo
-ggsave("Rplots_bslmc_fio2_histo.pdf", fio2_histo)
 
 cat('\n\nSome pts have mult ABGs per date----\n')
 fio2s %>%
@@ -259,10 +257,7 @@ group_by(PAT_ID, ORDERING_DATE) %>%
 summarise(n=n()) %>%
 arrange(desc(n))
 
-
-
-
-## scatterplot, baby!
+######## Oxygenation, both pO2 and FIO2 ########
 ## TODO - this looks like a job for... tidyr! But need to upgrade R.
 
 lab_no_join %>%
@@ -301,14 +296,14 @@ mutate(pfr = 100 * po2 / fio2,
 oxy_joined
 
 qplot(fio2, po2, color = category, data=oxy_joined) -> ards_scatter
-ggsave("Rplots_bslmc_scatter.pdf", ards_scatter)
 
 # todo exclude old abgs. i got 3 from 2014. rest = 2020.
+# TODO - How many of the patients in the dataset *lack* ABGs?
+# i.e. Get idea of how bad confound by test indication can be.
 
 
 
-
-# now these thingies are looking significant!
+######## Oxygenation vs COVID test ########
 
 comorb_covid %>%
 select(PAT_ID, covid_boolean, dm_boolean, asthma_boolean, copd_boolean) %>%
@@ -353,10 +348,13 @@ wilcox.test(covid_comorb_oxy[covid_comorb_oxy$covid_boolean == FALSE, ]$pfr,
 
 
 
-# pdf()
-# 3 "rplots_..." odds_plot fio2_histo ards_scatter
-# plus 5 plots not yet output
-# plot1
-# plot2
-# plot3
-# dev.off()
+pdf("Rplots_bslmc.pdf")
+odds_plot
+fio2_histo
+ards_scatter
+ards_scatter_shape
+po2_covid_box
+po2_covid_density
+pfr_covid_box
+pfr_covid_density
+dev.off()
