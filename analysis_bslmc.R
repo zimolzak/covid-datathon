@@ -313,7 +313,7 @@ ggsave("Rplots_bslmc_scatter.pdf", ards_scatter)
 comorb_covid %>%
 select(PAT_ID, covid_boolean, dm_boolean, asthma_boolean, copd_boolean) %>%
 full_join(oxy_joined) %>%
-filter(!is.na(covid_comorb_oxy$covid_boolean)) -> # todo count how many na
+filter(!is.na(covid_boolean)) -> # todo count how many na
 covid_comorb_oxy
 
 ggplot(covid_comorb_oxy, aes(fio2, po2, color=category, shape=covid_boolean)) +
@@ -354,6 +354,8 @@ wilcox.test(covid_comorb_oxy[covid_comorb_oxy$covid_boolean == FALSE, ]$pfr,
 
 
 # pdf()
+# 3 "rplots_..." odds_plot fio2_histo ards_scatter
+# plus 5 plots not yet output
 # plot1
 # plot2
 # plot3
