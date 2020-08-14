@@ -6,8 +6,8 @@ Andrew Zimolzak, MD, MMSc. May 2020.
 Datathon use case examples
 ========
 
-1. Test volume, positive tests, by date. The ability to do this analysis is the **foundation** of all other data.
-2. count tests, positive tests, by comorbidity (see below)
+1. Test volume, positive tests, by date. The ability to do this analysis is the **foundation** of all other data. **Done**
+2. count tests, positive tests, by comorbidity (see below). **In process.** 
 3. retest volume, likelihood of positivity. By clinic (this is called DEP within Epic). (How many patients have *any* test? How many have more than one test? What percent of those two sets are positive?)
 
 Intermediate
@@ -23,6 +23,7 @@ Advanced
 7. inpatient: testing late in admission: rate of this, rate of positives.
 8. inpatient: basic descriptives. LOS. Floor/hospital census (pos/neg) by date.
 9. outpatient: rate of admissions/ER (might require manual review); risk factors
+10. Anything to do with mortality.
 
 Capture what Baylor Medicine clinic it was sent from. Capture what lab
 (vendor) it went to (LabCorp, or whoever), called "test perfomed by." Most common "lab facility" are CPL and LabCorp. Slicer has the *confirmed* and the *suspected* registries for COVID.
