@@ -25,3 +25,12 @@ dim(pat)  # 49  4
 dim(ord)  # 44959     13
 dim(hosp) # 505   33
 dim(enc)  # 222   9
+
+prob %>% #copy paste works
+group_by(PAT_ID) %>%
+summarise(dm     = sum(grepl("diab", DX_NAME, ignore.case = TRUE)),
+	      asthma = sum(grepl("asth", DX_NAME, ignore.case = TRUE)),
+	      copd   = sum(grepl("copd", DX_NAME, ignore.case = TRUE)),) ->
+comorb_count
+
+# pat has birth date and death date. Death date is a character.
