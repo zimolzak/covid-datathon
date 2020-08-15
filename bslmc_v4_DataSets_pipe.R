@@ -19,8 +19,9 @@ ord  = read.csv(paste(PATH, ORF, sep=''), sep="|", stringsAsFactors = FALSE)
 hosp = read.csv(paste(PATH, HSF, sep=''), sep="|", stringsAsFactors = FALSE)
 enc  = read.csv(paste(PATH, ENF, sep=''), sep="|", stringsAsFactors = FALSE)
 
-dim(prob) # 132   1
-dim(pat)  # 49  1
-dim(ord)  # 44959     1
-dim(hosp) # 505   1
-dim(enc)  # 222   1
+cat('\nDims of prob, pat, ord, hosp, enc----\n')
+dim(prob) # 132   7
+dim(pat)  # 49  4
+dim(ord)  # 44959     13
+dim(hosp) # 505   33
+dim(enc)  # 222   9

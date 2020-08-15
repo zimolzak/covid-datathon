@@ -1,4 +1,4 @@
-files = thoughts.pdf Rplots.pdf covid_procs_stlukes.csv Routputs_vali_procs.txt Routputs_bslmc.txt
+files = thoughts.pdf Rplots.pdf covid_procs_stlukes.csv Routputs_vali_procs.txt Routputs_bslmc.txt Routputs_bslmc_v4.txt
 files_unmentioned = Routputs.txt Rplots_bslmc.pdf
 .PHONY: all clean upload
 infiles = PATIENT.txt PAT_ORDERS_PROCEDURES.txt PAT_ENC_DX.txt PAT_PRBL_LIST.txt Pat_FlowSheet_PulseOx.txt
@@ -19,6 +19,9 @@ Rplots.pdf: analysis_with_joins.R $(infiles)
 	Rscript $< > Routputs.txt
 
 Routputs_vali_procs.txt: validate_covid_procs.R covid_procs_stlukes.csv
+	Rscript $< > $@
+
+Routputs_bslmc_v4.txt: bslmc_v4_DataSets_pipe.R # lots of pipe delim inputs are depends too.
 	Rscript $< > $@
 
 clean: 
