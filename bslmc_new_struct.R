@@ -8,7 +8,7 @@ HSP_F = "SLH_HSP_0731_1.txt"
 LABS_F = "SLH_LABS_0731_1.txt"
 PROCS_F = "SLH_PROCS_0731_1.txt"
 
-# onedrive --> files / covid-19 / covid_datathon / data / DATA_HSP_LAB_PROC
+# onedrive --> files / covid-19 / covid_datathon / data / DataSets / DATA_HSP_LAB_PROC
 
 setwd(PATH)
 
@@ -25,9 +25,11 @@ dim(hsp)
 
 #### okay forget those here is BSLMC version 3
 
-# whole thing 240 MB
+# whole thing 240 MB DataSets.zip
 # encounter_dx - all encounters, beginning of time, on these pts
 # orders_results - big 50 MB files, times 3.
 # pat_id - uh oh the formatting has lots of text art lines and tables.
 
 #### okay forget that. it is not TSV. Await BSLMC version 4.
+
+# onedrive --> files / covid-19 / covid_datathon / data / slh_data / DataSets
