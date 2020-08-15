@@ -13,11 +13,11 @@ ENF = "ENC_DX/ENC_DX_GRP_1 20200814 1604.csv"
 
 setwd(PATH)
 
-prob = read.csv(paste(PATH, PRF, sep=''), sep="\t", stringsAsFactors = FALSE)
-pat  = read.csv(paste(PATH, PTF, sep=''), sep="\t", stringsAsFactors = FALSE)
-ord  = read.csv(paste(PATH, ORF, sep=''), sep="\t", stringsAsFactors = FALSE)
-hosp = read.csv(paste(PATH, HSF, sep=''), sep="\t", stringsAsFactors = FALSE)
-enc  = read.csv(paste(PATH, ENF, sep=''), sep="\t", stringsAsFactors = FALSE)
+prob = read.csv(paste(PATH, PRF, sep=''), sep="|", stringsAsFactors = FALSE)
+pat  = read.csv(paste(PATH, PTF, sep=''), sep="|", stringsAsFactors = FALSE)
+ord  = read.csv(paste(PATH, ORF, sep=''), sep="|", stringsAsFactors = FALSE)
+hosp = read.csv(paste(PATH, HSF, sep=''), sep="|", stringsAsFactors = FALSE)
+enc  = read.csv(paste(PATH, ENF, sep=''), sep="|", stringsAsFactors = FALSE)
 
 dim(prob) # 132   1
 dim(pat)  # 49  1
