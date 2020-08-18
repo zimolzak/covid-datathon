@@ -1,4 +1,4 @@
-files = thoughts.pdf Rplots.pdf covid_procs_stlukes.csv Routputs_vali_procs.txt Routputs_bslmc.txt Routputs_bslmc_v4.txt thoughts.docx
+files = thoughts.pdf Rplots.pdf covid_procs_stlukes.csv Routputs_vali_procs.txt Routputs_bslmc.txt Routputs_bslmc_v4.txt thoughts.docx thoughts-notes-appendix.pdf
 files_unmentioned = Routputs.txt Rplots_bslmc.pdf
 .PHONY: all clean upload
 infiles = PATIENT.txt PAT_ORDERS_PROCEDURES.txt PAT_ENC_DX.txt PAT_PRBL_LIST.txt Pat_FlowSheet_PulseOx.txt
