@@ -6,45 +6,23 @@ Andrew Zimolzak, MD, MMSc. May 2020.
 Datathon use case examples
 ========
 
-
-
-|N | Hard? | Status   | Description                                             |
-|--|-------|----------|---------------------------------------------------------|
-|1 | Int   | In proc. | 3.	retest volume, likelihood of positivity. By clinic. |
-|2 | ..    | Is TB req|                                                         |
-|2 | ..    | Is TB req|                                                         |
-|2 | ..    | Is TB req|                                                         |
-|2 | ..    | Is TB req|                                                         |
-|2 | ..    | Is TB req|                                                         |
-|2 | ..    | Is TB req|                                                         |
-|2 | ..    | Is TB req|                                                         |
-|2 | ..    | Is TB req|                                                         |
-|2 | ..    | Is TB req|                                                         |
-
-
-
-
-1. Test volume, positive tests, by date. The ability to do this analysis is the **foundation** of all other data. **Done**
-2. count tests, positive tests, by comorbidity (see below). **In process.** 
-3. retest volume, likelihood of positivity. By clinic (this is called DEP within Epic). (How many patients have *any* test? How many have more than one test? What percent of those two sets are positive?)
-
-Intermediate
---------
-
-4. pulse oximetry (SpO2) by positive/negative
-5. basic labs (see below) by positive/negative
-
-Advanced
---------
-
-6. inpatient: people who "touch" the chart (estimate PPE?)
-7. inpatient: testing late in admission: rate of this, rate of positives.
-8. inpatient: basic descriptives. LOS. Floor/hospital census (pos/neg) by date.
-9. outpatient: rate of admissions/ER (might require manual review); risk factors
-10. Anything to do with mortality.
+|ID| Hard? | Status   | Description                                                 |
+|--|-------|----------|-------------------------------------------------------------|
+|1 | Easy  | Done     | Test volume, positive tests, by date. **Foundational**      |
+|2 | Easy  | In proc. | Count tests, positive tests, by comorbidity (see below)     |
+|3 | Easy  |          | Retest volume, likelihood of positivity. By clinic.         |
+|4 | Int.  |          | Pulse oximetry (SpO2) by positive/negative                  |
+|5 | Int.  |          | Basic labs (see below) by positive/negative                 |
+|6 | Adva. |          | Inp: people who "touch" the chart (PPE estimate)            |
+|7 | Adva. |          | Inp: Rate of testing late in an admission, rate of positive |
+|8 | Adva. |          | Inp: basic descriptives (LOS, floor/hosp census by date)    |
+|9 | Adva. |          | Outp: Rate of admissions/ER (manual review?); risk factors  |
+|10| Adva. |          | Anything to do with mortality                               |
 
 Capture what Baylor Medicine clinic it was sent from. Capture what lab
-(vendor) it went to (LabCorp, or whoever), called "test perfomed by." Most common "lab facility" are CPL and LabCorp. Slicer has the *confirmed* and the *suspected* registries for COVID.
+(vendor) it went to (LabCorp, or whoever), called "test perfomed by."
+Most common "lab facility" are CPL and LabCorp. Slicer has the
+*confirmed* and the *suspected* registries for COVID.
 
 Define "comorbidity"
 --------
@@ -128,6 +106,42 @@ Option 2 may be the most practical, but I'm open to suggestions.
 
 I can pretty confidently say that I have no interest (for the purposes of this COVID project) in any pulse ox data point before 2020-01-01. Diagnoses are another matter. Concrete example: If the patient had 6 admissions with discharge diagnosis = heart failure in 2018 and 2019, I would want to know about it (eventually—can be in a later data pull). However, it doesn't matter as much that she had 200 pulse ox measurements ranging from 81 to 97 in the years 2018–2019.
 
+
+
+
+Abbreviations
+========
+
+PPE, personal protective equipment. LOS, length of stay. COPD, chronic
+obstructive pulmonary disease. DM, diabetes mellitus. HTN,
+hypertension. cmp, comprehensive metabolic profile. cbc, complete
+blood count. bmp, basic metabolic panel. crp, C-reactive protein. Inp,
+inpatient. Out, outpatient. Int, intermediate. Adva, advanced.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+***
 
 
 
@@ -357,10 +371,3 @@ the Last Four Digits of Social Security Numbers Substantially Improves
 Linking Patient Data from De-identified Hospital Claims Databases.
 Health Serv Res. 2015;50 Suppl 1(Suppl 1):1339-1350. pmid 26073819.
 
-Abbreviations
-========
-
-PPE, personal protective equipment. LOS, length of stay. COPD, chronic
-obstructive pulmonary disease. DM, diabetes mellitus. HTN,
-hypertension. cmp, comprehensive metabolic profile. cbc, complete
-blood count. bmp, basic metabolic panel. crp, C-reactive protein.
