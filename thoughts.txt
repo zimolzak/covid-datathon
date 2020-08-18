@@ -6,6 +6,24 @@ Andrew Zimolzak, MD, MMSc. May 2020.
 Datathon use case examples
 ========
 
+
+
+|N | Hard? | Status   | Description                                             |
+|--|-------|----------|---------------------------------------------------------|
+|1 | Int   | In proc. | 3.	retest volume, likelihood of positivity. By clinic. |
+|2 | ..    | Is TB req|                                                         |
+|2 | ..    | Is TB req|                                                         |
+|2 | ..    | Is TB req|                                                         |
+|2 | ..    | Is TB req|                                                         |
+|2 | ..    | Is TB req|                                                         |
+|2 | ..    | Is TB req|                                                         |
+|2 | ..    | Is TB req|                                                         |
+|2 | ..    | Is TB req|                                                         |
+|2 | ..    | Is TB req|                                                         |
+
+
+
+
 1. Test volume, positive tests, by date. The ability to do this analysis is the **foundation** of all other data. **Done**
 2. count tests, positive tests, by comorbidity (see below). **In process.** 
 3. retest volume, likelihood of positivity. By clinic (this is called DEP within Epic). (How many patients have *any* test? How many have more than one test? What percent of those two sets are positive?)
@@ -88,6 +106,29 @@ Things teams may want for October datathon
 - raw data
 - un-joined?
 - data dictionary, but even more thorough.
+- What formats provide? Poss Excel and pipe-delim both?
+
+
+
+
+
+Regarding flowsheet, if BSLMC is anything like outpatient, there is a ton of stuff in there. I would be fine with we select only the lines referring to pulse ox (to begin with). I would guess this yields a much more manageable data set (between 10x and 100x smaller).
+
+People are undoubtedly going to want other vital signs in the future (temp, pulse rate, resp rate, and blood pressure) but I don't strictly need these yet. Other stuff within the flow sheet is "tier 3" at best.
+
+Oh, the CONTACT_DATE field in that screenshot reminds me of another issue: Generally I do not need pulse ox data that is widely separated in time from the COVID result and/or hospital admission. Possible approaches to this issue:
+
+1. Don't limit at all (results in bulkier data sets)
+
+2. Simple limiting by date (no pulse ox before 2020-01-01)
+
+3. Fancy limiting like "grab all pulse ox during admission, plus 7 days before admission, plus 7 days after admission, plus 7 days before COVID test plus 7 days after COVID test"
+
+Option 2 may be the most practical, but I'm open to suggestions.
+
+I can pretty confidently say that I have no interest (for the purposes of this COVID project) in any pulse ox data point before 2020-01-01. Diagnoses are another matter. Concrete example: If the patient had 6 admissions with discharge diagnosis = heart failure in 2018 and 2019, I would want to know about it (eventually—can be in a later data pull). However, it doesn't matter as much that she had 200 pulse ox measurements ranging from 81 to 97 in the years 2018–2019.
+
+
 
 
 
