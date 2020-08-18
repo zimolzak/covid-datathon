@@ -1,21 +1,30 @@
-*.pdf
-*~
-.DS_Store
+# inputs
+
 *.tsv
 *.csv
-analysis-PHI.R
-old_output.txt
-output.txt
+*.tab
+*.zip
+Routputs*
 PATIENT.txt
 PAT_ENC_DX.txt
 PAT_ORDERS_PROCEDURES.txt
 PAT_PRBL_LIST.txt
 Pat_FlowSheet_PulseOx.txt
-*.png
-.Rapp.history
-Routputs.txt
 COVID_PROCS_STLUKES.txt
-Routputs_vali_procs.txt
-*.tab
-Routputs_bslmc.txt
-*.zip
+DATA_HSP_LAB_PROC/
+DataSets/
+
+# outputs
+
+*.pdf
+*.png
+*.docx
+old_output.txt
+output.txt
+
+# doots/misc.
+
+*~
+.DS_Store
+analysis-PHI.R
+.Rapp.history
