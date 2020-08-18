@@ -6,18 +6,18 @@ Andrew Zimolzak, MD, MMSc. August 2020.
 Datathon use case examples
 ========
 
-|ID| Hard? | Status   | Description                                                 |
-|--|-------|----------|-------------------------------------------------------------|
-|1 | Easy  | Done     | Test volume, positive tests, by date. **Foundational**      |
-|2 | Easy  | In proc. | Count tests, positive tests, by comorbidity (see below)     |
-|3 | Easy  |          | Retest volume, likelihood of positivity. By clinic.         |
-|4 | Int.  |          | Pulse oximetry (SpO2) by positive/negative                  |
-|5 | Int.  |          | Basic labs (see below) by positive/negative                 |
-|6 | Adva. |          | Inp: people who "touch" the chart (PPE estimate)            |
-|7 | Adva. |          | Inp: Rate of testing late in an admission, rate of positive |
-|8 | Adva. |          | Inp: basic descriptives (LOS, floor/hosp census by date)    |
-|9 | Adva. |          | Outp: Rate of admissions/ER (manual review?); risk factors  |
-|10| Adva. |          | Anything to do with mortality                               |
+|ID| Hard? | Status                   | Description                                                 |
+|--|-------|--------------------------|-------------------------------------------------------------|
+|1 | Easy  | Done                     | Test volume, positive tests, by date. **Foundational**      |
+|2 | Easy  | Done.                    | Count tests, positive tests, by comorbidity (see below)     |
+|3 | Easy  | AJZ                      | Retest volume, likelihood of positivity. By clinic.         |
+|4 | Int.  | *O:* done. *I:* done/Rory | Pulse oximetry (SpO2) by positive/negative                  |
+|5 | Int.  | AJZ                      | Basic labs (see below) by positive/negative                 |
+|6 | Adva. | Rory                     | *I:* people who "touch" the chart (PPE estimate)            |
+|7 | Adva. | AJZ                      | *I:* Rate of testing late in an admission, rate of positive |
+|8 | Adva. | Rory                     | *I:* basic descriptives (LOS, floor/hosp census by date)    |
+|9 | Adva. | AJZ                      | *O:* Rt. of admission/ER (manual rev.?); risk factors  |
+|10| Adva. | AJZ                      | Anything to do with mortality                               |
 
 Capture what Baylor Medicine clinic it was sent from. Capture what lab
 (vendor) it went to (LabCorp, or whoever), called "test perfomed by."
