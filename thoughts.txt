@@ -6,19 +6,19 @@ Andrew Zimolzak, MD, MMSc. August 2020.
 Datathon use case examples
 ========
 
-|ID| Hard? | Status    | Description                                                 |
-|--|-------|-----------|-------------------------------------------------------------|
-|1 | Easy  | Done      | Test volume, positive tests, by date. **Foundational**      |
-|2 | Easy  | Done      | Count tests, positive tests, by comorbidity (see below)     |
-|3 | Easy  | AJZ       | Retest volume, likelihood of positivity. By clinic.         |
-|4o| Int.  | Done      | Pulse oximetry (SpO2) by positive/negative                  |
-|4i| Int.  | Done/Rory | " " "                                                       |
-|5 | Int.  | AJZ       | Basic labs (see below) by positive/negative                 |
-|6 | Adva. | Rory      | *I:* People who "touch" the chart (PPE estimate)            |
-|7 | Adva. | AJZ       | *I:* Rate of testing late in an admission, rate of positive |
-|8 | Adva. | Rory      | *I:* Basic descriptives (LOS, floor/hosp census by date)    |
-|9 | Adva. | AJZ       | *O:* Rt. of admission/ER (manual rev.?); risk factors       |
-|10| Adva. | AJZ       | Anything to do with mortality                               |
+|ID| Hard? | Waiting on:   | Description                                                 |
+|--|-------|---------------|-------------------------------------------------------------|
+|1 | Easy  | **Done**      | Test volume, positive tests, by date. **Foundational.**     |
+|2 | Easy  | **Done**      | Count tests, positive tests, by comorbidity (see below).    |
+|3 | Easy  | Andy          | Retest volume, likelihood of positivity. By clinic.         |
+|4o| Int.  | **Done**      | Pulse oximetry (SpO2) by positive/negative.                 |
+|4i| Int.  | **Done**/Rory | " " "                                                       |
+|5 | Int.  | Andy          | Basic labs (see below) by positive/negative.                |
+|6 | Adva. | Rory          | *I:* People who "touch" the chart (PPE estimate).           |
+|7 | Adva. | Andy          | *I:* Rate of testing late in an admission, rate of positive.|
+|8 | Adva. | Rory          | *I:* Basic descriptives (LOS, floor/hosp census by date).   |
+|9 | Adva. | Andy          | *O:* Rt. of admission/ER (manual rev.?); risk factors.      |
+|10| Adva. | Andy          | Anything to do with mortality.                              |
 
 Capture what Baylor Medicine clinic it was sent from. Capture what lab
 (vendor) it went to (LabCorp, or whoever), called "test perfomed by."
