@@ -54,8 +54,6 @@ rename(spo2_datetime_text = ENTRY_TIME)
 
 ggplot(pulseox, aes(spo2_value_numeric)) + geom_histogram(binwidth=1) + xlab('Pulse oximetry (%)') + ylab('Count') + scale_x_continuous(breaks = seq(90,100,2))
 
-qplot(pulseox$spo2_date)
-
 
 
 
@@ -77,7 +75,6 @@ mutate(covid_result = case_when(
         )) %>%
 rename(cov_result_txt = ORD_VALUE_TEXT)
 
-qplot(covids$latency)
 qplot(covids$covid_ord_dt)
 
 ggplot(covids, aes(x=covid_ord_dt, color=as.factor(covid_result))) + geom_freqpoly(binwidth=7) + xlab('COVID test order date') + ylab('Count') + scale_y_continuous(breaks = seq(0,10,2)) + labs(color="Test result")
@@ -103,7 +100,6 @@ covids %>%
 inner_join(pulseox) %>%
 mutate(covid_spo2_diff = covid_ord_dt - spo2_date)
 
-qplot(covids_pulseox$covid_spo2_diff) # not good - very separated
 cat("table of time betw pulse ox & covid test----")
 table(covids_pulseox$covid_spo2_diff) # not good - very separated
 cat("dim pulseox----\n")
@@ -124,13 +120,6 @@ nearby
 
 cat("dim nearby----\n")
 dim(nearby)
-
-#invalid-ish histo
-ggplot(covids_pulseox, aes(x=spo2_value_numeric, fill=as.factor(covid_result))) + geom_histogram(binwidth=1) + xlab('Pulse oximetry (%)') + ylab('Count') + scale_x_continuous(breaks = seq(90,100,2))
-
-#unstacked version
-ggplot(covids_pulseox, aes(x=spo2_value_numeric, color=as.factor(covid_result))) + geom_freqpoly(binwidth=1) + xlab('Pulse oximetry (%)') + ylab('Count') + scale_x_continuous(breaks = seq(90,100,2))
-
 
 ## valid??
 ggplot(nearby, aes(x=spo2_value_numeric, color=as.factor(covid_result))) + geom_freqpoly(binwidth=1) + xlab('Pulse oximetry (%)') + ylab('Count') + scale_x_continuous(breaks = seq(90,100,2))
