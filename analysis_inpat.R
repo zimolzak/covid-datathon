@@ -348,7 +348,7 @@ wilcox.test(covid_comorb_oxy[covid_comorb_oxy$covid_boolean == FALSE, ]$pfr,
 
 
 
-pdf("Rplots_bslmc.pdf")
+pdf("Rplots_inpat.pdf")
 odds_plot
 fio2_histo
 ards_scatter
