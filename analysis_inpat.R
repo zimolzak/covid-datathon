@@ -199,10 +199,16 @@ for (i in seq(3)){
 	temp = data.frame(est = fishers[i][[1]]$estimate,
 		lower = fishers[i][[1]]$conf.int[1],
 		upper = fishers[i][[1]]$conf.int[2],
-		comorb_name = fishers[i][[1]]$data.name
+		comorb_longname = fishers[i][[1]]$data.name
 	)
 	df = rbind(df, temp)
 }
+
+df %>%
+mutate(comorb_name = case_when(comorb_longname=='dm_cov_table'~'Diabetes',
+	comorb_longname=='asth_cov_table'~'Asthma',
+	comorb_longname=='copd_cov_table'~'COPD')) ->
+df
 
 odds_plot = ggplot(df, aes(comorb_name, est)) +
 geom_pointrange(aes(ymin = lower, ymax = upper)) +
@@ -305,14 +311,15 @@ filter(!is.na(covid_boolean)) -> # todo count how many na
 covid_comorb_oxy
 
 ggplot(covid_comorb_oxy, aes(fio2, po2, color=category, shape=covid_boolean)) +
-geom_point() ->
+geom_point() + labs(title='Oxygenation severity vs. COVID status', shape='COVID', color='Severity')->
 ards_scatter_shape
 
 # po2
 
 ggplot(covid_comorb_oxy, aes(covid_boolean, po2)) +
 geom_boxplot(outlier.shape = NA) +
-geom_jitter(width=0.2) ->
+geom_jitter(width=0.2) +
+labs(title='Arterial oxygen vs. COVID status', y='COVID test result')->
 po2_covid_box
 
 wilcox.test(covid_comorb_oxy[covid_comorb_oxy$covid_boolean == FALSE, ]$po2,
@@ -323,7 +330,8 @@ wilcox.test(covid_comorb_oxy[covid_comorb_oxy$covid_boolean == FALSE, ]$po2,
 
 ggplot(covid_comorb_oxy, aes(covid_boolean, pfr)) +
 geom_boxplot(outlier.shape = NA) +
-geom_jitter(width=0.2) ->
+geom_jitter(width=0.2) +
+labs(title='PO2:FIO2 ratio vs. COVID status', y='COVID test result') ->
 pfr_covid_box
 
 wilcox.test(covid_comorb_oxy[covid_comorb_oxy$covid_boolean == FALSE, ]$pfr,
