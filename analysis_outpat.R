@@ -117,12 +117,15 @@ nearby
 cat("dim nearby----\n")
 dim(nearby)
 
-## valid??
-ggplot(nearby, aes(x=spo2_value_numeric, color=as.factor(covid_result))) + geom_freqpoly(binwidth=1) + labs(x='Pulse oximetry (%)', y='Count', title="Outpatient pulse ox distribution by COVID status", color='COVID result') + scale_x_continuous(breaks = seq(90,100,2))
-
+## valid
 cat("Wilcoxon Mann Whitney test on rather few samples----")
-wilcox.test(nearby[nearby$covid_result == 'neg', ]$spo2_value_numeric,
+wt = wilcox.test(nearby[nearby$covid_result == 'neg', ]$spo2_value_numeric,
 			nearby[nearby$covid_result == 'pos', ]$spo2_value_numeric)
+wt
+
+p_str = as.character(round(wt$p.value, 3))
+
+ggplot(nearby, aes(x=spo2_value_numeric, color=as.factor(covid_result))) + geom_freqpoly(binwidth=1) + labs(x='Pulse oximetry (%)', y='Count', title="Outpatient SpO2 distribution by COVID status", color='COVID result', subtitle = paste("P =", p_str)) + scale_x_continuous(breaks = seq(90,100,2))
 
 
 
