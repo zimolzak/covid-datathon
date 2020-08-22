@@ -246,11 +246,6 @@ mutate(FIO2 = as.numeric(ORD_NUM_VALUE)) %>%
 select(PAT_ID, ORDERING_DATE, FIO2) ->
 fio2s
 
-ggplot(fio2s, aes(FIO2)) +
-geom_histogram(binwidth=10) +
-scale_x_continuous(breaks = seq(20, 100, 20)) ->
-fio2_histo
-
 cat('\n\nSome pts have mult ABGs per date----\n')
 fio2s %>%
 group_by(PAT_ID, ORDERING_DATE) %>%
@@ -295,8 +290,6 @@ mutate(pfr = 100 * po2 / fio2,
 ) ->
 oxy_joined
 
-qplot(fio2, po2, color = category, data=oxy_joined) -> ards_scatter
-
 # todo exclude old abgs. i got 3 from 2014. rest = 2020.
 # TODO - How many of the patients in the dataset *lack* ABGs?
 # i.e. Get idea of how bad confound by test indication can be.
@@ -322,10 +315,6 @@ geom_boxplot(outlier.shape = NA) +
 geom_jitter(width=0.2) ->
 po2_covid_box
 
-ggplot(covid_comorb_oxy, aes(po2, color=covid_boolean)) +
-geom_density() ->
-po2_covid_density
-
 wilcox.test(covid_comorb_oxy[covid_comorb_oxy$covid_boolean == FALSE, ]$po2,
 			covid_comorb_oxy[covid_comorb_oxy$covid_boolean == TRUE,  ]$po2)
 # p-value = 1.187e-05 , no surprise
@@ -337,10 +326,6 @@ geom_boxplot(outlier.shape = NA) +
 geom_jitter(width=0.2) ->
 pfr_covid_box
 
-ggplot(covid_comorb_oxy, aes(pfr, color=covid_boolean)) +
-geom_density() ->
-pfr_covid_density
-
 wilcox.test(covid_comorb_oxy[covid_comorb_oxy$covid_boolean == FALSE, ]$pfr,
 			covid_comorb_oxy[covid_comorb_oxy$covid_boolean == TRUE,  ]$pfr)
 # p-value = 3.161e-05 , also no surprise
@@ -350,11 +335,7 @@ wilcox.test(covid_comorb_oxy[covid_comorb_oxy$covid_boolean == FALSE, ]$pfr,
 
 pdf("Rplots_inpat.pdf")
 odds_plot
-fio2_histo
-ards_scatter
 ards_scatter_shape
 po2_covid_box
-po2_covid_density
 pfr_covid_box
-pfr_covid_density
 dev.off()
