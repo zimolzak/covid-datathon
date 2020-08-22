@@ -1,5 +1,5 @@
-files = thoughts.pdf Rplots.pdf covid_procs_stlukes.csv Routputs_vali_procs.txt Routputs_inpat.txt Routputs_inpat_v4.txt thoughts.docx thoughts-notes-appendix.pdf
-files_unmentioned = Routputs.txt Rplots_inpat.pdf
+files = thoughts.pdf Rplots_outpat.pdf covid_procs_stlukes.csv Routputs_vali_procs.txt Routputs_inpat.txt Routputs_inpat_v4.txt thoughts.docx thoughts-notes-appendix.pdf
+files_unmentioned = Routputs_outpat.txt Rplots_inpat.pdf
 .PHONY: all clean upload
 infiles = PATIENT.txt PAT_ORDERS_PROCEDURES.txt PAT_ENC_DX.txt PAT_PRBL_LIST.txt Pat_FlowSheet_PulseOx.txt
 infile_bsl = COVID_1_SLH.tab
@@ -18,8 +18,9 @@ covid_procs_stlukes.csv: COVID_PROCS_STLUKES.txt txt2csv.pl
 Routputs_inpat.txt: analysis_inpat.R $(infile_bsl)
 	Rscript $< > $@
 
-Rplots.pdf: analysis_outpat.R $(infiles)
-	Rscript $< > Routputs.txt
+Rplots_outpat.pdf: analysis_outpat.R $(infiles)
+	Rscript $< > Routputs_outpat.txt
+	mv -f Rplots.pdf Rplots_outpat.pdf
 
 Routputs_vali_procs.txt: validate_covid_procs.R covid_procs_stlukes.csv
 	Rscript $< > $@
