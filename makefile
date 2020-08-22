@@ -15,10 +15,10 @@ covid_procs_stlukes.csv: COVID_PROCS_STLUKES.txt txt2csv.pl
 %.docx: %.txt
 	pandoc -o $@ $<
 
-Routputs_bslmc.txt: analysis_bslmc.R $(infile_bsl)
+Routputs_bslmc.txt: analysis_inpat.R $(infile_bsl)
 	Rscript $< > $@
 
-Rplots.pdf: analysis_with_joins.R $(infiles)
+Rplots.pdf: analysis_outpat.R $(infiles)
 	Rscript $< > Routputs.txt
 
 Routputs_vali_procs.txt: validate_covid_procs.R covid_procs_stlukes.csv
