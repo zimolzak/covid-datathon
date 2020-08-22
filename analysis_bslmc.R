@@ -73,9 +73,6 @@ lab_no_join
 # mortality !! pat_enc_hosp, also "care name"
 # emp id versus "ser" which is about role / job description
 
-
-
-
 #### 2020-08-07 ####
 #### Analyze problem list diagnoses ####
 
@@ -189,6 +186,9 @@ asth_cov_table
 Fa
 copd_cov_table
 Fc
+
+
+
 
 #### plots
 # fishers = rbind(Fd, Fa, Fc) # matrix
