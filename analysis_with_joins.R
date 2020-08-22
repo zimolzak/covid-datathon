@@ -52,8 +52,6 @@ rename(spo2_value_text = MEAS_VALUE) %>%
 mutate(spo2_date = as.Date(ENTRY_TIME, '%m-%d-%Y')) %>%
 rename(spo2_datetime_text = ENTRY_TIME)
 
-ggplot(pulseox, aes(spo2_value_numeric)) + geom_histogram(binwidth=1) + xlab('Pulse oximetry (%)') + ylab('Count') + scale_x_continuous(breaks = seq(90,100,2))
-
 
 
 
@@ -68,16 +66,14 @@ rename(cov_res_dt_txt = RESULT_DATE, cov_ord_dt_txt = ORDER_DATE) %>%
 mutate(latency = covid_res_dt - covid_ord_dt) %>%
 mutate(covid_result = case_when(
         ORD_VALUE_TEXT == "NEGATIVE" | ORD_VALUE_TEXT == "Negative" |
-                ORD_VALUE_TEXT == "NOT DETECTED" | ORD_VALUE_TEXT == "Not Detected" ~ 0,
+                ORD_VALUE_TEXT == "NOT DETECTED" | ORD_VALUE_TEXT == "Not Detected" ~ 'neg',
         ORD_VALUE_TEXT == "POSITIVE" | ORD_VALUE_TEXT == "Positive" |
-                ORD_VALUE_TEXT == "DETECTED" | ORD_VALUE_TEXT == "Detected" ~ 1,
-        ORD_VALUE_TEXT == "PRESUMPTIVE POSITIVE" ~ 0.5
+                ORD_VALUE_TEXT == "DETECTED" | ORD_VALUE_TEXT == "Detected" ~ 'pos',
+        ORD_VALUE_TEXT == "PRESUMPTIVE POSITIVE" ~ 'presump'
         )) %>%
 rename(cov_result_txt = ORD_VALUE_TEXT)
 
-qplot(covids$covid_ord_dt)
-
-ggplot(covids, aes(x=covid_ord_dt, color=as.factor(covid_result))) + geom_freqpoly(binwidth=7) + xlab('COVID test order date') + ylab('Count') + scale_y_continuous(breaks = seq(0,10,2)) + labs(color="Test result")
+ggplot(covids, aes(x=covid_ord_dt, color=as.factor(covid_result))) + geom_freqpoly(binwidth=7) + scale_y_continuous(breaks = seq(0,10,2)) + labs(title="COVID result by date", x='Order date', y='Count', color="Result")
 
 cat("confirm that numeric is useless----")
 table(covids$ORD_VALUE_NUMERIC) # confirm that numeric is useless
@@ -88,7 +84,7 @@ table(covids$cov_result_txt)
 cat("covids covid_result (consolidated) ----")
 table(covids$covid_result)
 
-qplot(data=covids, x=covid_ord_dt, y=latency)
+qplot(data=covids, x=covid_ord_dt, y=latency) + labs(title="COVID test latency over time", x="Order date")
 
 
 
@@ -122,11 +118,11 @@ cat("dim nearby----\n")
 dim(nearby)
 
 ## valid??
-ggplot(nearby, aes(x=spo2_value_numeric, color=as.factor(covid_result))) + geom_freqpoly(binwidth=1) + xlab('Pulse oximetry (%)') + ylab('Count') + scale_x_continuous(breaks = seq(90,100,2))
+ggplot(nearby, aes(x=spo2_value_numeric, color=as.factor(covid_result))) + geom_freqpoly(binwidth=1) + labs(x='Pulse oximetry (%)', y='Count', title="Outpatient pulse ox distribution by COVID status", color='COVID result') + scale_x_continuous(breaks = seq(90,100,2))
 
 cat("Wilcoxon Mann Whitney test on rather few samples----")
-wilcox.test(nearby[nearby$covid_result == 0, ]$spo2_value_numeric,
-			nearby[nearby$covid_result == 1, ]$spo2_value_numeric)
+wilcox.test(nearby[nearby$covid_result == 'neg', ]$spo2_value_numeric,
+			nearby[nearby$covid_result == 'pos', ]$spo2_value_numeric)
 
 
 
