@@ -9,6 +9,9 @@ FILE = "COVID_1_SLH.tab"
 setwd(PATH)
 stluke_lab = read.csv(paste(PATH, FILE,   sep=''), sep="\t", stringsAsFactors = FALSE)
 
+cat('Raw input-----\n')
+stluke_lab %>% select(PROC_NAME, CURRENT_ICD10_LIST, ORD_VALUE, NAME) %>% head(n=20)
+
 ## NOTED_DATE is first date a CC was noted by the provider
 ## NOTED DATE is specific to Problem List!!
 ## covid_1_slh is somewhat joined up.
@@ -21,6 +24,7 @@ out_only
 # still is really outpatient, outpatient test xray us etc. monitoring etc.
 # endoscopy, outpat cath, outpat ed.
 
+cat('distrib of patient class----\n')
 table(stluke_lab$ADT_PAT_CLASS_C)
 table(stluke_lab$PAT_CLASS)
 #   101    102    103    104    106    129 
@@ -86,6 +90,7 @@ dx
 # but nonetheless, later we should exclude ones that are to recent
 # ^^^^^ TODO
 
+cat('patients by count of diagnoses-----\n')
 dx %>% count(PAT_ID) %>% arrange(desc(n)) # output - who's "sickest"
 
 dx %>%
@@ -114,6 +119,7 @@ cov_lab_tall
 # 60 rows for about 50 pts, if we use "tall"
 
 # Inspect these because we're about to lose them in a summarise()
+cat('Tests maching string cov, vals of NAME and PAT_CLASS----\n')
 table(cov_lab_tall$NAME) # yes all 60 are the same
 table(cov_lab_tall$PAT_CLASS) # ER 9, inp 33, obs 3, outp 15
 
@@ -151,7 +157,7 @@ summarise(n=n()) %>%
 arrange(desc(n)) ->
 counts_dx
 
-cat('\n\nexplore----\n')
+cat('\n\nexplore string matching of dx_name----\n')
 counts_dx %>% filter(grepl("copd", DX_NAME, ignore.case = TRUE))
 counts_dx %>% filter(grepl("obstr", DX_NAME, ignore.case = TRUE)) # not needed
 counts_dx %>% filter(grepl("asth", DX_NAME, ignore.case = TRUE))
@@ -213,7 +219,7 @@ df
 odds_plot = ggplot(df, aes(comorb_name, est)) +
     geom_pointrange(aes(ymin = lower, ymax = upper)) +
     scale_y_log10() +
-    labs(y='Odds ratio', title='Odds of COVID +:- in disease vs. not', subtitle='Inpatient/BSLMC') +
+    labs(x = 'Comorbidity', y='Odds ratio', title='Odds of COVID +:- in disease vs. not', subtitle='Inpatient/BSLMC') +
     geom_hline(yintercept = 1)
 
 
@@ -266,6 +272,7 @@ filter(PROC_NAME == "BLOOD GAS, ARTERIAL") %>%
 head()
 
 # found out order_proc_id is the magic key that you want to group them
+cat('order_proc_id is good----\n')
 stluke_lab %>% filter(PROC_NAME == "BLOOD GAS, ARTERIAL" & (NAME == "FIO2 (BEAKER)" | NAME =='PO2 ARTERIAL (BEAKER)')) %>% select(ORDER_PROC_ID, PAT_ID, ORDERING_DATE, PROC_ID, NAME) %>% unique() %>% head(20)
 
 stluke_lab %>%
@@ -303,7 +310,7 @@ oxy_joined
 
 
 ######## Oxygenation vs COVID test ########
-
+cat('tests----\n')
 comorb_covid %>%
 select(PAT_ID, covid_boolean, dm_boolean, asthma_boolean, copd_boolean) %>%
 full_join(oxy_joined) %>%

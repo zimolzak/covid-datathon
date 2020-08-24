@@ -17,11 +17,14 @@ f_tests = "PAT_ORDERS_PROCEDURES.txt"
 # Pat_FlowSheet_PulseOx.txt # id, value, time, name (survey question or SpO2)
 # PAT_ORDERS_PROCEDURES.txt # id, date, proc name, result date, ORDER_COMPONENT, ORD_VALUE_TEXT, ord val numeric
 
-patient   = read.csv(paste(PATH, f_patient,   sep=''), sep="\t", stringsAsFactors = FALSE)
-problems  = read.csv(paste(PATH, f_problems,  sep=''), sep="\t", stringsAsFactors = FALSE)
-visits    = read.csv(paste(PATH, f_visits,    sep=''), sep="\t", stringsAsFactors = FALSE)
+patient   = read.csv(paste(PATH, f_patient,   sep=''), sep="\t", stringsAsFactors = FALSE) # unused so far
+problems  = read.csv(paste(PATH, f_problems,  sep=''), sep="\t", stringsAsFactors = FALSE) # unused so far
+visits    = read.csv(paste(PATH, f_visits,    sep=''), sep="\t", stringsAsFactors = FALSE) # unused so far
 flowsheet = read.csv(paste(PATH, f_flowsheet, sep=''), sep="\t", stringsAsFactors = FALSE)
 tests     = read.csv(paste(PATH, f_tests,     sep=''), sep="\t", stringsAsFactors = FALSE)
+
+cat("raw input----\n")
+tests %>% select(-PAT_ID, -ORDER_DATE, -PROC_CAT_NAME, -ORDER_RESULT_LINE, -ORD_VALUE_NUMERIC, -LAB_STATUS) %>% head(n=10)
 
 cat("number of patients----\n")
 dim(patient)
@@ -89,7 +92,7 @@ cat("covids covid_result (consolidated) ----")
 table(covids$covid_result)
 
 qplot(data=covids, x=covid_ord_dt, y=latency) +
-    labs(title="COVID test latency over time", x="Order date", subtitle='Outpatient (Baylor Clinic / FGP)')
+    labs(title="High COVID test latency early in the pandemic", x="Order date", subtitle='Outpatient (Baylor Clinic / FGP)')
 ggsave('pngs/fig2-latency-vs-time.png')
 
 
@@ -133,7 +136,7 @@ p_str = as.character(round(wt$p.value, 3))
 
 ggplot(nearby, aes(x=spo2_value_numeric, color=as.factor(covid_result))) +
     geom_freqpoly(binwidth=1) +
-    labs(x='Pulse oximetry (%)', y='Count', title="Outpatient SpO2 distribution by COVID status", color='COVID result', subtitle = paste("P =", p_str, 'Outpatient (Baylor Clinic / FGP)')) +
+    labs(x='Pulse oximetry (%)', y='Count', title="Minimally lower SpO2 in COVID+ outpatients", color='COVID result', subtitle = paste("P =", p_str)) +
     scale_x_continuous(breaks = seq(90,100,2))
 ggsave('pngs/fig3-spo2-vs-result.png')
 
