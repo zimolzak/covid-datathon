@@ -153,3 +153,21 @@ ggsave('pngs/fig3-spo2-vs-result.png')
 
 ## limit ORDERS_PROCEDURES and Flowsheet to 2019+
 ## consider limiting ORDERS_PROCEDURES to certain components?
+
+
+
+
+cat("survey answer sample----\n")
+flowsheet %>%
+	filter(grepl("CORON", FLO_MEAS_NAME)) %>%
+	mutate_at(vars(ENTRY_TIME), ~ as.Date( . , '%m-%d-%Y' )) %>%
+	select(-PAT_ID, -CSN_ID, -DISP_NAME) ->
+	surveys
+cat('denom----\n')
+table(surveys$FLO_MEAS_NAME)
+cat('numerators----\n')
+table(surveys$MEAS_VALUE)
+
+ggplot(surveys, aes(x=ENTRY_TIME, color=as.factor(MEAS_VALUE))) +
+    geom_freqpoly(binwidth=7) +
+    labs(title="In past month, contact w/ confirmed/suspected COVID?", x='Date', y='Count', color="Survey answer", subtitle='Outpatient (Baylor Clinic / FGP)')
