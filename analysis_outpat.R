@@ -73,7 +73,11 @@ mutate(covid_result = case_when(
         )) %>%
 rename(cov_result_txt = ORD_VALUE_TEXT)
 
-ggplot(covids, aes(x=covid_ord_dt, color=as.factor(covid_result))) + geom_freqpoly(binwidth=7) + scale_y_continuous(breaks = seq(0,10,2)) + labs(title="COVID result by date", x='Order date', y='Count', color="Result")
+ggplot(covids, aes(x=covid_ord_dt, color=as.factor(covid_result))) +
+    geom_freqpoly(binwidth=7) +
+    scale_y_continuous(breaks = seq(0,10,2)) +
+    labs(title="COVID result by date", x='Order date', y='Count', color="Result", subtitle='Outpatient (Baylor Clinic / FGP)')
+ggsave('pngs/fig1-result-vs-date.png')
 
 cat("confirm that numeric is useless----")
 table(covids$ORD_VALUE_NUMERIC) # confirm that numeric is useless
@@ -84,7 +88,9 @@ table(covids$cov_result_txt)
 cat("covids covid_result (consolidated) ----")
 table(covids$covid_result)
 
-qplot(data=covids, x=covid_ord_dt, y=latency) + labs(title="COVID test latency over time", x="Order date")
+qplot(data=covids, x=covid_ord_dt, y=latency) +
+    labs(title="COVID test latency over time", x="Order date", subtitle='Outpatient (Baylor Clinic / FGP)')
+ggsave('pngs/fig2-latency-vs-time.png')
 
 
 
@@ -125,7 +131,11 @@ wt
 
 p_str = as.character(round(wt$p.value, 3))
 
-ggplot(nearby, aes(x=spo2_value_numeric, color=as.factor(covid_result))) + geom_freqpoly(binwidth=1) + labs(x='Pulse oximetry (%)', y='Count', title="Outpatient SpO2 distribution by COVID status", color='COVID result', subtitle = paste("P =", p_str)) + scale_x_continuous(breaks = seq(90,100,2))
+ggplot(nearby, aes(x=spo2_value_numeric, color=as.factor(covid_result))) +
+    geom_freqpoly(binwidth=1) +
+    labs(x='Pulse oximetry (%)', y='Count', title="Outpatient SpO2 distribution by COVID status", color='COVID result', subtitle = paste("P =", p_str, 'Outpatient (Baylor Clinic / FGP)')) +
+    scale_x_continuous(breaks = seq(90,100,2))
+ggsave('pngs/fig3-spo2-vs-result.png')
 
 
 

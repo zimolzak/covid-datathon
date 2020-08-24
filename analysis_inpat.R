@@ -211,10 +211,10 @@ mutate(comorb_name = case_when(comorb_longname=='dm_cov_table'~'Diabetes',
 df
 
 odds_plot = ggplot(df, aes(comorb_name, est)) +
-geom_pointrange(aes(ymin = lower, ymax = upper)) +
-scale_y_log10() +
-ylab('Odds ratio') + ggtitle('Odds of COVID +:- in disease vs. not') +
-geom_hline(yintercept = 1)
+    geom_pointrange(aes(ymin = lower, ymax = upper)) +
+    scale_y_log10() +
+    labs(y='Odds ratio', title='Odds of COVID +:- in disease vs. not', subtitle='Inpatient/BSLMC') +
+    geom_hline(yintercept = 1)
 
 
 
@@ -311,16 +311,17 @@ filter(!is.na(covid_boolean)) -> # todo count how many na
 covid_comorb_oxy
 
 ggplot(covid_comorb_oxy, aes(fio2, po2, color=category, shape=covid_boolean)) +
-geom_point() + labs(title='Oxygenation severity vs. COVID status', shape='COVID', color='Severity')->
-ards_scatter_shape
+    geom_point() +
+    labs(title='Oxygenation severity vs. COVID status', shape='COVID', color='Severity', subtitle='Inpatient/BSLMC')->
+    ards_scatter_shape
 
 # po2
 
 ggplot(covid_comorb_oxy, aes(covid_boolean, po2)) +
-geom_boxplot(outlier.shape = NA) +
-geom_jitter(width=0.2) +
-labs(title='Arterial oxygen vs. COVID status', y='COVID test result')->
-po2_covid_box
+    geom_boxplot(outlier.shape = NA) +
+    geom_jitter(width=0.2) +
+    labs(title='Arterial oxygen vs. COVID status', x='COVID test result', subtitle='Inpatient/BSLMC')->
+    po2_covid_box
 
 wilcox.test(covid_comorb_oxy[covid_comorb_oxy$covid_boolean == FALSE, ]$po2,
 			covid_comorb_oxy[covid_comorb_oxy$covid_boolean == TRUE,  ]$po2)
@@ -329,10 +330,10 @@ wilcox.test(covid_comorb_oxy[covid_comorb_oxy$covid_boolean == FALSE, ]$po2,
 # pfr
 
 ggplot(covid_comorb_oxy, aes(covid_boolean, pfr)) +
-geom_boxplot(outlier.shape = NA) +
-geom_jitter(width=0.2) +
-labs(title='PO2:FIO2 ratio vs. COVID status', y='COVID test result') ->
-pfr_covid_box
+    geom_boxplot(outlier.shape = NA) +
+    geom_jitter(width=0.2) +
+    labs(title='PO2:FIO2 ratio vs. COVID status', x='COVID test result', y='P:F ratio', subtitle='Inpatient/BSLMC') ->
+    pfr_covid_box
 
 wilcox.test(covid_comorb_oxy[covid_comorb_oxy$covid_boolean == FALSE, ]$pfr,
 			covid_comorb_oxy[covid_comorb_oxy$covid_boolean == TRUE,  ]$pfr)
@@ -347,3 +348,8 @@ ards_scatter_shape
 po2_covid_box
 pfr_covid_box
 dev.off()
+
+ggsave('pngs/fig4-odds-vs-comorb.png', plot=odds_plot)
+ggsave('pngs/fig5-ards-vs-result.png', plot=ards_scatter_shape)
+ggsave('pngs/fig6-po2-vs-result.png', plot=po2_covid_box)
+ggsave('pngs/fig7-pfr-vs-result.png', plot=pfr_covid_box)
