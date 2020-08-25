@@ -94,7 +94,7 @@ cat('patients by count of diagnoses-----\n')
 dx %>% count(PAT_ID) %>% arrange(desc(n)) # output - who's "sickest"
 
 dx %>%
-group_by(PAT_ID) %>%
+group_by(PAT_ID) %>% ## REUSE
 summarise(dm     = sum(grepl("diab", DX_NAME, ignore.case = TRUE)),
 	      asthma = sum(grepl("asth", DX_NAME, ignore.case = TRUE)),
 	      copd   = sum(grepl("copd", DX_NAME, ignore.case = TRUE)),) ->
