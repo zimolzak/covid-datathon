@@ -35,3 +35,28 @@ summarise(dm     = sum(grepl("diab", DX_NAME, ignore.case = TRUE)),
 comorb_count_p
 
 # pat has birth date and death date. Death date is a character.
+# hosp - no diagnoses?
+
+enc %>%
+group_by(PAT_ID) %>% ## REUSE
+summarise(dm     = sum(grepl("diab", enc_dx_name, ignore.case = TRUE)),
+	      asthma = sum(grepl("asth", enc_dx_name, ignore.case = TRUE)),
+	      copd   = sum(grepl("copd", enc_dx_name, ignore.case = TRUE)),
+	      htn    = sum(grepl("hypert", enc_dx_name, ignore.case = TRUE))) ->
+comorb_count_e
+
+
+
+
+
+
+comorb_count_p %>%
+full_join(comorb_count_e, by = "PAT_ID") %>%
+mutate(dm = sum(dm.x,dm.y, na.rm=TRUE),
+	copd = sum(copd.x,copd.y, na.rm=TRUE),
+	asthma = sum(asthma.x,asthma.y, na.rm=TRUE),
+	htn = sum(htn.x,htn.y, na.rm=TRUE)) %>%
+select(- contains('.'))
+## TODO fixme, numbers not coming out right.
+
+#full_join(pat) %>%
