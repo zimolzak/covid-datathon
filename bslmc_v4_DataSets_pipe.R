@@ -30,7 +30,8 @@ prob %>% #copy paste works
 group_by(PAT_ID) %>%
 summarise(dm     = sum(grepl("diab", DX_NAME, ignore.case = TRUE)),
 	      asthma = sum(grepl("asth", DX_NAME, ignore.case = TRUE)),
-	      copd   = sum(grepl("copd", DX_NAME, ignore.case = TRUE)),) ->
-comorb_count
+	      copd   = sum(grepl("copd", DX_NAME, ignore.case = TRUE)),
+	      htn    = sum(grepl("hypert", DX_NAME, ignore.case = TRUE))) ->
+comorb_count_p
 
 # pat has birth date and death date. Death date is a character.
