@@ -2,6 +2,7 @@ library(dplyr)
 library(ggplot2)
 
 PATH = "/Users/ajz/Desktop/covid_datathon_git/DataSets/" # end with slash
+SETWDPATH = "/Users/ajz/Desktop/covid_datathon_git/" # end with slash
 
 prl = c('PROBLEM/PROBLEM_GRP_3 20200814 1855.csv','PROBLEM/PROBLEM_GRP_2 20200814 1854.csv','PROBLEM/PROBLEM_GRP_1 20200814 1853.csv')
 hsl = c('HSP/HSP_GRP_2 20200814 2207.csv','HSP/HSP_GRP_1 20200814 2205.csv','HSP/HSP_GRP_3 20200814 2208.csv')
@@ -21,7 +22,7 @@ list2df <- function(L) {
 	return(d)
 }
 
-setwd(PATH)
+setwd(SETWDPATH)
 
 prob = list2df(prl)
 pat  = list2df(ptl)
@@ -35,6 +36,9 @@ dim(pat)
 dim(ord)  # 181907     13
 dim(hosp)
 dim(enc)
+
+
+
 
 prob %>% #copy paste works
 group_by(PAT_ID) %>%
@@ -55,18 +59,53 @@ summarise(dm     = sum(grepl("diab", enc_dx_name, ignore.case = TRUE)),
 	      htn    = sum(grepl("hypert", enc_dx_name, ignore.case = TRUE))) ->
 comorb_count_e
 
-
-
-
-
-
 comorb_count_p %>%
-full_join(comorb_count_e, by = "PAT_ID") %>%
-mutate(dm = sum(dm.x,dm.y, na.rm=TRUE),
-	copd = sum(copd.x,copd.y, na.rm=TRUE),
-	asthma = sum(asthma.x,asthma.y, na.rm=TRUE),
-	htn = sum(htn.x,htn.y, na.rm=TRUE)) %>%
-select(- contains('.'))
-## TODO fixme, numbers not coming out right.
+full_join(comorb_count_e, by = "PAT_ID") ->
+nas
 
-#full_join(pat) %>%
+nas[is.na(nas)] <- 0
+
+nas %>%
+mutate(dm = dm.x+dm.y > 0,
+	copd = copd.x+copd.y > 0,
+	asthma = asthma.x+asthma.y > 0,
+	htn = htn.x+htn.y > 0) %>%
+select(- contains('.')) %>%
+full_join(pat) %>%
+mutate_at(vars(BIRTH_DATE, DEATH_DATE), ~ as.Date( . , '%m/%d/%Y' )) %>%
+mutate(age = as.numeric(as.Date('2020-08-30', '%Y-%m-%d') - BIRTH_DATE) / 365) ->
+onept
+
+ggplot(onept, aes(dm, age)) +
+    geom_boxplot(outlier.shape = NA) +
+    geom_jitter(width=0.2) +
+    labs(subtitle='Inpatient/BSLMC') ->
+    dmage
+
+ggplot(onept, aes(htn, age)) +
+    geom_boxplot(outlier.shape = NA) +
+    geom_jitter(width=0.2) +
+    labs(subtitle='Inpatient/BSLMC') ->
+    htnage
+
+ggplot(onept, aes(asthma, age)) +
+    geom_boxplot(outlier.shape = NA) +
+    geom_jitter(width=0.2) +
+    labs(subtitle='Inpatient/BSLMC') ->
+    astage
+
+ggplot(onept, aes(copd, age)) +
+    geom_boxplot(outlier.shape = NA) +
+    geom_jitter(width=0.2) +
+    labs(subtitle='Inpatient/BSLMC') ->
+    copdage
+
+cat("deceased----\n")
+onept %>% filter(DEATH_DATE > 0)
+
+pdf("Rplots_inpat_v4.pdf")
+dmage
+htnage
+astage
+copdage
+dev.off()
