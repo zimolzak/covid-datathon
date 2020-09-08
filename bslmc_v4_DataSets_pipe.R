@@ -24,7 +24,7 @@ list2df <- function(L) {
 
 setwd(SETWDPATH)
 
-prob = list2df(prl)
+prob = list2df(prl) %>% select(-PROBLEM_LIST_ID, -DX_ID, -CHRONIC_YN) %>% mutate_at(vars(NOTED_DATE), ~ as.Date( . , '%m/%d/%Y' ))
 pat  = list2df(ptl)
 ord  = list2df(orl)
 hosp = list2df(hsl)
@@ -34,11 +34,19 @@ cat('\nDims of prob, pat, ord, hosp, enc----\n')
 dim(prob)
 dim(pat)
 dim(ord)  # 181907     13
-dim(hosp)
-dim(enc)
+dim(hosp) # 2226 x 33
+dim(enc)  # 2068 x 9
 
-
-
+table(hosp$ETHNIC_GROUP)
+table(hosp$PAT_RACE)
+table(hosp$PAT_CLASS)
+table(hosp$DISCHARGE_DISP)
+table(hosp$LVL_OF_CARE)
+#          (null)    Critical Care Medical/Surgical Progressive Care        Telemetry 
+#            2063               19               91                6               47 
+table(hosp$ID_TYPE_NAME)
+table(hosp$NAME)
+table(hosp$PAT_CLASS, hosp$DISCHARGE_DISP)
 
 prob %>% #copy paste works
 group_by(PAT_ID) %>%
@@ -127,6 +135,10 @@ performing
 table(performing$ORD_VALUE)
 #BCM Resp Virus Lab              BSLMC                CPL               SLWH 
 #                 2                 74                 66                 21 
+
+
+
+
 
 #plot covid tests by date
 ggplot(covids, aes(x=ordering_dt, color=as.factor(cov_result))) +
