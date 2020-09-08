@@ -2,7 +2,7 @@ library(ggplot2)
 library(dplyr)
 #                                                                         80 #
 
-PATH = "/Users/ajz/Desktop/covid_datathon_git/"
+PATH = "/Users/ajz/Desktop/aa-git/covid_datathon/"
 setwd(PATH)
 
 f_patient = "PATIENT.txt"

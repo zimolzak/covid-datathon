@@ -2,7 +2,7 @@ library(dplyr)
 library(ggplot2)
 #library(tidyr)
 
-PATH = "/Users/ajz/Desktop/covid_datathon_git/"
+PATH = "/Users/ajz/Desktop/aa-git/covid_datathon/"
 FILE = "COVID_1_SLH.tab"
 # onedrive --> files / covid-19 / covid_datathon / data / slh_data
 
