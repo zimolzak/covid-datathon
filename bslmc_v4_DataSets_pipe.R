@@ -1,8 +1,8 @@
 library(dplyr)
 library(ggplot2)
 
-PATH = "/Users/ajz/Desktop/covid_datathon_git/DataSets/" # end with slash
-SETWDPATH = "/Users/ajz/Desktop/covid_datathon_git/" # end with slash
+PATH = "/Users/ajz/Desktop/aa-git/covid_datathon/DataSets/" # end with slash
+SETWDPATH = "/Users/ajz/Desktop/aa-git/covid_datathon/" # end with slash
 
 prl = c('PROBLEM/PROBLEM_GRP_3 20200814 1855.csv','PROBLEM/PROBLEM_GRP_2 20200814 1854.csv','PROBLEM/PROBLEM_GRP_1 20200814 1853.csv')
 hsl = c('HSP/HSP_GRP_2 20200814 2207.csv','HSP/HSP_GRP_1 20200814 2205.csv','HSP/HSP_GRP_3 20200814 2208.csv')
@@ -103,9 +103,41 @@ ggplot(onept, aes(copd, age)) +
 cat("deceased----\n")
 onept %>% filter(DEATH_DATE > 0)
 
+
+
+ord %>%
+filter(grepl("cov", PROC_NAME, ignore.case = TRUE) & ! grepl("performing", COMPONENT, ignore.case = TRUE) & LAB_STATUS == 'Final') %>%
+select(PAT_ID, ORDERING_DATE, RESULT_DATE, ORD_VALUE) %>%
+mutate(cov_result = case_when(
+	ORD_VALUE == "Negative" | ORD_VALUE == "Not Detected" ~ 0,
+	ORD_VALUE == "Positive" | ORD_VALUE == "Detected" ~ 1
+)) %>%
+mutate(ordering_dt = as.Date(ORDERING_DATE, '%m/%d/%Y')) %>%
+mutate(result_dt = as.Date(RESULT_DATE, '%m/%d/%Y')) %>%
+mutate(latency = result_dt - ordering_dt) ->
+covids
+
+table(covids$ORD_VALUE)
+#     Detected     Negative Not Detected     Positive 
+#           14           79           70            8 
+
+ord %>%
+filter(grepl("cov", PROC_NAME, ignore.case = TRUE) & grepl("performing", COMPONENT, ignore.case = TRUE)  ) ->
+performing
+table(performing$ORD_VALUE)
+#BCM Resp Virus Lab              BSLMC                CPL               SLWH 
+#                 2                 74                 66                 21 
+
+#plot covid tests by date
+ggplot(covids, aes(x=ordering_dt, color=as.factor(cov_result))) +
+    geom_freqpoly(binwidth=7) +
+    labs(title="COVID result by date", x='Order date', y='Count', color="Result", subtitle='Inpatient') ->
+    posnegdate
+
 pdf("Rplots_inpat_v4.pdf")
 dmage
 htnage
 astage
 copdage
+posnegdate
 dev.off()
