@@ -1,5 +1,6 @@
 library(dplyr)
 library(ggplot2)
+library(lubridate)
 
 PATH = "/Users/ajz/Desktop/aa-git/covid_datathon/DataSets/" # end with slash
 SETWDPATH = "/Users/ajz/Desktop/aa-git/covid_datathon/" # end with slash
@@ -24,11 +25,23 @@ list2df <- function(L) {
 
 setwd(SETWDPATH)
 
-prob = list2df(prl) %>% select(-PROBLEM_LIST_ID, -DX_ID, -CHRONIC_YN) %>% mutate_at(vars(NOTED_DATE), ~ as.Date( . , '%m/%d/%Y' ))
-pat  = list2df(ptl)
-ord  = list2df(orl)
-hosp = list2df(hsl)
-enc  = list2df(enl)
+prob = list2df(prl) %>%
+	select(-PROBLEM_LIST_ID, -DX_ID, -CHRONIC_YN) %>%
+	mutate_at(vars(NOTED_DATE), ~ as.Date( . , '%m/%d/%Y' ))
+pat  = list2df(ptl) %>%
+	select(-IDENTITY_ID) %>%
+	mutate_at(vars(BIRTH_DATE, DEATH_DATE), ~ as.Date( . , '%m/%d/%Y' )) %>%
+	mutate(age = as.numeric(as.Date('2020-08-30', '%Y-%m-%d') - BIRTH_DATE) / 365)
+ord  = list2df(orl) %>%
+	select(-PROC_ID, -LAB_STATUS_C, -COMPONENT_ID) %>%
+	mutate_at(vars(ORDERING_DATE, RESULT_DATE), ~ as.Date( . , '%m/%d/%Y' ))
+hosp = list2df(hsl) %>%
+	select(-IDENTITY_ID, -IDENTITY_TYPE_ID, -ID_TYPE_NAME, -HSP_ACCOUNT_ID, -BIRTH_DATE, -ETHNIC_GROUP_C, -DEATH_DATE, -SEX_C, -ADT_PAT_CLASS_C, -LEVEL_OF_CARE_C, -ADMIT_SOURCE_C, -DISCH_DISP_C, -PATIENT_RACE_C) %>%
+	mutate_at(vars(HOSP_ADMSN_TIME, HOSP_DISCH_TIME), ~  parse_date_time( . , orders='mdYIMSp')) %>%
+	mutate(los = difftime(HOSP_DISCH_TIME, HOSP_ADMSN_TIME, units="days"))
+enc  = list2df(enl) %>% select(-ENC_TYPE_C, -enc_dx_id)
+
+
 
 cat('\nDims of prob, pat, ord, hosp, enc----\n')
 dim(prob)
