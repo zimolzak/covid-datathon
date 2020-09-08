@@ -93,8 +93,8 @@ mutate(dm = dm.x+dm.y > 0,
 	htn = htn.x+htn.y > 0) %>%
 select(- contains('.')) %>%
 full_join(pat) %>%
-mutate_at(vars(BIRTH_DATE, DEATH_DATE), ~ as.Date( . , '%m/%d/%Y' )) %>%
-mutate(age = as.numeric(as.Date('2020-08-30', '%Y-%m-%d') - BIRTH_DATE) / 365) ->
+mutate_at(vars(BIRTH_DATE, DEATH_DATE), ~ as.Date( . , '%m/%d/%Y' )) %>%              # todo
+mutate(age = as.numeric(as.Date('2020-08-30', '%Y-%m-%d') - BIRTH_DATE) / 365) ->       # todo
 onept
 
 ggplot(onept, aes(dm, age)) +
@@ -133,8 +133,8 @@ mutate(cov_result = case_when(
 	ORD_VALUE == "Negative" | ORD_VALUE == "Not Detected" ~ 0,
 	ORD_VALUE == "Positive" | ORD_VALUE == "Detected" ~ 1
 )) %>%
-mutate(ordering_dt = as.Date(ORDERING_DATE, '%m/%d/%Y')) %>%
-mutate(result_dt = as.Date(RESULT_DATE, '%m/%d/%Y')) %>%
+mutate(ordering_dt = as.Date(ORDERING_DATE, '%m/%d/%Y')) %>% # todo
+mutate(result_dt = as.Date(RESULT_DATE, '%m/%d/%Y')) %>%     # todo
 mutate(latency = result_dt - ordering_dt) ->
 covids
 
