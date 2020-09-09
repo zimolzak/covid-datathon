@@ -37,22 +37,30 @@ list2df <- function(L) {
     return(d)
 }
 
+chdate = function(x) {
+    return(as.Date(x, '%m/%d/%Y' ))
+}
+
+chtime = function(x){
+    return(parse_date_time(x, orders='mdYIMSp'))
+}
+
 prob = list2df(prl) %>%
     select(-PROBLEM_LIST_ID, -DX_ID, -CHRONIC_YN) %>%
-    mutate_at(vars(NOTED_DATE), ~ as.Date( . , '%m/%d/%Y' ))
+    mutate_at(vars(NOTED_DATE), ~ chdate(.))
 pat = list2df(ptl) %>%
     select(-IDENTITY_ID) %>%
-    mutate_at(vars(BIRTH_DATE, DEATH_DATE), ~ as.Date( . , '%m/%d/%Y' )) %>%
+    mutate_at(vars(BIRTH_DATE, DEATH_DATE), ~ chdate(.)) %>%
     mutate(age = as.numeric(as.Date('2020-08-30', '%Y-%m-%d') - BIRTH_DATE) / 365)
 ord = list2df(orl) %>%
     select(-PROC_ID, -LAB_STATUS_C, -COMPONENT_ID) %>%
-    mutate_at(vars(ORDERING_DATE, RESULT_DATE), ~ as.Date( . , '%m/%d/%Y' ))
+    mutate_at(vars(ORDERING_DATE, RESULT_DATE), ~ chdate(.))
 hosp = list2df(hsl) %>%
     select(-IDENTITY_ID, -IDENTITY_TYPE_ID, -ID_TYPE_NAME,
         -HSP_ACCOUNT_ID, -BIRTH_DATE, -ETHNIC_GROUP_C, -DEATH_DATE,
         -SEX_C, -ADT_PAT_CLASS_C, -LEVEL_OF_CARE_C, -ADMIT_SOURCE_C,
         -DISCH_DISP_C, -PATIENT_RACE_C) %>%
-    mutate_at(vars(HOSP_ADMSN_TIME, HOSP_DISCH_TIME), ~  parse_date_time( . , orders='mdYIMSp')) %>%
+    mutate_at(vars(HOSP_ADMSN_TIME, HOSP_DISCH_TIME), ~  chtime(.)) %>%
     mutate(los = difftime(HOSP_DISCH_TIME, HOSP_ADMSN_TIME, units="days"))
 enc = list2df(enl) %>%
     select(-ENC_TYPE_C, -enc_dx_id)
@@ -66,6 +74,7 @@ dim(enc)  # 2068 x 9
 
 #### Hosp
 
+cat('Hospitalization fields----\n')
 table(hosp$ETHNIC_GROUP)
 table(hosp$PAT_RACE)
 table(hosp$PAT_CLASS)
@@ -75,6 +84,7 @@ table(hosp$LVL_OF_CARE)
 #            2063               19               91                6               47 
 table(hosp$ID_TYPE_NAME)
 table(hosp$NAME)
+cat('Pt Class vs. Disposition----\n')
 table(hosp$PAT_CLASS, hosp$DISCHARGE_DISP)
 
 #### Problem list
@@ -117,9 +127,7 @@ mutate(dm = dm.x+dm.y > 0,
 	asthma = asthma.x+asthma.y > 0,
 	htn = htn.x+htn.y > 0) %>%
 select(- contains('.')) %>%
-full_join(pat) %>%
-mutate_at(vars(BIRTH_DATE, DEATH_DATE), ~ as.Date( . , '%m/%d/%Y' )) %>%              # todo
-mutate(age = as.numeric(as.Date('2020-08-30', '%Y-%m-%d') - BIRTH_DATE) / 365) ->       # todo
+full_join(pat) ->
 onept
 
 ggplot(onept, aes(dm, age)) +
@@ -153,20 +161,20 @@ onept %>% filter(DEATH_DATE > 0)
 
 ord %>%
 filter(grepl("cov", PROC_NAME, ignore.case = TRUE) & ! grepl("performing", COMPONENT, ignore.case = TRUE) & LAB_STATUS == 'Final') %>%
-select(PAT_ID, ORDERING_DATE, RESULT_DATE, ORD_VALUE) %>%
 mutate(cov_result = case_when(
 	ORD_VALUE == "Negative" | ORD_VALUE == "Not Detected" ~ 0,
 	ORD_VALUE == "Positive" | ORD_VALUE == "Detected" ~ 1
 )) %>%
-mutate(ordering_dt = as.Date(ORDERING_DATE, '%m/%d/%Y')) %>% # todo
-mutate(result_dt = as.Date(RESULT_DATE, '%m/%d/%Y')) %>%     # todo
-mutate(latency = result_dt - ordering_dt) ->
+mutate(latency = RESULT_DATE - ORDERING_DATE) %>%
+select(PAT_ID, ORDERING_DATE, RESULT_DATE, cov_result, latency, ORD_VALUE) ->
 covids
 
+cat('COVID test results----\n')
 table(covids$ORD_VALUE)
 #     Detected     Negative Not Detected     Positive 
 #           14           79           70            8 
 
+cat('COVID performing lab----\n')
 ord %>%
 filter(grepl("cov", PROC_NAME, ignore.case = TRUE) & grepl("performing", COMPONENT, ignore.case = TRUE)  ) ->
 performing
@@ -174,12 +182,12 @@ table(performing$ORD_VALUE)
 #BCM Resp Virus Lab              BSLMC                CPL               SLWH 
 #                 2                 74                 66                 21 
 
-
+# TODO merge these rows of the 'ord' data frame
 
 
 
 #plot covid tests by date
-ggplot(covids, aes(x=ordering_dt, color=as.factor(cov_result))) +
+ggplot(covids, aes(x=ORDERING_DATE, color=as.factor(cov_result))) +
     geom_freqpoly(binwidth=7) +
     labs(title="COVID result by date", x='Order date', y='Count', color="Result", subtitle='Inpatient') ->
     posnegdate
