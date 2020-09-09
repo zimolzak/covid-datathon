@@ -1,6 +1,7 @@
 library(dplyr)
 library(ggplot2)
 library(lubridate)
+library(tidyr)
 
 PATH = "/Users/ajz/Desktop/aa-git/covid_datathon/DataSets/" # end with slash
 SETWDPATH = "/Users/ajz/Desktop/aa-git/covid_datathon/"
@@ -159,28 +160,26 @@ onept %>% filter(DEATH_DATE > 0)
 #### COVID tests
 
 ord %>%
-filter(grepl("cov", PROC_NAME, ignore.case = TRUE) & ! grepl("performing", COMPONENT, ignore.case = TRUE) & LAB_STATUS == 'Final') %>%
+filter(grepl("cov", PROC_NAME, ignore.case = TRUE) & LAB_STATUS == 'Final') %>%
+mutate(COMPONENT = case_when(COMPONENT == "SARS-COV-2 PERFORMING LAB" ~ 'performing_lab',
+    COMPONENT == "SARS-COV2/RT-PCR" ~ 'raw_result')) %>%
+spread(COMPONENT, ORD_VALUE) %>%
 mutate(cov_result = case_when(
-	ORD_VALUE == "Negative" | ORD_VALUE == "Not Detected" ~ 0,
-	ORD_VALUE == "Positive" | ORD_VALUE == "Detected" ~ 1
+	raw_result == "Negative" | raw_result == "Not Detected" ~ 0,
+	raw_result == "Positive" | raw_result == "Detected" ~ 1
 )) %>%
-select(PAT_ID, ORDERING_DATE, RESULT_DATE, cov_result, latency, ORD_VALUE) ->
+select(PAT_ID, PAT_ENC_CSN_ID, ORDERING_DATE, RESULT_DATE, performing_lab, cov_result, latency, raw_result) ->
 covids
 
-cat('COVID test results----\n')
-table(covids$ORD_VALUE)
+cat('COVID raw results----\n')
+table(covids$raw_result)
 #     Detected     Negative Not Detected     Positive 
 #           14           79           70            8 
 
 cat('COVID performing lab----\n')
-ord %>%
-filter(grepl("cov", PROC_NAME, ignore.case = TRUE) & grepl("performing", COMPONENT, ignore.case = TRUE)  ) ->
-performing
-table(performing$ORD_VALUE)
+table(covids$performing_lab)
 #BCM Resp Virus Lab              BSLMC                CPL               SLWH 
 #                 2                 74                 66                 21 
-
-# TODO merge these rows of the 'ord' data frame
 
 #plot covid tests by date
 ggplot(covids, aes(x=ORDERING_DATE, color=as.factor(cov_result))) +
@@ -188,7 +187,7 @@ ggplot(covids, aes(x=ORDERING_DATE, color=as.factor(cov_result))) +
     labs(title="COVID result by date", x='Order date', y='Count', color="Result", subtitle='Inpatient') ->
     posnegdate
 
-qplot(x=ORDERING_DATE, y=latency, data=covids) +
+qplot(x=ORDERING_DATE, y=latency, color=performing_lab, data=covids) +
     labs(title="Latency of COVID test by date", x='Order date', y='Latency (days)', subtitle='Inpatient') ->
     latency_date
 
