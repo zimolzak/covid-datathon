@@ -94,6 +94,33 @@ select(PAT_ID, ZIP, ETHNIC_GROUP, NAME, PAT_RACE) %>%
 distinct() ->
 pt_data_fr_hosp
 
+hosp %>%
+select(-ZIP, -ETHNIC_GROUP, -NAME, -PAT_RACE) ->
+hosp # destructive. Don't re-run interactive.
+
+cat('Inspect these rows. We are about to discard some.----\n')
+pt_data_fr_hosp %>%
+count(PAT_ID) %>%
+filter(n>1) %>%
+left_join(pt_data_fr_hosp)
+
+pt_data_fr_hosp %>%
+group_by(PAT_ID) %>%
+summarise_all(list(first)) ->
+pt_data_fr_hosp_uniq
+
+cat("dims of unjoined pt data----\n")
+dim(pt_data_fr_hosp)
+# [1] 148   5
+dim(pt_data_fr_hosp_uniq)
+# 146 x 5
+
+pat %>%
+full_join(pt_data_fr_hosp_uniq) %>%
+arrange(PAT_ID) ->
+pat # destructive. Don't re-run interactive.
+
+
 
 
 #### Comorbs
