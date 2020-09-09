@@ -191,6 +191,13 @@ qplot(x=ORDERING_DATE, y=latency, color=performing_lab, data=covids) +
     labs(title="Latency of COVID test by date", x='Order date', y='Latency (days)', subtitle='Inpatient') ->
     latency_date
 
+covids %>% count(PAT_ID) -> tests_per_pt
+
+ggplot(tests_per_pt, aes(x=n)) +
+    geom_histogram(binwidth=1) +
+    labs(title="Number of COVID tests per patient", x='Tests per patient', y='Count', subtitle='Inpatient') ->
+    ntests
+
 pdf("Rplots_inpat_v4.pdf")
 dmage
 htnage
@@ -198,4 +205,5 @@ astage
 copdage
 latency_date
 posnegdate
+ntests
 dev.off()
