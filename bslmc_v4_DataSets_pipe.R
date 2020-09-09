@@ -195,14 +195,15 @@ qplot(x=ORDERING_DATE, y=latency, color=performing_lab, data=covids) +
 
 covids %>%
 group_by(PAT_ID) %>%
-summarise(positives = sum(cov_result), n = n()) %>%
-mutate(proportion_pos = positives / n) ->
-tests_per_pt
+summarise(positives = sum(cov_result), n = n(), first_test_ordered = min(ORDERING_DATE)) %>%
+mutate(proportion_pos = positives / n) %>%
+full_join(onept, by='PAT_ID') ->
+onept
 
 cat('Proportion of COVID tests positive----\n')
-table(tests_per_pt$proportion_pos)
+table(onept$proportion_pos)
 
-ggplot(tests_per_pt, aes(x=n)) +
+ggplot(onept, aes(x=n)) +
     geom_histogram(binwidth=1) +
     labs(title="Number of COVID tests per patient", x='Tests per patient', y='Count', subtitle='Inpatient') ->
     ntests
