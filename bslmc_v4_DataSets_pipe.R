@@ -31,7 +31,7 @@ list2df <- function(L) {
         stringsAsFactors = FALSE, na.strings="null")
     for (i in seq(2,length(L))) {
         di = read.csv(paste(PATH, L[i], sep=''), sep="|",
-	    stringsAsFactors = FALSE, na.strings="null")
+	        stringsAsFactors = FALSE, na.strings="null")
         d %>% bind_rows(di) -> d
     }
     return(d)
@@ -54,7 +54,8 @@ pat = list2df(ptl) %>%
     mutate(age = as.numeric(as.Date('2020-08-30', '%Y-%m-%d') - BIRTH_DATE) / 365)
 ord = list2df(orl) %>%
     select(-PROC_ID, -LAB_STATUS_C, -COMPONENT_ID) %>%
-    mutate_at(vars(ORDERING_DATE, RESULT_DATE), ~ chdate(.))
+    mutate_at(vars(ORDERING_DATE, RESULT_DATE), ~ chdate(.)) %>%
+    mutate(latency = RESULT_DATE - ORDERING_DATE)
 hosp = list2df(hsl) %>%
     select(-IDENTITY_ID, -IDENTITY_TYPE_ID, -ID_TYPE_NAME,
         -HSP_ACCOUNT_ID, -BIRTH_DATE, -ETHNIC_GROUP_C, -DEATH_DATE,
@@ -165,7 +166,6 @@ mutate(cov_result = case_when(
 	ORD_VALUE == "Negative" | ORD_VALUE == "Not Detected" ~ 0,
 	ORD_VALUE == "Positive" | ORD_VALUE == "Detected" ~ 1
 )) %>%
-mutate(latency = RESULT_DATE - ORDERING_DATE) %>%
 select(PAT_ID, ORDERING_DATE, RESULT_DATE, cov_result, latency, ORD_VALUE) ->
 covids
 
@@ -192,10 +192,15 @@ ggplot(covids, aes(x=ORDERING_DATE, color=as.factor(cov_result))) +
     labs(title="COVID result by date", x='Order date', y='Count', color="Result", subtitle='Inpatient') ->
     posnegdate
 
+qplot(x=ORDERING_DATE, y=latency, data=covids) +
+    labs(title="Latency of COVID test by date", x='Order date', y='Latency (days)', subtitle='Inpatient') ->
+    latency_date
+
 pdf("Rplots_inpat_v4.pdf")
 dmage
 htnage
 astage
 copdage
+latency_date
 posnegdate
 dev.off()
