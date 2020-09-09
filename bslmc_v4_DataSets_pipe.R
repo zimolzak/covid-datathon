@@ -73,7 +73,7 @@ dim(ord)  # 181907     13
 dim(hosp) # 2226 x 33
 dim(enc)  # 2068 x 9
 
-#### Hosp
+#### Hosp basic tables
 
 cat('Hospitalization fields----\n')
 table(hosp$ETHNIC_GROUP)
@@ -88,33 +88,29 @@ table(hosp$NAME)
 cat('Pt Class vs. Disposition----\n')
 table(hosp$PAT_CLASS, hosp$DISCHARGE_DISP)
 
-#### Problem list
+
+
+
+#### Comorbs
 
 prob %>% #copy paste works
 group_by(PAT_ID) %>%
-summarise(dm     = sum(grepl("diab", DX_NAME, ignore.case = TRUE)),
-	      asthma = sum(grepl("asth", DX_NAME, ignore.case = TRUE)),
-	      copd   = sum(grepl("copd", DX_NAME, ignore.case = TRUE)),
-	      htn    = sum(grepl("hypert", DX_NAME, ignore.case = TRUE))) ->
+summarise(dm_p     = sum(grepl("diab", DX_NAME, ignore.case = TRUE)),
+	      asthma_p = sum(grepl("asth", DX_NAME, ignore.case = TRUE)),
+	      copd_p   = sum(grepl("copd", DX_NAME, ignore.case = TRUE)),
+	      htn_p    = sum(grepl("hypert", DX_NAME, ignore.case = TRUE))) ->
 comorb_count_p
 
 # pat has birth date and death date. Death date is a character.
 # hosp - no diagnoses?
 
-#### Encounter
-
 enc %>%
 group_by(PAT_ID) %>% ## REUSE
-summarise(dm     = sum(grepl("diab", enc_dx_name, ignore.case = TRUE)),
-	      asthma = sum(grepl("asth", enc_dx_name, ignore.case = TRUE)),
-	      copd   = sum(grepl("copd", enc_dx_name, ignore.case = TRUE)),
-	      htn    = sum(grepl("hypert", enc_dx_name, ignore.case = TRUE))) ->
+summarise(dm_e     = sum(grepl("diab", enc_dx_name, ignore.case = TRUE)),
+	      asthma_e = sum(grepl("asth", enc_dx_name, ignore.case = TRUE)),
+	      copd_e   = sum(grepl("copd", enc_dx_name, ignore.case = TRUE)),
+	      htn_e    = sum(grepl("hypert", enc_dx_name, ignore.case = TRUE))) ->
 comorb_count_e
-
-
-
-
-#### Joins
 
 comorb_count_p %>%
 full_join(comorb_count_e, by = "PAT_ID") ->
@@ -123,11 +119,10 @@ nas
 nas[is.na(nas)] <- 0
 
 nas %>%
-mutate(dm = dm.x+dm.y > 0,
-	copd = copd.x+copd.y > 0,
-	asthma = asthma.x+asthma.y > 0,
-	htn = htn.x+htn.y > 0) %>%
-select(- contains('.')) %>%
+mutate(dm = dm_p+dm_e > 0,
+	copd = copd_p+copd_e > 0,
+	asthma = asthma_p+asthma_e > 0,
+	htn = htn_p+htn_e > 0) %>%
 full_join(pat) ->
 onept
 
@@ -160,6 +155,9 @@ onept %>% filter(DEATH_DATE > 0)
 
 
 
+
+#### COVID tests
+
 ord %>%
 filter(grepl("cov", PROC_NAME, ignore.case = TRUE) & ! grepl("performing", COMPONENT, ignore.case = TRUE) & LAB_STATUS == 'Final') %>%
 mutate(cov_result = case_when(
@@ -183,8 +181,6 @@ table(performing$ORD_VALUE)
 #                 2                 74                 66                 21 
 
 # TODO merge these rows of the 'ord' data frame
-
-
 
 #plot covid tests by date
 ggplot(covids, aes(x=ORDERING_DATE, color=as.factor(cov_result))) +
