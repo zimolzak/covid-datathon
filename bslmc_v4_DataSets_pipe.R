@@ -89,6 +89,10 @@ table(hosp$NAME)
 cat('Pt Class vs. Disposition----\n')
 table(hosp$PAT_CLASS, hosp$DISCHARGE_DISP)
 
+hosp %>%
+select(PAT_ID, ZIP, ETHNIC_GROUP, NAME, PAT_RACE) %>%
+distinct() ->
+pt_data_fr_hosp
 
 
 
