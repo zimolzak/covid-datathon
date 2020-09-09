@@ -161,8 +161,10 @@ onept %>% filter(DEATH_DATE > 0)
 
 ord %>%
 filter(grepl("cov", PROC_NAME, ignore.case = TRUE) & LAB_STATUS == 'Final') %>%
+select(-ORD_NUM_VALUE) %>%     # drop this field early because it breaks spread()
 mutate(COMPONENT = case_when(COMPONENT == "SARS-COV-2 PERFORMING LAB" ~ 'performing_lab',
     COMPONENT == "SARS-COV2/RT-PCR" ~ 'raw_result')) %>%
+mutate(ORD_VALUE = case_when(is.na(ORD_VALUE) ~ 'unknown', TRUE ~ ORD_VALUE)) %>%
 spread(COMPONENT, ORD_VALUE) %>%
 mutate(cov_result = case_when(
 	raw_result == "Negative" | raw_result == "Not Detected" ~ 0,
@@ -191,7 +193,14 @@ qplot(x=ORDERING_DATE, y=latency, color=performing_lab, data=covids) +
     labs(title="Latency of COVID test by date", x='Order date', y='Latency (days)', subtitle='Inpatient') ->
     latency_date
 
-covids %>% count(PAT_ID) -> tests_per_pt
+covids %>%
+group_by(PAT_ID) %>%
+summarise(positives = sum(cov_result), n = n()) %>%
+mutate(proportion_pos = positives / n) ->
+tests_per_pt
+
+cat('Proportion of COVID tests positive----\n')
+table(tests_per_pt$proportion_pos)
 
 ggplot(tests_per_pt, aes(x=n)) +
     geom_histogram(binwidth=1) +
