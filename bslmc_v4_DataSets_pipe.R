@@ -76,7 +76,7 @@ dim(enc)  # 2068 x 9
 
 #### Hosp basic tables
 
-cat('Hospitalization fields----\n')
+cat('\nHospitalization fields----\n')
 table(hosp$ETHNIC_GROUP)
 table(hosp$PAT_RACE)
 table(hosp$PAT_CLASS)
@@ -86,7 +86,7 @@ table(hosp$LVL_OF_CARE)
 #            2063               19               91                6               47 
 table(hosp$ID_TYPE_NAME)
 table(hosp$NAME)
-cat('Pt Class vs. Disposition----\n')
+cat('\nPt Class vs. Disposition----\n')
 table(hosp$PAT_CLASS, hosp$DISCHARGE_DISP)
 
 hosp %>%
@@ -98,7 +98,7 @@ hosp %>%
 select(-ZIP, -ETHNIC_GROUP, -NAME, -PAT_RACE) ->
 hosp # destructive. Don't re-run interactive.
 
-cat('Inspect these rows. We are about to discard some.----\n')
+cat('\nInspect these rows. We are about to discard some.----\n')
 pt_data_fr_hosp %>%
 count(PAT_ID) %>%
 filter(n>1) %>%
@@ -159,25 +159,25 @@ full_join(pat) ->
 onept
 
 ggplot(onept, aes(dm, age)) +
-    geom_boxplot(outlier.shape = NA) +
+    geom_boxplot(outlier.shape = NA, notch = TRUE) +
     geom_jitter(width=0.2) +
     labs(subtitle='Inpatient/BSLMC') ->
     dmage
 
 ggplot(onept, aes(htn, age)) +
-    geom_boxplot(outlier.shape = NA) +
+    geom_boxplot(outlier.shape = NA, notch = TRUE) +
     geom_jitter(width=0.2) +
     labs(subtitle='Inpatient/BSLMC') ->
     htnage
 
 ggplot(onept, aes(asthma, age)) +
-    geom_boxplot(outlier.shape = NA) +
+    geom_boxplot(outlier.shape = NA, notch = TRUE) +
     geom_jitter(width=0.2) +
     labs(subtitle='Inpatient/BSLMC') ->
     astage
 
 ggplot(onept, aes(copd, age)) +
-    geom_boxplot(outlier.shape = NA) +
+    geom_boxplot(outlier.shape = NA, notch = TRUE) +
     geom_jitter(width=0.2) +
     labs(subtitle='Inpatient/BSLMC') ->
     copdage
@@ -204,12 +204,12 @@ mutate(cov_result = case_when(
 select(PAT_ID, PAT_ENC_CSN_ID, ORDERING_DATE, RESULT_DATE, performing_lab, cov_result, latency, raw_result) ->
 covids
 
-cat('COVID raw results----\n')
+cat('\nCOVID raw results----\n')
 table(covids$raw_result)
 #     Detected     Negative Not Detected     Positive 
 #           14           79           70            8 
 
-cat('COVID performing lab----\n')
+cat('\nCOVID performing lab----\n')
 table(covids$performing_lab)
 #BCM Resp Virus Lab              BSLMC                CPL               SLWH 
 #                 2                 74                 66                 21 
@@ -224,6 +224,11 @@ qplot(x=ORDERING_DATE, y=latency, color=performing_lab, data=covids) +
     labs(title="Latency of COVID test by date", x='Order date', y='Latency (days)', subtitle='Inpatient') ->
     latency_date
 
+ggplot(data=covids, aes(x=ORDERING_DATE, y=latency)) +
+    geom_line() +
+	facet_grid(rows = vars(performing_lab)) ->
+	facetlatency
+
 covids %>%
 group_by(PAT_ID) %>%
 summarise(positives = sum(cov_result), n = n(), first_test_ordered = min(ORDERING_DATE)) %>%
@@ -232,7 +237,7 @@ full_join(onept, by='PAT_ID') %>%
 mutate(died = case_when(is.na(DEATH_DATE) ~ FALSE, TRUE ~ TRUE)) ->
 onept # destructive
 
-cat('Proportion of COVID tests positive----\n')
+cat('\nProportion of COVID tests positive----\n')
 table(onept$proportion_pos)
 
 ggplot(onept, aes(x=n)) +
@@ -240,16 +245,48 @@ ggplot(onept, aes(x=n)) +
     labs(title="Number of COVID tests per patient", x='Tests per patient', y='Count', subtitle='Inpatient') ->
     ntests
 
+ggplot(onept, aes(died, age)) +
+    geom_boxplot(outlier.shape = NA, notch = TRUE) +
+    geom_jitter(width=0.2) +
+    labs(subtitle='Inpatient/BSLMC') ->
+    agevsdied
+
+ggplot(onept, aes(NAME, age)) +
+    geom_boxplot(outlier.shape = NA, notch = TRUE) +
+    geom_jitter(width=0.2) +
+    labs(subtitle='Inpatient/BSLMC', x = 'Sex') ->
+    agevssex
+
+#### Mortality analysis
+
+with(onept, table(proportion_pos, died))
+# Doh, no deaths in the covid group.
+# Better pick a different outcome.
+
+onept %>%
+rename(sex = NAME) %>%
+filter(proportion_pos > 0) ->
+covid_pts
+
+cat('\nCrude tables of categoricals vs. mortality----\n')
+with(covid_pts, table(dm, died))
+with(covid_pts, table(copd, died))
+with(covid_pts, table(asthma, died))
+with(covid_pts, table(htn, died))
+with(covid_pts, table(sex, died))
 
 
 
-
+cat('\n\n----\n\nEnd of text output. Now plotting.\n\n')
 pdf("Rplots_inpat_v4.pdf")
 dmage
 htnage
 astage
 copdage
 latency_date
+facetlatency
 posnegdate
 ntests
+agevsdied
+agevssex
 dev.off()
