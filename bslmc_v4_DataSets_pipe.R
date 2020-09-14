@@ -226,6 +226,7 @@ qplot(x=ORDERING_DATE, y=latency, color=performing_lab, data=covids) +
 
 ggplot(data=covids, aes(x=ORDERING_DATE, y=latency)) +
     geom_line() +
+    geom_point(shape=3, size=1) +
 	facet_grid(rows = vars(performing_lab)) ->
 	facetlatency
 
