@@ -228,8 +228,9 @@ covids %>%
 group_by(PAT_ID) %>%
 summarise(positives = sum(cov_result), n = n(), first_test_ordered = min(ORDERING_DATE)) %>%
 mutate(proportion_pos = positives / n) %>%
-full_join(onept, by='PAT_ID') ->
-onept
+full_join(onept, by='PAT_ID') %>%
+mutate(died = case_when(is.na(DEATH_DATE) ~ FALSE, TRUE ~ TRUE)) ->
+onept # destructive
 
 cat('Proportion of COVID tests positive----\n')
 table(onept$proportion_pos)
@@ -238,6 +239,10 @@ ggplot(onept, aes(x=n)) +
     geom_histogram(binwidth=1) +
     labs(title="Number of COVID tests per patient", x='Tests per patient', y='Count', subtitle='Inpatient') ->
     ntests
+
+
+
+
 
 pdf("Rplots_inpat_v4.pdf")
 dmage
