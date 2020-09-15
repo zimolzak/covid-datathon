@@ -61,7 +61,7 @@ hosp = list2df(hsl) %>%
     select(-IDENTITY_ID, -IDENTITY_TYPE_ID, -ID_TYPE_NAME,
         -HSP_ACCOUNT_ID, -BIRTH_DATE, -ETHNIC_GROUP_C, -DEATH_DATE,
         -SEX_C, -ADT_PAT_CLASS_C, -LEVEL_OF_CARE_C, -ADMIT_SOURCE_C,
-        -DISCH_DISP_C, -PATIENT_RACE_C) %>%
+        -PATIENT_RACE_C) %>%
     mutate_at(vars(HOSP_ADMSN_TIME, HOSP_DISCH_TIME), ~  chtime(.)) %>%
     mutate(los = difftime(HOSP_DISCH_TIME, HOSP_ADMSN_TIME, units="days"))
 enc = list2df(enl) %>%
@@ -78,15 +78,19 @@ dim(enc)  # 2068 x 9
 
 cat('\nHospitalization fields----\n')
 table(hosp$ETHNIC_GROUP)
+cat('\nrace----\n')
 table(hosp$PAT_RACE)
+cat('\nclass----\n')
 table(hosp$PAT_CLASS)
+cat('\ndisp----\n')
 table(hosp$DISCHARGE_DISP)
+cat('\nlvl----\n')
 table(hosp$LVL_OF_CARE)
 #          (null)    Critical Care Medical/Surgical Progressive Care        Telemetry 
 #            2063               19               91                6               47 
 table(hosp$ID_TYPE_NAME)
 table(hosp$NAME)
-cat('\nPt Class vs. Disposition----\n')
+cat('\nCrosstab Pt Class vs. Disposition----\n')
 table(hosp$PAT_CLASS, hosp$DISCHARGE_DISP)
 
 hosp %>%
@@ -258,6 +262,10 @@ ggplot(onept, aes(NAME, age)) +
     labs(subtitle='Inpatient/BSLMC', x = 'Sex') ->
     agevssex
 
+
+
+
+
 #### Mortality analysis
 
 with(onept, table(proportion_pos, died))
@@ -265,7 +273,7 @@ with(onept, table(proportion_pos, died))
 # Better pick a different outcome.
 
 onept %>%
-rename(sex = NAME) %>%
+rename(sex = NAME) %>% # todo move the rename upstream
 filter(proportion_pos > 0) ->
 covid_pts
 
@@ -277,6 +285,97 @@ with(covid_pts, table(htn, died))
 with(covid_pts, table(sex, died))
 
 
+
+
+#### New outcome, limit to ER ####
+
+hosp %>%
+filter(PAT_CLASS == 'Emergency') %>%
+select(PAT_ID, SOURCE_OF_ADMISSION, HOSP_ADMSN_TIME, DISCHARGE_DISP, DISCH_DISP_C, los) %>%
+mutate(dispo = case_when(DISCH_DISP_C == 1 ~ 'out',
+	DISCH_DISP_C == 2 ~ 'in-short',
+	DISCH_DISP_C == 4 ~ 'out', # intermediate care facil
+	DISCH_DISP_C == 7 ~ 'left',
+	DISCH_DISP_C == 9 ~ 'in-admit',
+	DISCH_DISP_C == 64 ~ 'out', # nurs facil
+	DISCH_DISP_C == 70 ~ 'out', # another hcare inst
+	DISCH_DISP_C == 100 ~ 'left', # never arr
+	DISCH_DISP_C == 300 ~ 'left',  #left p/ triage
+	DISCH_DISP_C == 500 ~ 'left', # triage after test: ??
+	DISCH_DISP_C == 600 ~ 'left')) %>%
+mutate(admitted = case_when(dispo == 'in-short' ~ TRUE,
+    dispo == 'in-admit' ~ TRUE,
+    TRUE ~ FALSE))->  # LWBS
+er
+
+cat('\nER visits, count by pat id----\n')
+table(er$PAT_ID)
+cat('\nsource----\n')
+table(er$SOURCE_OF_ADMISSION)
+cat('\ndisposition----\n')
+table(er$DISCHARGE_DISP)
+cat('\ndispo codes----\n')
+with(er, table(DISCHARGE_DISP, DISCH_DISP_C))
+cat('\ngrouped dispo----\n')
+with(er, table(dispo))
+
+# TODO - function to replace all this cat('\n----\n') nonsense
+
+qplot(er$los * 24) +
+    labs(title='ER duration of stay', x='Duration (hours)', y='Count (ER visits)') ->
+    erlos
+
+er %>%
+group_by(PAT_ID) %>%
+summarise(n_er_visits = n(),
+	proportion_admitted = mean(admitted),
+	first_er_vis = min(HOSP_ADMSN_TIME),
+	max_los = max(los),
+	n_admissions = sum(admitted)) %>%
+mutate(ever_admitted = (proportion_admitted > 0)) %>%
+full_join(onept) ->
+onept_join_er
+
+with(onept_join_er, table(ever_admitted))
+
+qplot(onept_join_er$n_er_visits) +
+    labs(title='ER utilization per patient', x='Number of ER visits', y = 'Count of patients') ->
+    ervisperpt
+
+qplot(onept_join_er$n_admissions) +
+    labs(title='ER admisisons per patient', x='Number of admits from ER', y = 'Count of patients') ->
+    eradmperpt
+
+qplot(onept_join_er$proportion_admitted) +
+    labs(title='Distribution of admisison rate',
+    x='Proportion of ER visits w/ admission', y='Count of patients') ->
+    admrate
+
+cat('\n-Doh, again covid pos patients have only one outcome (all disch, none admit).---\n')
+with(onept_join_er, table(proportion_pos, ever_admitted))
+
+onept_join_er %>%
+rename(sex = NAME) %>% # todo move the rename upstream
+filter(proportion_pos > 0) ->
+covid_pts # clobbers old version
+
+cat('\nCrude tables of categoricals vs. admission----\n')
+with(covid_pts, table(dm, ever_admitted))
+with(covid_pts, table(copd, ever_admitted))
+with(covid_pts, table(asthma, ever_admitted))
+with(covid_pts, table(htn, ever_admitted))
+with(covid_pts, table(sex, ever_admitted))
+
+cat('\nWhat do the admitted pts look like?----\n')
+onept_join_er %>%
+filter(ever_admitted) %>%
+select(-ends_with('_p'), -ends_with('_e'), -ends_with('_DATE')) %>%
+print(width = Inf)
+
+#
+#
+#
+#
 
 cat('\n\n----\n\nEnd of text output. Now plotting.\n\n')
 pdf("Rplots_inpat_v4.pdf")
@@ -290,4 +389,8 @@ posnegdate
 ntests
 agevsdied
 agevssex
+erlos
+ervisperpt
+eradmperpt
+admrate
 dev.off()
