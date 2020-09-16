@@ -232,7 +232,9 @@ qplot(x=ORDERING_DATE, y=latency, color=performing_lab, data=covids) +
 ggplot(data=covids, aes(x=ORDERING_DATE, y=latency)) +
     geom_line() +
     geom_point(shape=3, size=1, alpha = 0.5) +
-	facet_grid(rows = vars(performing_lab)) ->
+	facet_grid(rows = vars(performing_lab)) +
+	labs(title='COVID test latency by performing lab over time',
+	    x="Ordering Date", y='Latency')->
 	facetlatency
 
 covids %>%
@@ -429,8 +431,8 @@ qplot(x=n_er_visits, y=los, data=inp_stays_pt_details) +
     losvser
 
 qplot(x=HOSP_ADMSN_TIME, y=los, data=inp_stays_pt_details) +  labs(subtitle='Inpatients, 2020 only') -> los_dt
-qplot(x=(max_los * 24), y=los, data=inp_stays_pt_details) +  labs(subtitle='Inpatients, 2020 only', x='Max ER LOS (hr)', y='Inpatient LOS (days)') ->los_er
-qplot(x=age, y=los, data=inp_stays_pt_details) +  labs(subtitle='Inpatients, 2020 only') -> los_age
+qplot(x=(max_los * 24), y=los, data=inp_stays_pt_details) +  labs(subtitle='Inpatients, 2020 only', x='Max ER LOS (hr)', y='Inpatient LOS (days)') + geom_smooth() ->los_er
+qplot(x=age, y=los, data=inp_stays_pt_details) + labs(subtitle='Inpatients, 2020 only') + geom_smooth() -> los_age
 
 # TODO function for these silly verbose cut/paste things!
 # TODO better var names for the plots??
@@ -446,20 +448,23 @@ los2 <- ggplot(data=inp_stays_pt_details, aes(x= PAT_RACE, y=los)) +
 	labs(subtitle='Inpatients, 2020 only')
 
 
-# covid
+
+
+#### covid LOS ####
+
 los3 <- ggplot(data=inp_stays_pt_details, aes(x= as.factor(proportion_pos), y=los)) +
     geom_boxplot(outlier.shape = NA, notch = TRUE) +
     geom_jitter(width=0.2) +
-	labs(subtitle='Inpatients, 2020 only')
+	labs(title='COVID analysis', subtitle='Inpatients, 2020 only')
 
-# covid freqpoly
 los4 <- ggplot(data=inp_stays_pt_details, aes(x=los, color=as.factor(proportion_pos))) +
     geom_freqpoly(binwidth=2) +
-	labs(subtitle='Inpatients, 2020 only')
+	labs(title='COVID analysis', subtitle='Inpatients, 2020 only')
 
 los4_hist <- ggplot(data=inp_stays_pt_details, aes(x=los, fill=as.factor(proportion_pos))) +
     geom_histogram(binwidth=2) +
-	labs(subtitle='Inpatients, 2020 only')
+	labs(title='LOS by COVID status', subtitle='Inpatients, 2020 only', x='Length of Stay (days)',
+	y='Count', fill='COVID status')
 
 pos = inp_stays_pt_details %>% filter(proportion_pos > 0) %>% select(PAT_ID, IP_EPISODE_ID, los)
 neg = inp_stays_pt_details %>% filter(proportion_pos <= 0) %>% select(PAT_ID, IP_EPISODE_ID, los)
@@ -467,36 +472,35 @@ neg = inp_stays_pt_details %>% filter(proportion_pos <= 0) %>% select(PAT_ID, IP
 cat('\nIs LOS different in COVID+ vs COVID- ? ----\n')
 wilcox.test(as.numeric(pos$los), as.numeric(neg$los))
 
-
 los5 <- ggplot(data=inp_stays_pt_details, aes(x= dm, y=los)) +
     geom_boxplot(outlier.shape = NA, notch = TRUE) +
     geom_jitter(width=0.2) +
-	labs(subtitle='Inpatients, 2020 only')
+	labs(title='All patient LOS predictors', subtitle='Inpatients, 2020 only', y='Length of Stay (days)')
 
 los6 <- ggplot(data=inp_stays_pt_details, aes(x= copd, y=los)) +
     geom_boxplot(outlier.shape = NA, notch = TRUE) +
     geom_jitter(width=0.2) +
-	labs(subtitle='Inpatients, 2020 only')
+	labs(title='All patient LOS predictors', subtitle='Inpatients, 2020 only', y='Length of Stay (days)')
 
 los7 <- ggplot(data=inp_stays_pt_details, aes(x= asthma, y=los)) +
     geom_boxplot(outlier.shape = NA, notch = TRUE) +
     geom_jitter(width=0.2) +
-	labs(subtitle='Inpatients, 2020 only')
+	labs(title='All patient LOS predictors', subtitle='Inpatients, 2020 only', y='Length of Stay (days)')
 
 los8 <- ggplot(data=inp_stays_pt_details, aes(x= htn, y=los)) +
     geom_boxplot(outlier.shape = NA, notch = TRUE) +
     geom_jitter(width=0.2) +
-	labs(subtitle='Inpatients, 2020 only')
+	labs(title='All patient LOS predictors', subtitle='Inpatients, 2020 only', y='Length of Stay (days)')
 
 los9 <- ggplot(data=inp_stays_pt_details, aes(x= ETHNIC_GROUP, y=los)) +
     geom_boxplot(outlier.shape = NA, notch = TRUE) +
     geom_jitter(width=0.2) +
-	labs(subtitle='Inpatients, 2020 only')
+	labs(title='All patient LOS predictors', subtitle='Inpatients, 2020 only', y='Length of Stay (days)')
 
 los10 <- ggplot(data=inp_stays_pt_details, aes(x= died, y=los)) +
     geom_boxplot(outlier.shape = NA, notch = TRUE) +
     geom_jitter(width=0.2) +
-	labs(subtitle='Inpatients, 2020 only')
+	labs(title='All patient LOS predictors', subtitle='Inpatients, 2020 only', y='Length of Stay (days)')
 
 
 
@@ -504,7 +508,11 @@ los10 <- ggplot(data=inp_stays_pt_details, aes(x= died, y=los)) +
 #### covid +, analyze los
 
 covid_inp_stays = inp_stays_pt_details %>% filter(proportion_pos > 0)
-covid_inp_stays_d = covid_inp_stays %>% distinct()
+
+covid_inp_stays_d = covid_inp_stays %>% distinct() %>%
+rename(Race = PAT_RACE, Diabetes = dm, COPD=copd, Asthma=asthma,
+    Hypertension=htn, Sex=NAME, Age=age, Ethnicity=ETHNIC_GROUP)
+
 cat("\nCovid + inpatient stays, vs distinct----\n")
 dim(covid_inp_stays)
 dim(covid_inp_stays_d)
@@ -513,29 +521,28 @@ dim(covid_inp_stays_d)
 
 los_vs_categ = function(ggp) {
 	p <- ggp +
-    geom_boxplot(outlier.shape = NA, notch = TRUE) +
+    geom_boxplot(outlier.shape = NA, notch = FALSE) +
     geom_jitter(width=0.2) +
-	labs(title='COVID-positive LOS predictors', subtitle='Inpatients, 2020 only')
+	labs(title='COVID-positive LOS predictors', subtitle='Inpatients, 2020 only', y='Length of Stay (days)')
 	return(p)
 }
 
-pred01 = los_vs_categ(ggplot(covid_inp_stays_d, aes(PAT_RACE, los)))
-pred02 = los_vs_categ(ggplot(covid_inp_stays_d, aes(dm, los)))
-pred03 = los_vs_categ(ggplot(covid_inp_stays_d, aes(copd, los)))
-pred04 = los_vs_categ(ggplot(covid_inp_stays_d, aes(asthma, los)))
-pred05 = los_vs_categ(ggplot(covid_inp_stays_d, aes(htn, los)))
-pred06 = los_vs_categ(ggplot(covid_inp_stays_d, aes(ETHNIC_GROUP, los)))
-pred07 = los_vs_categ(ggplot(covid_inp_stays_d, aes(NAME, los)))
+pred01 = los_vs_categ(ggplot(covid_inp_stays_d, aes(Race, los)))
+pred02 = los_vs_categ(ggplot(covid_inp_stays_d, aes(Diabetes, los)))
+pred03 = los_vs_categ(ggplot(covid_inp_stays_d, aes(COPD, los)))
+pred04 = los_vs_categ(ggplot(covid_inp_stays_d, aes(Asthma, los)))
+pred05 = los_vs_categ(ggplot(covid_inp_stays_d, aes(Hypertension, los)))
+pred06 = los_vs_categ(ggplot(covid_inp_stays_d, aes(Ethnicity, los)))
+pred07 = los_vs_categ(ggplot(covid_inp_stays_d, aes(Sex, los)))
 
 los_vs_contin = function(ggp) {
 	p <- ggp +
     geom_point() +
-    geom_smooth() +
-	labs(title='COVID-positive LOS predictors', subtitle='Inpatients, 2020 only')
+	labs(title='COVID-positive LOS predictors', subtitle='Inpatients, 2020 only', y='Length of Stay (days)')
 	return(p)
 }
 
-pred08 = los_vs_contin(ggplot(covid_inp_stays_d, aes(age, los)))
+pred08 = los_vs_contin(ggplot(covid_inp_stays_d, aes(Age, los)))
 pred09 = los_vs_contin(ggplot(covid_inp_stays_d, aes(HOSP_ADMSN_TIME, los)))
 pred10 = los_vs_contin(ggplot(covid_inp_stays_d, aes(n_er_visits, los)))
 pred11 = los_vs_contin(ggplot(covid_inp_stays_d, aes(proportion_admitted, los)))
@@ -600,3 +607,12 @@ pred10
 pred11
 pred12
 dev.off()
+
+ggsave('new-pngs/1-latency.png', facetlatency)
+ggsave('new-pngs/2-covid-by-date.png', posnegdate)
+ggsave('new-pngs/3-los-by-covid.png', los4_hist)
+ggsave('new-pngs/4-race.png', pred01)
+ggsave('new-pngs/5-dm.png', pred02)
+ggsave('new-pngs/6-htn.png', pred05)
+ggsave('new-pngs/7-sex.png', pred07)
+ggsave('new-pngs/8-age.png', pred08)
