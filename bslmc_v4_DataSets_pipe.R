@@ -445,6 +445,7 @@ los2 <- ggplot(data=inp_stays_pt_details, aes(x= PAT_RACE, y=los)) +
     geom_jitter(width=0.2) +
 	labs(subtitle='Inpatients, 2020 only')
 
+
 # covid
 los3 <- ggplot(data=inp_stays_pt_details, aes(x= as.factor(proportion_pos), y=los)) +
     geom_boxplot(outlier.shape = NA, notch = TRUE) +
@@ -455,6 +456,17 @@ los3 <- ggplot(data=inp_stays_pt_details, aes(x= as.factor(proportion_pos), y=lo
 los4 <- ggplot(data=inp_stays_pt_details, aes(x=los, color=as.factor(proportion_pos))) +
     geom_freqpoly(binwidth=2) +
 	labs(subtitle='Inpatients, 2020 only')
+
+los4_hist <- ggplot(data=inp_stays_pt_details, aes(x=los, fill=as.factor(proportion_pos))) +
+    geom_histogram(binwidth=2) +
+	labs(subtitle='Inpatients, 2020 only')
+
+pos = inp_stays_pt_details %>% filter(proportion_pos > 0) %>% select(PAT_ID, IP_EPISODE_ID, los)
+neg = inp_stays_pt_details %>% filter(proportion_pos <= 0) %>% select(PAT_ID, IP_EPISODE_ID, los)
+
+cat('\nIs LOS different in COVID+ vs COVID- ? ----\n')
+wilcox.test(as.numeric(pos$los), as.numeric(neg$los))
+
 
 los5 <- ggplot(data=inp_stays_pt_details, aes(x= dm, y=los)) +
     geom_boxplot(outlier.shape = NA, notch = TRUE) +
@@ -485,6 +497,49 @@ los10 <- ggplot(data=inp_stays_pt_details, aes(x= died, y=los)) +
     geom_boxplot(outlier.shape = NA, notch = TRUE) +
     geom_jitter(width=0.2) +
 	labs(subtitle='Inpatients, 2020 only')
+
+
+
+
+#### covid +, analyze los
+
+covid_inp_stays = inp_stays_pt_details %>% filter(proportion_pos > 0)
+covid_inp_stays_d = covid_inp_stays %>% distinct()
+cat("\nCovid + inpatient stays, vs distinct----\n")
+dim(covid_inp_stays)
+dim(covid_inp_stays_d)
+
+# age hosp-admsn-time n_er_visits proportion_admitted max_los
+
+los_vs_categ = function(ggp) {
+	p <- ggp +
+    geom_boxplot(outlier.shape = NA, notch = TRUE) +
+    geom_jitter(width=0.2) +
+	labs(title='COVID-positive LOS predictors', subtitle='Inpatients, 2020 only')
+	return(p)
+}
+
+pred01 = los_vs_categ(ggplot(covid_inp_stays_d, aes(PAT_RACE, los)))
+pred02 = los_vs_categ(ggplot(covid_inp_stays_d, aes(dm, los)))
+pred03 = los_vs_categ(ggplot(covid_inp_stays_d, aes(copd, los)))
+pred04 = los_vs_categ(ggplot(covid_inp_stays_d, aes(asthma, los)))
+pred05 = los_vs_categ(ggplot(covid_inp_stays_d, aes(htn, los)))
+pred06 = los_vs_categ(ggplot(covid_inp_stays_d, aes(ETHNIC_GROUP, los)))
+pred07 = los_vs_categ(ggplot(covid_inp_stays_d, aes(NAME, los)))
+
+los_vs_contin = function(ggp) {
+	p <- ggp +
+    geom_point() +
+    geom_smooth() +
+	labs(title='COVID-positive LOS predictors', subtitle='Inpatients, 2020 only')
+	return(p)
+}
+
+pred08 = los_vs_contin(ggplot(covid_inp_stays_d, aes(age, los)))
+pred09 = los_vs_contin(ggplot(covid_inp_stays_d, aes(HOSP_ADMSN_TIME, los)))
+pred10 = los_vs_contin(ggplot(covid_inp_stays_d, aes(n_er_visits, los)))
+pred11 = los_vs_contin(ggplot(covid_inp_stays_d, aes(proportion_admitted, los)))
+pred12 = los_vs_contin(ggplot(covid_inp_stays_d, aes(max_los * 24, los)))
 
 
 #
@@ -524,10 +579,24 @@ los1
 los2
 los3
 los4
+los4_hist
 los5
 los6
 los7
 los8
 los9
 los10
+
+pred01
+pred02
+pred03
+pred04
+pred05
+pred06
+pred07
+pred08
+pred09
+pred10
+pred11
+pred12
 dev.off()
