@@ -60,7 +60,7 @@ ord = list2df(orl) %>%
 hosp = list2df(hsl) %>%
     select(-IDENTITY_ID, -IDENTITY_TYPE_ID, -ID_TYPE_NAME,
         -HSP_ACCOUNT_ID, -BIRTH_DATE, -ETHNIC_GROUP_C, -DEATH_DATE,
-        -SEX_C, -ADT_PAT_CLASS_C, -LEVEL_OF_CARE_C, -ADMIT_SOURCE_C,
+        -SEX_C, -ADT_PAT_CLASS_C, -ADMIT_SOURCE_C,
         -PATIENT_RACE_C) %>%
     mutate_at(vars(HOSP_ADMSN_TIME, HOSP_DISCH_TIME), ~  chtime(.)) %>%
     mutate(los = difftime(HOSP_DISCH_TIME, HOSP_ADMSN_TIME, units="days"))
@@ -397,6 +397,7 @@ qplot(inpt_2020$los) +
     labs(title='inpatients, 2020 only', x = 'Length of stay', y='Count') ->
     inp2020los
 
+cat('\nTables of characteristics of 2020 inpatient stays----\n')
 with(inpt_2020, table(LVL_OF_CARE))
 with(inpt_2020, table(SOURCE_OF_ADMISSION))
 with(inpt_2020, table(DISCHARGE_DISP))
@@ -407,7 +408,9 @@ with(inpt_2020, table(Pat_Service))
 
 inpt_2020 %>%
 group_by(PAT_ID) %>%
-summarise(n_inpt_stays = n()) ->
+summarise(n_inpt_stays = n(),
+    first_adm = min(HOSP_ADMSN_TIME),
+    mean_los = mean(los)) ->
 adms_per_pt
 
 qplot(adms_per_pt$n_inpt_stays) ->
@@ -424,13 +427,65 @@ qplot(x=n_er_visits, y=los, data=inp_stays_pt_details) +
     x='Number of ER visits', y = 'Length of stay (days)') ->
     losvser
 
+qplot(x=HOSP_ADMSN_TIME, y=los, data=inp_stays_pt_details) +  labs(subtitle='Inpatients, 2020 only') -> los_dt
+qplot(x=(max_los * 24), y=los, data=inp_stays_pt_details) +  labs(subtitle='Inpatients, 2020 only', x='Max ER LOS (hr)', y='Inpatient LOS (days)') ->los_er
+qplot(x=n_er_visits, y=los, data=inp_stays_pt_details) +  labs(subtitle='Inpatients, 2020 only') -> los_ner
+qplot(x=age, y=los, data=inp_stays_pt_details) +  labs(subtitle='Inpatients, 2020 only') -> los_age
 
+# TODO function for these silly verbose cut/paste things!
+# TODO better var names for the plots??
 
+los1 <- ggplot(data=inp_stays_pt_details, aes(x= DISCHARGE_DISP, y=los)) +
+    geom_boxplot(outlier.shape = NA, notch = TRUE) +
+    geom_jitter(width=0.2) +
+	labs(subtitle='Inpatients, 2020 only')
 
+los2 <- ggplot(data=inp_stays_pt_details, aes(x= PAT_RACE, y=los)) +
+    geom_boxplot(outlier.shape = NA, notch = TRUE) +
+    geom_jitter(width=0.2) +
+	labs(subtitle='Inpatients, 2020 only')
 
-inpt_2020 %>%
-group_by(PAT_ID) %>%
-summarise()
+# covid
+los3 <- ggplot(data=inp_stays_pt_details, aes(x= as.factor(proportion_pos), y=los)) +
+    geom_boxplot(outlier.shape = NA, notch = TRUE) +
+    geom_jitter(width=0.2) +
+	labs(subtitle='Inpatients, 2020 only')
+
+# covid freqpoly
+los4 <- ggplot(data=inp_stays_pt_details, aes(x=los, color=as.factor(proportion_pos))) +
+    geom_freqpoly(binwidth=2) +
+	labs(subtitle='Inpatients, 2020 only')
+
+los5 <- ggplot(data=inp_stays_pt_details, aes(x= dm, y=los)) +
+    geom_boxplot(outlier.shape = NA, notch = TRUE) +
+    geom_jitter(width=0.2) +
+	labs(subtitle='Inpatients, 2020 only')
+
+los6 <- ggplot(data=inp_stays_pt_details, aes(x= copd, y=los)) +
+    geom_boxplot(outlier.shape = NA, notch = TRUE) +
+    geom_jitter(width=0.2) +
+	labs(subtitle='Inpatients, 2020 only')
+
+los7 <- ggplot(data=inp_stays_pt_details, aes(x= asthma, y=los)) +
+    geom_boxplot(outlier.shape = NA, notch = TRUE) +
+    geom_jitter(width=0.2) +
+	labs(subtitle='Inpatients, 2020 only')
+
+los8 <- ggplot(data=inp_stays_pt_details, aes(x= htn, y=los)) +
+    geom_boxplot(outlier.shape = NA, notch = TRUE) +
+    geom_jitter(width=0.2) +
+	labs(subtitle='Inpatients, 2020 only')
+
+los9 <- ggplot(data=inp_stays_pt_details, aes(x= ETHNIC_GROUP, y=los)) +
+    geom_boxplot(outlier.shape = NA, notch = TRUE) +
+    geom_jitter(width=0.2) +
+	labs(subtitle='Inpatients, 2020 only')
+
+los10 <- ggplot(data=inp_stays_pt_details, aes(x= died, y=los)) +
+    geom_boxplot(outlier.shape = NA, notch = TRUE) +
+    geom_jitter(width=0.2) +
+	labs(subtitle='Inpatients, 2020 only')
+
 
 #
 #
@@ -460,4 +515,20 @@ inp2020admdt
 inp2020los
 admperpt2020
 losvser
+
+los_dt
+los_er
+los_ner
+los_age
+
+los1
+los2
+los3
+los4
+los5
+los6
+los7
+los8
+los9
+los10
 dev.off()
