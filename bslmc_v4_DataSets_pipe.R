@@ -372,6 +372,66 @@ filter(ever_admitted) %>%
 select(-ends_with('_p'), -ends_with('_e'), -ends_with('_DATE')) %>%
 print(width = Inf)
 
+
+
+
+#### Inpatients only
+
+hosp %>%
+filter(PAT_CLASS == 'Inpatient')  ->
+inpt
+
+qplot(inpt$HOSP_ADMSN_TIME) +
+    labs(title='inpatients') ->
+inptadmdate
+
+inpt %>%
+filter(HOSP_ADMSN_TIME > as.Date('2020-01-01')) ->
+inpt_2020
+
+qplot(inpt_2020$HOSP_ADMSN_TIME) +
+    labs(title='inpatients, 2020 only') ->
+inp2020admdt
+
+qplot(inpt_2020$los) +
+    labs(title='inpatients, 2020 only', x = 'Length of stay', y='Count') ->
+    inp2020los
+
+with(inpt_2020, table(LVL_OF_CARE))
+with(inpt_2020, table(SOURCE_OF_ADMISSION))
+with(inpt_2020, table(DISCHARGE_DISP))
+with(inpt_2020, table(DEPARTMENT_ID))
+with(inpt_2020, table(LINE))
+with(inpt_2020, table(ICU_PAT_SERVICE_C))
+with(inpt_2020, table(Pat_Service))
+
+inpt_2020 %>%
+group_by(PAT_ID) %>%
+summarise(n_inpt_stays = n()) ->
+adms_per_pt
+
+qplot(adms_per_pt$n_inpt_stays) ->
+admperpt2020
+
+inpt_2020 %>%
+left_join(onept_join_er) ->
+inp_stays_pt_details
+
+# los is outcome now
+
+qplot(x=n_er_visits, y=los, data=inp_stays_pt_details) +
+    labs(title='LOS vs. ER utilization', subtitle='Inpatients, 2020 only',
+    x='Number of ER visits', y = 'Length of stay (days)') ->
+    losvser
+
+
+
+
+
+inpt_2020 %>%
+group_by(PAT_ID) %>%
+summarise()
+
 #
 #
 #
@@ -389,8 +449,15 @@ posnegdate
 ntests
 agevsdied
 agevssex
+
 erlos
 ervisperpt
 eradmperpt
 admrate
+
+inptadmdate
+inp2020admdt
+inp2020los
+admperpt2020
+losvser
 dev.off()
