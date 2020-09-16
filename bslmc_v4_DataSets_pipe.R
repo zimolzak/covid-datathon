@@ -63,7 +63,8 @@ hosp = list2df(hsl) %>%
         -SEX_C, -ADT_PAT_CLASS_C, -ADMIT_SOURCE_C,
         -PATIENT_RACE_C) %>%
     mutate_at(vars(HOSP_ADMSN_TIME, HOSP_DISCH_TIME), ~  chtime(.)) %>%
-    mutate(los = difftime(HOSP_DISCH_TIME, HOSP_ADMSN_TIME, units="days"))
+    mutate(los = difftime(HOSP_DISCH_TIME, HOSP_ADMSN_TIME, units="days")) %>%
+    distinct()
 enc = list2df(enl) %>%
     select(-ENC_TYPE_C, -enc_dx_id)
 
@@ -429,7 +430,6 @@ qplot(x=n_er_visits, y=los, data=inp_stays_pt_details) +
 
 qplot(x=HOSP_ADMSN_TIME, y=los, data=inp_stays_pt_details) +  labs(subtitle='Inpatients, 2020 only') -> los_dt
 qplot(x=(max_los * 24), y=los, data=inp_stays_pt_details) +  labs(subtitle='Inpatients, 2020 only', x='Max ER LOS (hr)', y='Inpatient LOS (days)') ->los_er
-qplot(x=n_er_visits, y=los, data=inp_stays_pt_details) +  labs(subtitle='Inpatients, 2020 only') -> los_ner
 qplot(x=age, y=los, data=inp_stays_pt_details) +  labs(subtitle='Inpatients, 2020 only') -> los_age
 
 # TODO function for these silly verbose cut/paste things!
@@ -518,7 +518,6 @@ losvser
 
 los_dt
 los_er
-los_ner
 los_age
 
 los1
