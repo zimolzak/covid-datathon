@@ -1,3 +1,5 @@
+library(dplyr)
+
 # onedrive --> files / covid-19 / covid_datathon / HospitalAdmissionCovid
 
 SETWDPATH = "/Users/ajz/Desktop/aa-git/covid_datathon/"
@@ -18,7 +20,7 @@ str2df <- function(s) {
 }
 
 drop_sparse = function(df) {
-	ncols = dim(diag)[2]
+	ncols = dim(df)[2]
 	df %>%
 		summarise_all(~ mean(!is.na(.))) ->
 		prop_populated
