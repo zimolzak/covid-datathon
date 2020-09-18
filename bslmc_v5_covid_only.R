@@ -33,7 +33,28 @@ drop_sparse = function(df) {
 	return(df[,retain])
 }
 
+say = function(s) {
+	sL = c('\n', s, '----\n')
+	cat(paste(sL, collapse=''))
+}
+
 diml = str2df(dimlf)
-diag = drop_sparse(str2df(diagf))
-hosp = drop_sparse(str2df(hospf))
-prob = drop_sparse(str2df(probf))
+d_i = str2df(diagf)
+h_i = str2df(hospf)
+p_i = str2df(probf)
+
+say('dims of initial frames')
+
+for (d in list(diml, d_i, h_i, p_i)) {
+	print(dim(d))
+}
+
+diag = drop_sparse(d_i)
+hosp = drop_sparse(h_i)
+prob = drop_sparse(p_i)
+
+say('dims of filtered frames')
+
+for (d in list(diag, hosp, prob)) {
+	print(dim(d))
+}
