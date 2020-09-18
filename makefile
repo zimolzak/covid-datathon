@@ -1,4 +1,4 @@
-files = thoughts.pdf Rplots_outpat.pdf covid_procs_stlukes.csv Routputs_vali_procs.txt Routputs_inpat.txt Routputs_inpat_v4.txt thoughts.docx thoughts-notes-appendix.pdf
+files = thoughts.pdf Rplots_outpat.pdf covid_procs_stlukes.csv Routputs_vali_procs.txt Routputs_inpat.txt Routputs_inpat_v4.txt thoughts.docx thoughts-notes-appendix.pdf Routputs_inpat_v5.txt
 files_unmentioned = Routputs_outpat.txt Rplots_inpat.pdf
 .PHONY: all clean upload
 infiles = PATIENT.txt PAT_ORDERS_PROCEDURES.txt PAT_ENC_DX.txt PAT_PRBL_LIST.txt Pat_FlowSheet_PulseOx.txt
@@ -26,6 +26,9 @@ Routputs_vali_procs.txt: validate_covid_procs.R covid_procs_stlukes.csv
 	Rscript $< > $@
 
 Routputs_inpat_v4.txt: bslmc_v4_DataSets_pipe.R # lots of pipe delim inputs are depends too.
+	Rscript $< > $@
+
+Routputs_inpat_v5.txt: bslmc_v5_covid_only.R
 	Rscript $< > $@
 
 clean: 
