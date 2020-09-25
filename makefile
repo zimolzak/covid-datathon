@@ -1,4 +1,4 @@
-files = thoughts.pdf Rplots_outpat.pdf Routputs_inpat_v4.txt thoughts.docx thoughts-notes-appendix.pdf Routputs_inpat_v5.txt Routputs_inpat.txt
+files = README.pdf Rplots_outpat.pdf Routputs_inpat_v4.txt README.docx thoughts-notes-appendix.pdf Routputs_inpat_v5.txt Routputs_inpat.txt
 files_unmentioned = Routputs_outpat.txt Rplots_inpat_v4.pdf Rplots_inpat.pdf
 .PHONY: all clean upload
 infiles_outpat = PATIENT.txt PAT_ORDERS_PROCEDURES.txt PAT_ENC_DX.txt PAT_PRBL_LIST.txt Pat_FlowSheet_PulseOx.txt
@@ -9,7 +9,13 @@ all: $(files)
 %.pdf: %.txt
 	pandoc -o $@ $<
 
+%.pdf: %.md
+	pandoc -o $@ $<
+
 %.docx: %.txt
+	pandoc -o $@ $<
+
+%.docx: %.md
 	pandoc -o $@ $<
 
 #### Analyses
@@ -29,9 +35,9 @@ Routputs_inpat_v5.txt: bslmc_v5_covid_only.R
 
 #### not part of "all"
 
-clean: 
+clean:
 	rm -f $(files) $(files_unmentioned)
 	rm -f pngs/*.png new-pngs/*.png
 
 upload:
-	cp thoughts.pdf /Users/ajz/Box\ Sync/COVID_DATATHON
+	cp README.pdf /Users/ajz/Box\ Sync/COVID_DATATHON/thoughts.pdf
