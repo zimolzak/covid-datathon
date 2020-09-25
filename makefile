@@ -1,7 +1,8 @@
-files = thoughts.pdf Rplots_outpat.pdf Routputs_inpat_v4.txt thoughts.docx thoughts-notes-appendix.pdf Routputs_inpat_v5.txt
-files_unmentioned = Routputs_outpat.txt Rplots_inpat_v4.pdf
+files = thoughts.pdf Rplots_outpat.pdf Routputs_inpat_v4.txt thoughts.docx thoughts-notes-appendix.pdf Routputs_inpat_v5.txt Routputs_inpat.txt
+files_unmentioned = Routputs_outpat.txt Rplots_inpat_v4.pdf Rplots_inpat.pdf
 .PHONY: all clean upload
 infiles_outpat = PATIENT.txt PAT_ORDERS_PROCEDURES.txt PAT_ENC_DX.txt PAT_PRBL_LIST.txt Pat_FlowSheet_PulseOx.txt
+infile_bsl = COVID_1_SLH.tab
 
 all: $(files)
 
@@ -17,6 +18,9 @@ Rplots_outpat.pdf: analysis_outpat.R $(infiles_outpat)
 	Rscript $< > Routputs_outpat.txt
 	mv -f Rplots.pdf Rplots_outpat.pdf
 
+Routputs_inpat.txt: analysis_inpat.R $(infile_bsl)
+	Rscript $< > $@
+
 Routputs_inpat_v4.txt: bslmc_v4_DataSets_pipe.R # infiles_v4, sadly 15 of them
 	Rscript $< > $@
 
@@ -27,6 +31,7 @@ Routputs_inpat_v5.txt: bslmc_v5_covid_only.R
 
 clean: 
 	rm -f $(files) $(files_unmentioned)
+	rm -f pngs/*.png new-pngs/*.png
 
 upload:
 	cp thoughts.pdf /Users/ajz/Box\ Sync/COVID_DATATHON
