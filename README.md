@@ -13,8 +13,16 @@ comorbidity.
 to evaluate population-level changes.
 
 
+Where to look in this code
+--------
+
+High value areas would be `bslmc_v4_DataSets_pipe.R` for inpatient
+data and `analysis_outpat.R` for outpatient. Pay the most attention to
+variables & values mentioned within `select()` and `filter()`
+statements to get a sense of how the data is structured.
+
 Requirements for current repo
-========
+--------
 
 - R, Rscript
 - R packages: dplyr, ggplot2, tidyr, lubridate
