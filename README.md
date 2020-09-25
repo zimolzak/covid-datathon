@@ -1,7 +1,26 @@
-Thoughts for COVID Datathon
-=======
+Datathon: Predictors of severe COVID-19 outcomes
+========
 
-Andrew Zimolzak, MD, MMSc. August 2020.
+1. Characterize the BCM experience with COVID, including
+hospitalization rate by comorbidity, and ICU utilization.
+
+2. Train a multivariable predictive model for severity of COVID (ICU
+admission, incidence of ARDS criteria, length of stay, and in-hospital
+mortality) as a function of known and novel factors such as
+comorbidity.
+
+3. Study the covariation in severe outcomes with treatment modalities
+to evaluate population-level changes.
+
+
+Requirements for current repo
+========
+
+- R, Rscript
+- R packages: dplyr, ggplot2, tidyr, lubridate
+- make and usual UNIX-like toolchain (mv, rm, cp)
+- pandoc (only for documentation)
+
 
 Datathon use case examples
 ========
