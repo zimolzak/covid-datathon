@@ -39,7 +39,7 @@ diml = str2df(dimlf)
 h_i = str2df(hospf)
 p_i = str2df(probf)
 say('dims of initial frames')
-for (d in list(diml, d_i, h_i, p_i)) {
+for (d in list(diml, h_i, p_i)) {
 	print(dim(d))
 }
 
