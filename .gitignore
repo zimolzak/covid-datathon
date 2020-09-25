@@ -1,4 +1,4 @@
-# inputs
+#### inputs
 
 *.tsv
 *.csv
@@ -13,8 +13,10 @@ Pat_FlowSheet_PulseOx.txt
 COVID_PROCS_STLUKES.txt
 DATA_HSP_LAB_PROC/
 DataSets/
+HospitalAdmissionCovid/
 
-# outputs
+
+#### outputs
 
 *.pdf
 *.png
@@ -22,7 +24,8 @@ DataSets/
 old_output.txt
 output.txt
 
-# doots/misc.
+
+#### doots/misc.
 
 *~
 .DS_Store
