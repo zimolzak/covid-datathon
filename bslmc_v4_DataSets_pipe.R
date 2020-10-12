@@ -3,8 +3,8 @@ library(ggplot2)
 library(lubridate)
 library(tidyr)
 
-PATH = "/Users/ajz/Desktop/aa-git/covid_datathon/DataSets/" # end with slash
-SETWDPATH = "/Users/ajz/Desktop/aa-git/covid_datathon/"
+PATH = "/Users/ajz/Desktop/aa-git/covid-datathon/DataSets/" # end with slash
+SETWDPATH = "/Users/ajz/Desktop/aa-git/covid-datathon/"
 
 setwd(SETWDPATH)
 
@@ -67,6 +67,19 @@ hosp = list2df(hsl) %>%
     distinct()
 enc = list2df(enl) %>%
     select(-ENC_TYPE_C, -enc_dx_id)
+
+#### deident output
+cat('\nDeidentified examples----\n')
+cat('\nPROBLEM table----\n')
+prob %>% select(-PAT_ID) %>% head()
+cat('\nPAT_ID table----\n')
+pat %>% head(n=0)
+cat('\nORDER_RESULTS table----\n')
+ord %>% select(-PAT_ID) %>% head()
+cat('\nHSP table----\n')
+hosp %>% select(-PAT_ID, -ZIP) %>% head(n=4)
+cat('\nENC_DX table----\n')
+enc %>% select(-PAT_ID) %>% head()
 
 cat('\nDims of prob, pat, ord, hosp, enc----\n')
 dim(prob)
