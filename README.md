@@ -12,6 +12,37 @@ comorbidity.
 3. Study the covariation in severe outcomes with treatment modalities
 to evaluate population-level changes.
 
+Data pull spec
+--------
+
+Include: anyone with *positive* covid test. BSLMC and BCM outpatient.
+If more than 10,000 patients, OK to randomly sample. (Seems to be 1100
+to 1800). 700 ish at office visit in person.
+
+Tables (inpatient/BSLMC):
+
+- PAT_ID
+
+- ENC_DX including distant past
+
+- PROBLEM including distant past
+
+- ORDER_RESULTS only need recent dates like 2020
+
+- HSP, including all types of visits (ER, inpatient, etc.). OK to
+  limit to 2020 only, but not necessary.
+
+- possibly flowsheet: height weight systolic diastolic pulse
+  respirations spo2. limit to intubated or other o2 params, and spo2
+  po2.
+
+- discharge disposition (looking for discharge disposition)
+
+Tables (outpatient):
+
+- TBD
+
+
 
 Where to look in this code
 --------
