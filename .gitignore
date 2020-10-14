@@ -2,19 +2,9 @@
 
 *.tsv
 *.csv
-*.tab
 *.zip
-Routputs*
-PATIENT.txt
-PAT_ENC_DX.txt
-PAT_ORDERS_PROCEDURES.txt
-PAT_PRBL_LIST.txt
-Pat_FlowSheet_PulseOx.txt
 COVID_PROCS_STLUKES.txt
-DATA_HSP_LAB_PROC/
-DataSets/
-HospitalAdmissionCovid/
-Data-gloria-2020-10-13/
+data/
 
 
 #### outputs
@@ -22,8 +12,7 @@ Data-gloria-2020-10-13/
 *.pdf
 *.png
 *.docx
-old_output.txt
-output.txt
+Routputs*
 
 
 #### doots/misc.
