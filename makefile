@@ -3,10 +3,8 @@
 all:
 	$(MAKE) -C outputs
 
-#### not part of "all"
-
 clean:
-	rm -f $(files) $(files_unmentioned) # TODO
+	rm -f outputs/*.docx outputs/*.pdf outputs/*.txt
 	rm -f pngs/*.png new-pngs/*.png
 
 upload:

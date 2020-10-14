@@ -2,8 +2,8 @@ library(dplyr)
 
 # onedrive --> files / covid-19 / covid_datathon / HospitalAdmissionCovid
 
-SETWDPATH = "/Users/ajz/Desktop/aa-git/covid_datathon/"
-DATADIR = "HospitalAdmissionCovid/"
+SETWDPATH = "/Users/ajz/Desktop/aa-git/covid-datathon/"
+DATADIR = "data/HospitalAdmissionCovid/"
 DATAPATH = paste(SETWDPATH, DATADIR, sep='')
 
 setwd(SETWDPATH)
@@ -17,6 +17,7 @@ str2df <- function(s) {
         stringsAsFactors = FALSE, na.strings="NULL")
     return(d)
 }
+
 drop_sparse = function(df) {
 	ncols = dim(df)[2]
 	df %>%
@@ -30,14 +31,21 @@ drop_sparse = function(df) {
 	}
 	return(df[,retain])
 }
+
 say = function(s) {
 	sL = c('\n', s, '----\n')
 	cat(paste(sL, collapse=''))
 }
 
+
+
+
+#### main
+
 diml = str2df(dimlf)
 h_i = str2df(hospf)
 p_i = str2df(probf)
+
 say('dims of initial frames')
 for (d in list(diml, h_i, p_i)) {
 	print(dim(d))
@@ -45,7 +53,8 @@ for (d in list(diml, h_i, p_i)) {
 
 hosp = drop_sparse(h_i)
 prob = drop_sparse(p_i)
+
 say('dims of filtered frames')
-for (d in list(diag, hosp, prob)) {
+for (d in list(hosp, prob)) {
 	print(dim(d))
 }
