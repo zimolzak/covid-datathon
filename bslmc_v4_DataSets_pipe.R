@@ -3,7 +3,7 @@ library(ggplot2)
 library(lubridate)
 library(tidyr)
 
-PATH = "/Users/ajz/Desktop/aa-git/covid-datathon/DataSets/" # end with slash
+PATH = "/Users/ajz/Desktop/aa-git/covid-datathon/data/DataSets/" # end with slash
 SETWDPATH = "/Users/ajz/Desktop/aa-git/covid-datathon/"
 
 setwd(SETWDPATH)
@@ -568,7 +568,7 @@ pred12 = los_vs_contin(ggplot(covid_inp_stays_d, aes(max_los * 24, los)))
 #
 
 cat('\n\n----\n\nEnd of text output. Now plotting.\n\n')
-pdf("Rplots_inpat_v4.pdf")
+pdf("outputs/Rplots_inpat_v4.pdf")
 dmage
 htnage
 astage
