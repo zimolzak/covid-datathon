@@ -1,8 +1,8 @@
-files = README.pdf README.docx thoughts-notes-appendix.pdf
+documents = README.pdf README.docx thoughts-notes-appendix.pdf
 
 .PHONY: all
 
-all: $(files)
+all: $(documents)
 
 #### Documents
 
