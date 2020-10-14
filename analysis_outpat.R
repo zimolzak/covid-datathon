@@ -1,8 +1,7 @@
 library(ggplot2)
 library(dplyr)
-#                                                                         80 #
 
-PATH = "/Users/ajz/Desktop/aa-git/covid_datathon/"
+PATH = "/Users/ajz/Desktop/aa-git/covid-datathon/data/2020-06-08/"
 setwd(PATH)
 
 f_patient = "PATIENT.txt"
@@ -80,7 +79,7 @@ ggplot(covids, aes(x=covid_ord_dt, color=as.factor(covid_result))) +
     geom_freqpoly(binwidth=7) +
     scale_y_continuous(breaks = seq(0,10,2)) +
     labs(title="COVID result by date", x='Order date', y='Count', color="Result", subtitle='Outpatient (Baylor Clinic / FGP)')
-ggsave('pngs/fig1-result-vs-date.png')
+ggsave('../../pngs/fig1-result-vs-date.png')
 
 cat("confirm that numeric is useless----")
 table(covids$ORD_VALUE_NUMERIC) # confirm that numeric is useless
@@ -93,7 +92,7 @@ table(covids$covid_result)
 
 qplot(data=covids, x=covid_ord_dt, y=latency) +
     labs(title="High COVID test latency early in the pandemic", x="Order date", subtitle='Outpatient (Baylor Clinic / FGP)')
-ggsave('pngs/fig2-latency-vs-time.png')
+ggsave('../../pngs/fig2-latency-vs-time.png')
 
 
 
@@ -138,7 +137,7 @@ ggplot(nearby, aes(x=spo2_value_numeric, color=as.factor(covid_result))) +
     geom_freqpoly(binwidth=1) +
     labs(x='Pulse oximetry (%)', y='Count', title="Minimally lower SpO2 in COVID+ outpatients", color='COVID result', subtitle = paste("P =", p_str)) +
     scale_x_continuous(breaks = seq(90,100,2))
-ggsave('pngs/fig3-spo2-vs-result.png')
+ggsave('../../pngs/fig3-spo2-vs-result.png')
 
 
 
