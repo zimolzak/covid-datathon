@@ -52,6 +52,6 @@ if(INTERACTIVE) {
 #    mutate_at(vars(NOTED_DATE), ~ chdate(.))
 
 say('Dimensions of pat, enc, dxs')
-dim(pat)
+dim(pat) ## currently messed up, pipe delim has too many rows. Work on others 1st.
 dim(enc)
 dim(dxs)
