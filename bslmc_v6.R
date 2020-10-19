@@ -21,7 +21,7 @@ df_interactive_mode = function(fn) {
 }
 
 chdate = function(x) {
-    return(as.Date(x, '%m/%d/%Y' ))
+    return(as.Date(x, '%Y-%m-%d' ))
 }
 
 chtime = function(x){
@@ -55,3 +55,16 @@ say('Dimensions of pat, enc, dxs')
 dim(pat) ## currently messed up, pipe delim has too many rows. Work on others 1st.
 dim(enc)
 dim(dxs)
+
+dxs %>%
+select(PAT_ID, DX_NAME, CURRENT_ICD10_LIST, CONTACT_DATE) %>%
+mutate_at(vars(CONTACT_DATE), ~ chdate(.)) %>%
+group_by(PAT_ID) %>%
+mutate(first_contact = min(CONTACT_DATE)) %>%
+summarise(dm_e     = sum(grepl("diab", enc_dx_name, ignore.case = TRUE)),
+	      asthma_e = sum(grepl("asth", enc_dx_name, ignore.case = TRUE)),
+	      copd_e   = sum(grepl("copd", enc_dx_name, ignore.case = TRUE)),
+	      htn_e    = sum(grepl("hypert", enc_dx_name, ignore.case = TRUE)))
+
+->
+dxs_cleaned
