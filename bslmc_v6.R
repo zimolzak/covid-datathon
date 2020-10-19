@@ -7,7 +7,7 @@ library(here)
 ####
 
 filename2df <- function(fn) {
-    df = read.csv(here("data", "2020-10-19", fn), sep=",",
+    df = read.csv(here("data", "2020-10-19", fn), sep="|",
         stringsAsFactors = FALSE, na.strings="null")
     return(df)
 }
@@ -27,9 +27,9 @@ say = function(s) {
 
 ####
 
-pat = filename2df('PATIENT_DEMOGRAPHICS.csv')
-enc = filename2df('ENCOUNTER_DATA.csv')
-dxs = filename2df('DX_ENCOUNTER.csv')
+pat = filename2df('PATIENT_DEMOGRAPHICS.DATA')
+enc = filename2df('ENCOUNTER.DATA')
+dxs = filename2df('DX_ENCOUNTER.DATA')
 
 #prob = list2df(prl) %>%
 #    select(-PROBLEM_LIST_ID, -DX_ID, -CHRONIC_YN) %>%
