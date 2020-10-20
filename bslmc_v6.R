@@ -127,7 +127,7 @@ summarise(comor.first.vis = min(CONTACT_DATE),
     comor.copd.nvis = sum(grepl("copd", DX_NAME, ignore.case = TRUE)),
     comor.hypert.nvis = sum(grepl("hypert", DX_NAME, ignore.case = TRUE))
     ) ->
-dxs_processed
+predictors_visit_count
 
 prb %>%
 group_by(PAT_ID) %>%
@@ -136,7 +136,7 @@ summarise(comor.diab.probl = sum(grepl("diab", DX_NAME, ignore.case = TRUE)),
     comor.copd.probl = sum(grepl("copd", DX_NAME, ignore.case = TRUE)),
     comor.hypert.probl = sum(grepl("hypert", DX_NAME, ignore.case = TRUE))
     ) ->
-prb_processed
+predictors_problem_list
 
 dxs_cleaned %>%
 filter(grepl("covid", DX_NAME, ignore.case = TRUE)) %>%
@@ -144,7 +144,7 @@ group_by(PAT_ID) %>%
 summarise(covid.first.vis = min(CONTACT_DATE)) ->
 covid_dx_dates
 
-# todo - this is probably safer than the above:
+# todo - the below is probably safer than the above:
 # filter(grepl("U07.1", CURRENT_ICD10_LIST, ignore.case = TRUE))
 
 enc_cleaned %>%
@@ -160,6 +160,8 @@ inpat2020
 
 # todo - next step - find which Inpatient stays are for COVID.
 # join inpat2020 and dxs on PAT_ENC_CSN_ID
+# Need to do it from the perspective of ER visit if outcome is admit/not.
+# Can do from perspective in an inpat visit if outcome is LOS.
 
 
 
