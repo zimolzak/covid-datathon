@@ -1,9 +1,11 @@
 library(dplyr)
 library(ggplot2)
 library(lubridate)
-library(tidyr)
+library(tidyr) # might not be using
 library(here)
 library(earth)
+library(ROCR)
+
 
 
 
@@ -298,7 +300,22 @@ qplot(predict(earth.mod2), learning_data$los.days.n)  +
   labs(title='MARS model, degree 2')-> yyhat2
 
 # todo - cross validation or train/test split?
-# todo - logistic of mortality
+
+say('Logistic regression of mortality')
+logitMod <- glm(died_ever ~ Age + ETHNIC_GROUP + sex + race_aggr + comor.diab + comor.asth + comor.copd + comor.hypert, data=analytic_data, family=binomial(link="logit"))
+summary(logitMod)
+
+rocr_pred = prediction(logitMod$fitted.values, logitMod$y)
+rocr_perf <- performance(rocr_pred, measure = "tpr", x.measure = "fpr")
+performance(rocr_pred, "auc")
+
+# calibration
+# library(rms)
+# val.prob(logitMod$fitted.values, logitMod$y)
+# val.prob(logitMod$fitted.values, logitMod$y, group=10)
+ggplot(data=NULL, aes(x=logitMod$fitted.values, color=analytic_data$died_ever)) + geom_freqpoly() -> cal1
+ggplot(data=NULL, aes(x=logitMod$fitted.values, fill=analytic_data$died_ever)) + geom_histogram(binwidth=0.1) -> calhist
+
 
 
 
@@ -331,6 +348,9 @@ yyhat1
 plotmo(earth.mod2)
 plot(earth.mod2)
 yyhat2
+plot(rocr_perf, colorize=TRUE)
+cal1
+calhist
 dev.off()
 
 # ggsave png here if needed
