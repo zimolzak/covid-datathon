@@ -25,7 +25,8 @@ chdate = function(x) {
 }
 
 chtime = function(x){
-    return(parse_date_time(x, orders='mdYIMSp'))
+    return(parse_date_time(x, orders='ymdHMS')) # lubridate
+    # mdYIMSp = mo day yr Hourdecimal min sec am/pm
 }
 
 say = function(s) {
@@ -57,9 +58,21 @@ dim(enc) # 13943    15
 dim(dxs) # 44816     9
 
 dxs %>%
-select(PAT_ID, DX_NAME, CURRENT_ICD10_LIST, CONTACT_DATE) %>%
+select(PAT_ID, DX_NAME, CURRENT_ICD10_LIST, CONTACT_DATE, PAT_ENC_CSN_ID) %>%
 mutate_at(vars(CONTACT_DATE), ~ chdate(.)) ->
 dxs_cleaned
+
+enc %>%
+select(PAT_ID, PAT_ENC_CSN_ID, CONTACT_DATE, PATIENT_CLASS,
+    HOSP_ADMSN_TIME, HOSP_DISCH_TIME, LVL_OF_CARE, DISCHARGE_DISP,
+    ACUITY_LEVEL_C, ADMIT_SOURCE_C) %>%
+mutate_at(vars(CONTACT_DATE), ~ chdate(.)) %>%
+mutate_at(vars(HOSP_ADMSN_TIME, HOSP_DISCH_TIME), ~ chtime(.)) ->
+enc_cleaned
+
+
+
+
 
 dxs_cleaned %>%
 group_by(PAT_ID) %>%
@@ -71,3 +84,11 @@ summarise(comor.first.vis = min(CONTACT_DATE),
     comor.hypert.nvis = sum(grepl("hypert", DX_NAME, ignore.case = TRUE))
     ) ->
 dxs_processed
+
+dxs_cleaned %>%
+filter(grepl("covid", DX_NAME, ignore.case = TRUE)) %>%
+group_by(PAT_ID) %>%
+summarise(covid.first.vis = min(CONTACT_DATE)) ->
+covid_dx_dates
+
+# enc_cleaned %>% filter(PATIENT_CLASS == 'Emergency')
