@@ -65,5 +65,9 @@ dxs_cleaned %>%
 group_by(PAT_ID) %>%
 mutate() %>%
 summarise(comor.first.vis = min(CONTACT_DATE),
-    comor.diab.nvis = sum(grepl("diab", DX_NAME, ignore.case = TRUE))) ->
+    comor.diab.nvis = sum(grepl("diab", DX_NAME, ignore.case = TRUE)),
+    comor.asth.nvis = sum(grepl("asth", DX_NAME, ignore.case = TRUE)),
+    comor.copd.nvis = sum(grepl("copd", DX_NAME, ignore.case = TRUE)),
+    comor.hypert.nvis = sum(grepl("hypert", DX_NAME, ignore.case = TRUE))
+    ) ->
 dxs_processed
