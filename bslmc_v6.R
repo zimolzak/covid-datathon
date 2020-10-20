@@ -86,7 +86,8 @@ select(PAT_ID, PAT_ENC_CSN_ID, CONTACT_DATE, PATIENT_CLASS,
     HOSP_ADMSN_TIME, HOSP_DISCH_TIME, LVL_OF_CARE, DISCHARGE_DISP,
     ACUITY_LEVEL_C, ADMIT_SOURCE_C) %>%
 mutate_at(vars(CONTACT_DATE), ~ chdate(.)) %>%
-mutate_at(vars(HOSP_ADMSN_TIME, HOSP_DISCH_TIME), ~ chtime(.)) ->
+mutate_at(vars(HOSP_ADMSN_TIME, HOSP_DISCH_TIME), ~ chtime(.)) %>%
+mutate(los.days = difftime(HOSP_DISCH_TIME, HOSP_ADMSN_TIME, units="days")) ->
 enc_cleaned
 
 lab %>% # todo - lab table looks really really weird, may be a problem.
@@ -109,7 +110,8 @@ table(proc_distinct$PROC_NAME)
 
 pat %>%
 select(PAT_ID, Age, ETHNIC_GROUP, PATIENT_RACE, DEATH_DATE, SEX_C) %>%
-mutate_at(vars(DEATH_DATE), ~ chdate(.)) ->
+mutate_at(vars(DEATH_DATE), ~ chdate(.)) %>%
+mutate(sex = case_when(SEX_C == 1 ~ 'F', SEX_C == 2 ~ 'M')) ->
 pat_cleaned
 
 
@@ -142,10 +144,22 @@ group_by(PAT_ID) %>%
 summarise(covid.first.vis = min(CONTACT_DATE)) ->
 covid_dx_dates
 
+# todo - this is probably safer than the above:
+# filter(grepl("U07.1", CURRENT_ICD10_LIST, ignore.case = TRUE))
+
 enc_cleaned %>%
 filter(PATIENT_CLASS == 'Emergency', CONTACT_DATE > chdate('2020-01-01')) ->
 er2020
 
+enc_cleaned %>%
+mutate(los.days.n = as.numeric(los.days)) %>%
+filter(PATIENT_CLASS == 'Inpatient', CONTACT_DATE > chdate('2020-01-01')) ->
+inpat2020
+
+
+
+# todo - next step - find which Inpatient stays are for COVID.
+# join inpat2020 and dxs on PAT_ENC_CSN_ID
 
 
 
@@ -155,11 +169,15 @@ table(er2020$DISCHARGE_DISP)
 
 table(pat_cleaned$ETHNIC_GROUP)
 table(pat_cleaned$PATIENT_RACE)
+with(pat_cleaned, table(PATIENT_RACE, ETHNIC_GROUP))
 
 ggplot(pat_cleaned, aes(x = DEATH_DATE)) +
 geom_histogram() ->
 death_histogram
 
+qplot(inpat2020$los.days.n) +
+scale_x_log10() ->
+los_histogram
 
 
 
@@ -168,6 +186,7 @@ death_histogram
 say('\n\n----\n\nEnd of text output. Now plotting.')
 pdf(here("outputs", "Rplots_v6.pdf"))
 death_histogram
+los_histogram
 dev.off()
 
 # ggsave png here if needed
