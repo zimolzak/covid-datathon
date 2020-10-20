@@ -78,6 +78,7 @@ dim(prb) # 16628     7
 
 
 
+
 #### Cleaning (of dates, etc)
 
 dxs %>%
@@ -156,14 +157,14 @@ dxs_cleaned %>%
 filter(grepl("covid", DX_NAME, ignore.case = TRUE)) %>%
 group_by(PAT_ID) %>%
 summarise(covid.first.vis = min(CONTACT_DATE)) ->
-covid_dx_dates
+covid_dx_dates # not used
 
 # todo - the below is probably safer than the above:
 # filter(grepl("U07.1", CURRENT_ICD10_LIST, ignore.case = TRUE))
 
 enc_cleaned %>%
 filter(PATIENT_CLASS == 'Emergency', CONTACT_DATE > chdate('2020-01-01')) ->
-er2020
+er2020 # barely used
 
 enc_cleaned %>%
 mutate(los.days.n = as.numeric(los.days)) %>%
@@ -248,8 +249,8 @@ qplot(analytic_data$los.days.n) +
 scale_x_log10() ->
 los_histogram
 
-ggplot(analytic_data, aes(x=Age, y = los.days.n)) + geom_point() -> agepoint
-ggplot(analytic_data, aes(x=comor.diab.nvis, y = los.days.n)) + geom_point() -> diabpoint
+ggplot(analytic_data, aes(x=Age, y = los.days.n)) + geom_point(alpha=0.2) -> agepoint
+ggplot(analytic_data, aes(x=comor.diab.nvis, y = los.days.n)) + geom_point(alpha=0.1) -> diabpoint
 
 los_vs_categorical('sex', 'box') -> sexbox
 los_vs_categorical('ETHNIC_GROUP', 'box') -> ethbox
