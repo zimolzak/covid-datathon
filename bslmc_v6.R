@@ -3,7 +3,7 @@ library(ggplot2)
 library(lubridate)
 library(tidyr)
 library(here)
-
+library(earth)
 
 
 
@@ -89,6 +89,8 @@ mutate_at(vars(CONTACT_DATE), ~ chdate(.)) %>%
 mutate_at(vars(HOSP_ADMSN_TIME, HOSP_DISCH_TIME), ~ chtime(.)) %>%
 mutate(los.days = difftime(HOSP_DISCH_TIME, HOSP_ADMSN_TIME, units="days")) ->
 enc_cleaned
+
+## Todo - important - sometimes HOSP_DISCH_TIME is NA. Why? What to do?
 
 lab %>% # todo - lab table looks really really weird, may be a problem.
 select(PAT_ID, RESULT_TIME, COMPONENT, ORD_VALUE) %>%
@@ -186,7 +188,7 @@ analytic_data
 
 
 
-#### diagnostics
+#### analyses
 say('ER discharge disposition')
 table(er2020$DISCHARGE_DISP)
 
@@ -202,7 +204,7 @@ qplot(inpat2020$los.days.n) +
 scale_x_log10() ->
 los_histogram
 
-#### bunch of plots, may not work
+#### plots
 
 my_boxplot = function(aesthetic) {
     return(ggplot(analytic_data, aesthetic) +
@@ -258,9 +260,23 @@ los_vs_categorical('comor.asth', 'dens') -> asthdens
 los_vs_categorical('comor.copd', 'dens') -> copddens
 los_vs_categorical('comor.hypert', 'dens') -> hypertdens
 
-
-
 # todo: titles, axes
+# earth, NN, knn, adaboost, rf
+
+analytic_data %>%
+select(los.days.n, Age, ETHNIC_GROUP, sex, race_aggr, comor.diab, comor.asth, comor.copd, comor.hypert) %>%
+filter(!is.na(los.days.n)) ->
+learning_data
+
+earth.mod = earth(los.days.n ~ ., data = learning_data)
+# plotmo
+# plot
+# evimp
+# summary
+# yhat = predict(earth.mod)
+# qplot(predict(earth.mod2), learning_data$los.days.n)  + geom_abline(intercept = 0, slope = 1)
+
+earth.mod2 = earth(los.days.n ~ ., data = learning_data, degree=2)
 
 
 
