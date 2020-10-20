@@ -199,7 +199,7 @@ analytic_data
 
 
 
-#### simple text tables
+#### Analyses: simple text tables
 
 say('ER discharge disposition')
 table(er2020$DISCHARGE_DISP)
@@ -213,7 +213,7 @@ with(pat_cleaned, table(PATIENT_RACE, ETHNIC_GROUP))
 
 
 
-#### plots
+#### plots, Bivariate
 
 los_vs_categorical = function(catvar, plottype) {
 	result = kruskal.test(analytic_data$los.days.n, analytic_data[,catvar])
@@ -276,6 +276,7 @@ los_vs_categorical('comor.hypert', 'dens') -> hypertdens
 
 
 
+#### Modeling
 # earth, NN, knn, adaboost, rf
 
 analytic_data %>%
@@ -283,7 +284,7 @@ select(los.days.n, Age, ETHNIC_GROUP, sex, race_aggr, comor.diab, comor.asth, co
 filter(!is.na(los.days.n)) ->
 learning_data
 
-say('MARS model, degree 1')
+say('MARS model, degree 1 (evimp and summary)')
 earth.mod = earth(los.days.n ~ ., data = learning_data)
 evimp(earth.mod)
 summary(earth.mod)
@@ -291,7 +292,7 @@ qplot(predict(earth.mod), learning_data$los.days.n)  +
   geom_abline(intercept = 0, slope = 1) +
   labs(title='MARS model, degree 1')-> yyhat1
 
-say('MARS model, degree 2')
+say('MARS model, degree 2 (evimp and summary)')
 earth.mod2 = earth(los.days.n ~ ., data = learning_data, degree=2)
 evimp(earth.mod2)
 summary(earth.mod2)
@@ -301,21 +302,40 @@ qplot(predict(earth.mod2), learning_data$los.days.n)  +
 
 # todo - cross validation or train/test split?
 
+# logistic
+
 say('Logistic regression of mortality')
 logitMod <- glm(died_ever ~ Age + ETHNIC_GROUP + sex + race_aggr + comor.diab + comor.asth + comor.copd + comor.hypert, data=analytic_data, family=binomial(link="logit"))
 summary(logitMod)
 
 rocr_pred = prediction(logitMod$fitted.values, logitMod$y)
 rocr_perf <- performance(rocr_pred, measure = "tpr", x.measure = "fpr")
+say('AUC')
 performance(rocr_pred, "auc")
 
 # calibration
 # library(rms)
 # val.prob(logitMod$fitted.values, logitMod$y)
 # val.prob(logitMod$fitted.values, logitMod$y, group=10)
-ggplot(data=NULL, aes(x=logitMod$fitted.values, color=analytic_data$died_ever)) + geom_freqpoly() -> cal1
-ggplot(data=NULL, aes(x=logitMod$fitted.values, fill=analytic_data$died_ever)) + geom_histogram(binwidth=0.1) -> calhist
+ggplot(data=NULL, aes(x=logitMod$fitted.values, color=analytic_data$died_ever)) +
+    geom_freqpoly() + labs(title='Calibration, logistic regression') -> cal1
+ggplot(data=NULL, aes(x=logitMod$fitted.values, fill=analytic_data$died_ever)) +
+    geom_histogram(binwidth=0.1) + labs(title='Calibration, logistic regression') -> calhist
 
+bind_cols(analytic_data, phat = logitMod$fitted.values) %>%
+select(died_ever, phat) %>%
+mutate(bin = trunc(phat * 10) / 10) %>%
+group_by(bin) %>%
+summarise(p_observed = mean(died_ever),
+    numerator = sum(died_ever),
+    denominator = n()) ->
+caldata
+
+say('Logistic model calibration')
+caldata
+
+ggplot(caldata, aes(bin, p_observed)) + geom_point(color='red') + geom_abline(intercept=0, slope=1, alpha=0.25) +
+xlim(0,1) + ylim(0,1) + geom_line(color='red') + labs(title='Calibration, logistic regression') -> calformal
 
 
 
@@ -351,6 +371,7 @@ yyhat2
 plot(rocr_perf, colorize=TRUE)
 cal1
 calhist
+calformal
 dev.off()
 
 # ggsave png here if needed
