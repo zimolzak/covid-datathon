@@ -49,15 +49,17 @@ if(INTERACTIVE) {
 	enc = df_interactive_mode('ENCOUNTER.DATA')
 	dxs = df_interactive_mode('DX_ENCOUNTER.DATA')
 	prb = df_interactive_mode('PROBLEMS_LIST.DATA')
-	lab = df_interactive_mode('LAB_RESULTS.DATA') # 1.77 GB, ~55 seconds to load
+# uncomment later
+	# lab = df_interactive_mode('LAB_RESULTS.DATA') # 1.77 GB, ~55 seconds to load
 } else {
 	pat = filename2df('PATIENT_DEMOGRAPHICS.DATA')
 	enc = filename2df('ENCOUNTER.DATA')
 	dxs = filename2df('DX_ENCOUNTER.DATA')
 	prb = filename2df('PROBLEMS_LIST.DATA')
-	message(paste('Reading labs...', now()))
-	lab = filename2df('LAB_RESULTS.DATA')
-	message(paste('done.', now()))
+# uncomment later
+	# message(paste('Reading labs...', now()))
+	# lab = filename2df('LAB_RESULTS.DATA')
+	# message(paste('done.', now()))
 }
 
 #prob = list2df(prl) %>%
@@ -69,7 +71,9 @@ dim(pat) # 1900 x 14
 dim(enc) # 13943    15
 dim(dxs) # 44816     9
 dim(prb) # 16628     7
-dim(lab) # 8490824      17
+
+# uncomment later
+# dim(lab) # 8490824      17
 
 
 
@@ -92,23 +96,25 @@ enc_cleaned
 
 ## Todo - important - sometimes HOSP_DISCH_TIME is NA. Why? What to do?
 
-lab %>% # todo - lab table looks really really weird, may be a problem.
-select(PAT_ID, RESULT_TIME, COMPONENT, ORD_VALUE) %>%
-distinct() %>%
-mutate_at(vars(RESULT_TIME), ~ chtime(.)) ->
-lab_distinct
+#### lab stuff. Not using it currently. Takes a while.
+# uncomment later
+# lab %>% # todo - lab table looks really really weird, may be a problem.
+# select(PAT_ID, RESULT_TIME, COMPONENT, ORD_VALUE) %>%
+# distinct() %>%
+# mutate_at(vars(RESULT_TIME), ~ chtime(.)) ->
+# lab_distinct
 
-say('Dim of lab_distinct')
-dim(lab_distinct)
+# say('Dim of lab_distinct')
+# dim(lab_distinct)
 
-lab %>%
-select(PAT_ID, ORDERING_DATE, PROC_NAME, PROC_CODE) %>%
-distinct() %>%
-filter(! grepl("LAB", PROC_CODE)) ->
-proc_distinct # probably won't use this yet. Need chdate() if we do.
+# lab %>%
+# select(PAT_ID, ORDERING_DATE, PROC_NAME, PROC_CODE) %>%
+# distinct() %>%
+# filter(! grepl("LAB", PROC_CODE)) ->
+# proc_distinct # probably won't use this yet. Need chdate() if we do.
 
-say('Procedure names')
-table(proc_distinct$PROC_NAME)
+# say('Procedure names')
+# table(proc_distinct$PROC_NAME)
 
 pat %>%
 select(PAT_ID, Age, ETHNIC_GROUP, PATIENT_RACE, DEATH_DATE, SEX_C) %>%
@@ -179,6 +185,7 @@ covid_admissions %>%
 left_join(pat_cleaned) %>%
 left_join(predictors_visit_count) %>%
 left_join(predictors_problem_list) %>%
+filter(!is.na(los.days.n)) %>% # TODO - important - about when LOS or discharge is NA
 mutate(comor.diab = (comor.diab.nvis + comor.diab.probl > 0),
 	comor.asth = (comor.asth.nvis + comor.asth.probl > 0),
 	comor.copd = (comor.copd.nvis + comor.copd.probl > 0),
@@ -189,6 +196,7 @@ analytic_data
 
 
 #### analyses
+
 say('ER discharge disposition')
 table(er2020$DISCHARGE_DISP)
 
@@ -200,17 +208,12 @@ ggplot(pat_cleaned, aes(x = DEATH_DATE)) +
 geom_histogram() ->
 death_histogram
 
-qplot(inpat2020$los.days.n) +
-scale_x_log10() ->
-los_histogram
+
+
+
+
 
 #### plots
-
-my_boxplot = function(aesthetic) {
-    return(ggplot(analytic_data, aesthetic) +
-    geom_boxplot(outlier.shape = NA, notch = TRUE) +
-    geom_jitter(width=0.2, alpha = 0.2))
-}
 
 los_vs_categorical = function(catvar, plottype) {
 	result = kruskal.test(analytic_data$los.days.n, analytic_data[,catvar])
@@ -218,7 +221,7 @@ los_vs_categorical = function(catvar, plottype) {
 	n_categories = dim(table(analytic_data[,catvar]))
 	if(n_categories == 2){
 		categories = analytic_data %>% select(all_of(catvar)) %>% distinct()
-		data_2col = analytic_data %>% select(catvar, los.days.n)
+		data_2col = analytic_data %>% select(all_of(catvar), los.days.n)
 		logical_vec = (data_2col[,1] == categories[1,])
 		los1 = data_2col[logical_vec,2]
 		los2 = data_2col[!logical_vec,2]
@@ -241,6 +244,10 @@ los_vs_categorical = function(catvar, plottype) {
 	return(g)
 }
 
+qplot(analytic_data$los.days.n) +
+scale_x_log10() ->
+los_histogram
+
 ggplot(analytic_data, aes(x=Age, y = los.days.n)) + geom_point() -> agepoint
 ggplot(analytic_data, aes(x=comor.diab.nvis, y = los.days.n)) + geom_point() -> diabpoint
 
@@ -261,6 +268,10 @@ los_vs_categorical('comor.copd', 'dens') -> copddens
 los_vs_categorical('comor.hypert', 'dens') -> hypertdens
 
 # todo: titles, axes
+
+
+
+
 # earth, NN, knn, adaboost, rf
 
 analytic_data %>%
