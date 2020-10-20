@@ -213,14 +213,28 @@ my_boxplot = function(aesthetic) {
 los_vs_categorical = function(catvar, plottype) {
 	result = kruskal.test(analytic_data$los.days.n, analytic_data[,catvar])
 	p = result$p.value
+	n_categories = dim(table(analytic_data[,catvar]))
+	if(n_categories == 2){
+		categories = analytic_data %>% select(all_of(catvar)) %>% distinct()
+		data_2col = analytic_data %>% select(catvar, los.days.n)
+		logical_vec = (data_2col[,1] == categories[1,])
+		los1 = data_2col[logical_vec,2]
+		los2 = data_2col[!logical_vec,2]
+		median_str = paste('\nMedians:', median(los1, na.rm=TRUE), median(los2, na.rm=TRUE))
+	} else {
+		median_str = ''
+	}
 	if(plottype == 'box') {
 		g = ggplot(data = NULL, aes(x=analytic_data[,catvar], y=analytic_data$los.days.n)) +
 	    geom_boxplot(outlier.shape = NA, notch = TRUE) +
     	geom_jitter(width=0.2, alpha = 0.2) +
-    	labs(subtitle=paste('p =', p), y = 'Length of stay (days)', x = catvar)
+    	labs(subtitle=paste('p =', p, median_str), y = 'Length of stay (days)', x = catvar)
     	# todo: put medians on the plot
 	} else {
-		g=5 #todo
+		g = ggplot(data=NULL, aes(x= analytic_data$los.days.n, color= analytic_data[,catvar])) +
+		geom_density() +
+		scale_x_log10() +
+    	labs(subtitle=paste('p =', p, median_str), x = 'Length of stay (days)', color = catvar)
 	}
 	return(g)
 }
@@ -228,18 +242,23 @@ los_vs_categorical = function(catvar, plottype) {
 ggplot(analytic_data, aes(x=Age, y = los.days.n)) + geom_point() -> agepoint
 ggplot(analytic_data, aes(x=comor.diab.nvis, y = los.days.n)) + geom_point() -> diabpoint
 
-my_boxplot(aes(x=sex, y = los.days.n)) -> sexbox
-my_boxplot(aes(x=ETHNIC_GROUP, y = los.days.n)) -> ethbox
-my_boxplot(aes(x=race_aggr, y = los.days.n)) -> racebox
-my_boxplot(aes(x=comor.diab, y = los.days.n)) -> diabbox
-my_boxplot(aes(x=comor.asth, y = los.days.n)) -> asthbox
-my_boxplot(aes(x=comor.copd, y = los.days.n)) -> copdbox
-my_boxplot(aes(x=comor.hypert, y = los.days.n)) -> hypertbox
+los_vs_categorical('sex', 'box') -> sexbox
+los_vs_categorical('ETHNIC_GROUP', 'box') -> ethbox
+los_vs_categorical('race_aggr', 'box') -> racebox
+los_vs_categorical('comor.diab', 'box') -> diabbox
+los_vs_categorical('comor.asth', 'box') -> asthbox
+los_vs_categorical('comor.copd', 'box') -> copdbox
+los_vs_categorical('comor.hypert', 'box') -> hypertbox
 
-ggplot(analytic_data, aes(los.days.n, color=sex)) + geom_density() + scale_x_log10() -> sexdens
-ggplot(analytic_data, aes(los.days.n, color=ETHNIC_GROUP)) + geom_density() + scale_x_log10() -> ethdens
-ggplot(analytic_data, aes(los.days.n, color=race_aggr)) + geom_density() + scale_x_log10() -> racedens
-ggplot(analytic_data, aes(los.days.n, color=comor.diab)) + geom_density() + scale_x_log10() -> diabdens
+los_vs_categorical('sex', 'dens') -> sexdens
+los_vs_categorical('ETHNIC_GROUP', 'dens') -> ethdens
+los_vs_categorical('race_aggr', 'dens') -> racedens
+los_vs_categorical('comor.diab', 'dens') -> diabdens
+los_vs_categorical('comor.asth', 'dens') -> asthdens
+los_vs_categorical('comor.copd', 'dens') -> copddens
+los_vs_categorical('comor.hypert', 'dens') -> hypertdens
+
+
 
 # todo: titles, axes
 
@@ -266,6 +285,9 @@ sexdens
 ethdens
 racedens
 diabdens
+asthdens
+copddens
+hypertdens
 dev.off()
 
 # ggsave png here if needed
