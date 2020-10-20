@@ -211,11 +211,18 @@ my_boxplot = function(aesthetic) {
 }
 
 ggplot(analytic_data, aes(x=Age, y = los.days.n)) + geom_point() -> agepoint
+ggplot(analytic_data, aes(x=comor.diab.nvis, y = los.days.n)) + geom_point() -> diabpoint
+
+my_boxplot(aes(x=sex, y = los.days.n)) -> sexbox
 my_boxplot(aes(x=ETHNIC_GROUP, y = los.days.n)) -> ethbox
 my_boxplot(aes(x=race_aggr, y = los.days.n)) -> racebox
-my_boxplot(aes(x=sex, y = los.days.n)) -> sexbox
-ggplot(analytic_data, aes(x=comor.diab.nvis, y = los.days.n)) + geom_point() -> diabpoint
 my_boxplot(aes(x=comor.diab, y = los.days.n)) -> diabbox
+
+ggplot(analytic_data, aes(los.days.n, color=sex)) + geom_density() + scale_x_log10() -> sexdens
+ggplot(analytic_data, aes(los.days.n, color=ETHNIC_GROUP)) + geom_density() + scale_x_log10() -> ethdens
+ggplot(analytic_data, aes(los.days.n, color=race_aggr)) + geom_density() + scale_x_log10() -> racedens
+ggplot(analytic_data, aes(los.days.n, color=comor.diab)) + geom_density() + scale_x_log10() -> diabdens
+
 
 # todo: titles, axes
 
@@ -229,11 +236,15 @@ pdf(here("outputs", "Rplots_v6.pdf"))
 death_histogram
 los_histogram
 agepoint
+diabpoint
+sexbox
 ethbox
 racebox
-sexbox
-diabpoint
 diabbox
+sexdens
+ethdens
+racedens
+diabdens
 dev.off()
 
 # ggsave png here if needed
