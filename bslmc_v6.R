@@ -273,6 +273,41 @@ los_vs_categorical('comor.hypert', 'dens') -> hypertdens
 
 # todo: titles, axes
 
+# death versus {age, sex, eth, race, 4 comorbs}
+say('bivariate, mortality versus X')
+
+t = with(analytic_data, table(died_ever, sex))
+t
+fisher.test(t)$p.value
+t = with(analytic_data, table(died_ever, ETHNIC_GROUP)) # todo - sorry so repetitive
+t
+fisher.test(t)$p.value
+t = with(analytic_data, table(died_ever, race_aggr))
+t
+fisher.test(t)$p.value
+t = with(analytic_data, table(died_ever, comor.diab))
+t
+fisher.test(t)$p.value
+t = with(analytic_data, table(died_ever, comor.asth))
+t
+fisher.test(t)$p.value
+t = with(analytic_data, table(died_ever, comor.copd))
+t
+fisher.test(t)$p.value
+t = with(analytic_data, table(died_ever, comor.hypert))
+t
+fisher.test(t)$p.value
+
+analytic_data %>% select(died_ever, Age) %>% group_by(died_ever) %>% summarise(median_age = median(Age)) # text output
+
+kw_agedied = kruskal.test(x = analytic_data$Age, g = analytic_data $died_ever)
+kw_agedied
+
+ggplot(data = analytic_data, aes(x=died_ever, y=Age)) +
+	    geom_boxplot(outlier.shape = NA, notch = TRUE) +
+    	geom_jitter(width=0.2, alpha = 0.2) +
+    	labs(subtitle=paste('p =', kw_agedied$p.value)) ->
+    	died_age
 
 
 
@@ -364,6 +399,7 @@ diabdens
 asthdens
 copddens
 hypertdens
+died_age
 plotmo(earth.mod)
 plot(earth.mod)
 yyhat1
