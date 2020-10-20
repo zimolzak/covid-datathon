@@ -12,6 +12,68 @@ comorbidity.
 3. Study the covariation in severe outcomes with treatment modalities
 to evaluate population-level changes.
 
+Analytic data set sketch
+--------
+
+* one row per ED encounter
+    * patient ID of course
+    * ER visit diagnoses
+    * admission diagnoses, if admitted
+    * covid test date(s) & results
+    * ER visit index date
+* outcomes as follows:
+    * admitted yes/no
+    * ER directly to ICU yes/no
+    * length of stay, if admitted (continuous)
+    * pao2:fio2 ratio (future summary measure, of oxygenation)
+    * mortality yes/no (and date)
+    * intubated yes/no (and date)
+    * maybe future ICU admit & date if I can manage it
+* predictors as follows
+    * demographics
+        * age
+        * sex
+        * race
+        * ethnicity
+        * ZIP
+    * comorbidities (two columns for each: N prior visits or rate, and prob list yes/no)
+        * diabetes
+        * copd
+        * asthma
+        * hypertension
+        * coronary disease
+        * cancer
+    * number of prior hospital admissions (or rate)
+    * number of prior ER visits (or rate)
+    * vitals (summary meas if needed)
+        * temp
+        * pulse
+        * respirations
+        * BP
+        * SpO2
+        * height
+        * weight
+    * labs (summary measure of labs just before/on index date)
+        * wbc
+        * hgb
+        * plt
+        * sodium
+        * K
+        * bicarb
+        * creatinine
+        * d-dimer
+        * CRP
+        * LDH
+        * BUN
+        * HDL
+        * direct bilirubin
+        * RDW
+        * albumin
+        * neutrophils
+        * lymphocytes
+        * ALT
+        * P:F ratio can be predictor for more "hard" downstream events
+
 Data pull spec
 --------
 
@@ -42,8 +104,6 @@ Tables (outpatient):
 
 - TBD
 
-
-
 Where to look in this code
 --------
 
@@ -56,12 +116,12 @@ Requirements for current repo
 --------
 
 - R, Rscript
-- R packages: dplyr, ggplot2, tidyr, lubridate
+- R packages: dplyr, ggplot2, tidyr, lubridate, here
 - make and usual UNIX-like toolchain (mv, rm, cp)
 - pandoc (only for documentation)
 
 
-Datathon use case examples
+Datathon "alpha phase" use case examples
 ========
 
 |ID| Hard? | Waiting on:   | Description                                                 |
@@ -133,42 +193,3 @@ had the lab ordered/done). *This is shown on one of Gloria's
 SlicerDicer slides.*
 
 [^ehrn]: Epic Health Research Network, https://ehrn.org/
-
-
-
-
-Things teams may want for October datathon
-==========
-
-- raw data
-- un-joined?
-- data dictionary, but even more thorough.
-- What formats provide? Poss Excel and pipe-delim both?
-
-Regarding flowsheet, if BSLMC is anything like outpatient, there is a ton of stuff in there. I would be fine with we select only the lines referring to pulse ox (to begin with). I would guess this yields a much more manageable data set (between 10x and 100x smaller).
-
-People are undoubtedly going to want other vital signs in the future (temp, pulse rate, resp rate, and blood pressure) but I don't strictly need these yet. Other stuff within the flow sheet is "tier 3" at best.
-
-Oh, the CONTACT_DATE field in that screenshot reminds me of another issue: Generally I do not need pulse ox data that is widely separated in time from the COVID result and/or hospital admission. Possible approaches to this issue:
-
-1. Don't limit at all (results in bulkier data sets)
-
-2. Simple limiting by date (no pulse ox before 2020-01-01)
-
-3. Fancy limiting like "grab all pulse ox during admission, plus 7 days before admission, plus 7 days after admission, plus 7 days before COVID test plus 7 days after COVID test"
-
-Option 2 may be the most practical, but I'm open to suggestions.
-
-I can pretty confidently say that I have no interest (for the purposes of this COVID project) in any pulse ox data point before 2020-01-01. Diagnoses are another matter. Concrete example: If the patient had 6 admissions with discharge diagnosis = heart failure in 2018 and 2019, I would want to know about it (eventually—can be in a later data pull). However, it doesn't matter as much that she had 200 pulse ox measurements ranging from 81 to 97 in the years 2018–2019.
-
-
-
-
-Abbreviations
-========
-
-PPE, personal protective equipment. LOS, length of stay. COPD, chronic
-obstructive pulmonary disease. DM, diabetes mellitus. HTN,
-hypertension. cmp, comprehensive metabolic profile. cbc, complete
-blood count. bmp, basic metabolic panel. crp, C-reactive protein. Inp,
-inpatient. Out, outpatient. Int, intermediate. Adva, advanced.
