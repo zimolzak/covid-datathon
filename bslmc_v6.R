@@ -111,7 +111,13 @@ table(proc_distinct$PROC_NAME)
 pat %>%
 select(PAT_ID, Age, ETHNIC_GROUP, PATIENT_RACE, DEATH_DATE, SEX_C) %>%
 mutate_at(vars(DEATH_DATE), ~ chdate(.)) %>%
-mutate(sex = case_when(SEX_C == 1 ~ 'F', SEX_C == 2 ~ 'M')) ->
+mutate(sex = case_when(SEX_C == 1 ~ 'F', SEX_C == 2 ~ 'M')) %>%
+mutate(race_aggr = case_when(PATIENT_RACE == 'White or Caucasian' ~ 'White or Caucasian',
+    PATIENT_RACE == 'Black or African American' ~ 'Black or African American',
+    PATIENT_RACE == 'Asian' ~ 'Asian',
+    PATIENT_RACE == 'Declined' ~ 'Declined/unknown',
+    PATIENT_RACE == 'Unable to Determine' ~ 'Declined/unknown',
+    TRUE ~ 'Other'))->
 pat_cleaned
 
 
@@ -170,7 +176,11 @@ covid_admissions
 covid_admissions %>%
 left_join(pat_cleaned) %>%
 left_join(predictors_visit_count) %>%
-left_join(predictors_problem_list) ->
+left_join(predictors_problem_list) %>%
+mutate(comor.diab = (comor.diab.nvis + comor.diab.probl > 0),
+	comor.asth = (comor.asth.nvis + comor.asth.probl > 0),
+	comor.copd = (comor.copd.nvis + comor.copd.probl > 0),
+	comor.hypert = (comor.hypert.nvis + comor.hypert.probl > 0))-> # todo - free parameter
 analytic_data
 
 
@@ -194,8 +204,20 @@ los_histogram
 
 #### bunch of plots, may not work
 
-ggplot(analytic_data, aes(x=Age, y = los.days.n)) + geom_point() -> p1
+my_boxplot = function(aesthetic) {
+    return(ggplot(analytic_data, aesthetic) +
+    geom_boxplot(outlier.shape = NA, notch = TRUE) +
+    geom_jitter(width=0.2, alpha = 0.2))
+}
 
+ggplot(analytic_data, aes(x=Age, y = los.days.n)) + geom_point() -> agepoint
+my_boxplot(aes(x=ETHNIC_GROUP, y = los.days.n)) -> ethbox
+my_boxplot(aes(x=race_aggr, y = los.days.n)) -> racebox
+my_boxplot(aes(x=sex, y = los.days.n)) -> sexbox
+ggplot(analytic_data, aes(x=comor.diab.nvis, y = los.days.n)) + geom_point() -> diabpoint
+my_boxplot(aes(x=comor.diab, y = los.days.n)) -> diabbox
+
+# todo: titles, axes
 
 
 
@@ -206,7 +228,12 @@ say('\n\n----\n\nEnd of text output. Now plotting.')
 pdf(here("outputs", "Rplots_v6.pdf"))
 death_histogram
 los_histogram
-p1
+agepoint
+ethbox
+racebox
+sexbox
+diabpoint
+diabbox
 dev.off()
 
 # ggsave png here if needed
