@@ -52,19 +52,18 @@ if(INTERACTIVE) {
 #    mutate_at(vars(NOTED_DATE), ~ chdate(.))
 
 say('Dimensions of pat, enc, dxs')
-dim(pat) ## currently messed up, pipe delim has too many rows. Work on others 1st.
-dim(enc)
-dim(dxs)
+dim(pat) # 1900 x 14
+dim(enc) # 13943    15
+dim(dxs) # 44816     9
 
 dxs %>%
 select(PAT_ID, DX_NAME, CURRENT_ICD10_LIST, CONTACT_DATE) %>%
-mutate_at(vars(CONTACT_DATE), ~ chdate(.)) %>%
-group_by(PAT_ID) %>%
-mutate(first_contact = min(CONTACT_DATE)) %>%
-summarise(dm_e     = sum(grepl("diab", enc_dx_name, ignore.case = TRUE)),
-	      asthma_e = sum(grepl("asth", enc_dx_name, ignore.case = TRUE)),
-	      copd_e   = sum(grepl("copd", enc_dx_name, ignore.case = TRUE)),
-	      htn_e    = sum(grepl("hypert", enc_dx_name, ignore.case = TRUE)))
-
-->
+mutate_at(vars(CONTACT_DATE), ~ chdate(.)) ->
 dxs_cleaned
+
+dxs_cleaned %>%
+group_by(PAT_ID) %>%
+mutate() %>%
+summarise(comor.first.vis = min(CONTACT_DATE),
+    comor.diab.nvis = sum(grepl("diab", DX_NAME, ignore.case = TRUE))) ->
+dxs_processed
