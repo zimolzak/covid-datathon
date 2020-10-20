@@ -288,15 +288,17 @@ say('MARS model, degree 1 (evimp and summary)')
 earth.mod = earth(los.days.n ~ ., data = learning_data)
 evimp(earth.mod)
 summary(earth.mod)
-qplot(predict(earth.mod), learning_data$los.days.n)  +
+ggplot(data=NULL, aes(predict(earth.mod), learning_data$los.days.n)) +
+  geom_point(alpha=0.2) +
   geom_abline(intercept = 0, slope = 1) +
-  labs(title='MARS model, degree 1')-> yyhat1
+  labs(title='MARS model, degree 1') -> yyhat1
 
 say('MARS model, degree 2 (evimp and summary)')
 earth.mod2 = earth(los.days.n ~ ., data = learning_data, degree=2)
 evimp(earth.mod2)
 summary(earth.mod2)
-qplot(predict(earth.mod2), learning_data$los.days.n)  +
+ggplot(data=NULL, aes(predict(earth.mod2), learning_data$los.days.n)) +
+  geom_point(alpha=0.2) +
   geom_abline(intercept = 0, slope = 1) +
   labs(title='MARS model, degree 2')-> yyhat2
 
