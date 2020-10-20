@@ -156,12 +156,23 @@ mutate(los.days.n = as.numeric(los.days)) %>%
 filter(PATIENT_CLASS == 'Inpatient', CONTACT_DATE > chdate('2020-01-01')) ->
 inpat2020
 
-
-
 # todo - next step - find which Inpatient stays are for COVID.
 # join inpat2020 and dxs on PAT_ENC_CSN_ID
 # Need to do it from the perspective of ER visit if outcome is admit/not.
 # Can do from perspective in an inpat visit if outcome is LOS.
+
+dxs_cleaned %>%
+select(CURRENT_ICD10_LIST, PAT_ENC_CSN_ID) %>% # Don't need PAT_ID. I verified.
+filter(grepl("U07.1", CURRENT_ICD10_LIST, ignore.case = TRUE)) %>%
+inner_join(inpat2020, by = "PAT_ENC_CSN_ID") ->
+covid_admissions
+
+covid_admissions %>%
+left_join(pat_cleaned) %>%
+left_join(predictors_visit_count) %>%
+left_join(predictors_problem_list) ->
+analytic_data
+
 
 
 
@@ -181,14 +192,21 @@ qplot(inpat2020$los.days.n) +
 scale_x_log10() ->
 los_histogram
 
+#### bunch of plots, may not work
+
+ggplot(analytic_data, aes(x=Age, y = los.days.n)) + geom_point() -> p1
 
 
-#### plots
+
+
+
+#### write to plot files
 
 say('\n\n----\n\nEnd of text output. Now plotting.')
 pdf(here("outputs", "Rplots_v6.pdf"))
 death_histogram
 los_histogram
+p1
 dev.off()
 
 # ggsave png here if needed
