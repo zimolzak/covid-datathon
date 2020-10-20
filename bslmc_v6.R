@@ -144,6 +144,8 @@ summarise(comor.first.vis = min(CONTACT_DATE),
     ) ->
 predictors_visit_count
 
+## Todo - note that all these grepls with ignore.case will generate warnings when trying to scan DX_NAME with fancy characters, like if they put an accent on "Guillain-Barre." Consider grepl() within ICD code instead. See also how I generate covid_dx_dates, versus covid_admissions, below.
+
 prb %>%
 group_by(PAT_ID) %>%
 summarise(comor.diab.probl = sum(grepl("diab", DX_NAME, ignore.case = TRUE)),
@@ -171,10 +173,8 @@ mutate(los.days.n = as.numeric(los.days)) %>%
 filter(PATIENT_CLASS == 'Inpatient', CONTACT_DATE > chdate('2020-01-01')) ->
 inpat2020
 
-# todo - next step - find which Inpatient stays are for COVID.
-# join inpat2020 and dxs on PAT_ENC_CSN_ID
-# Need to do it from the perspective of ER visit if outcome is admit/not.
-# Can do from perspective in an inpat visit if outcome is LOS.
+# Would need to make analytic dataset from the perspective of ER visit if outcome is admit/not.
+# But can make the dataset from the perspective of an inpat visit if outcome is LOS.
 
 dxs_cleaned %>%
 select(CURRENT_ICD10_LIST, PAT_ENC_CSN_ID) %>% # Don't need PAT_ID. I verified.
@@ -190,26 +190,23 @@ filter(!is.na(los.days.n)) %>% # TODO - important - about when LOS or discharge 
 mutate(comor.diab = (comor.diab.nvis + comor.diab.probl > 0),
 	comor.asth = (comor.asth.nvis + comor.asth.probl > 0),
 	comor.copd = (comor.copd.nvis + comor.copd.probl > 0),
-	comor.hypert = (comor.hypert.nvis + comor.hypert.probl > 0))-> # todo - free parameter
+	comor.hypert = (comor.hypert.nvis + comor.hypert.probl > 0),
+	died_ever = !is.na(DEATH_DATE)) -> # todo - free parameter
 analytic_data
 
 
 
 
-#### analyses
+#### simple text tables
 
 say('ER discharge disposition')
 table(er2020$DISCHARGE_DISP)
 
+say('Tables of ethnicity/race')
 table(pat_cleaned$ETHNIC_GROUP)
 table(pat_cleaned$PATIENT_RACE)
+say('Crosstab of race, ethnicity')
 with(pat_cleaned, table(PATIENT_RACE, ETHNIC_GROUP))
-
-ggplot(pat_cleaned, aes(x = DEATH_DATE)) +
-geom_histogram() ->
-death_histogram
-
-
 
 
 
@@ -249,6 +246,10 @@ qplot(analytic_data$los.days.n) +
 scale_x_log10() ->
 los_histogram
 
+ggplot(pat_cleaned, aes(x = DEATH_DATE)) +
+geom_histogram() ->
+death_histogram
+
 ggplot(analytic_data, aes(x=Age, y = los.days.n)) + geom_point(alpha=0.2) -> agepoint
 ggplot(analytic_data, aes(x=comor.diab.nvis, y = los.days.n)) + geom_point(alpha=0.1) -> diabpoint
 
@@ -280,16 +281,24 @@ select(los.days.n, Age, ETHNIC_GROUP, sex, race_aggr, comor.diab, comor.asth, co
 filter(!is.na(los.days.n)) ->
 learning_data
 
+say('MARS model, degree 1')
 earth.mod = earth(los.days.n ~ ., data = learning_data)
-# plotmo
-# plot
-# evimp
-# summary
-# yhat = predict(earth.mod)
-# qplot(predict(earth.mod2), learning_data$los.days.n)  + geom_abline(intercept = 0, slope = 1)
+evimp(earth.mod)
+summary(earth.mod)
+qplot(predict(earth.mod), learning_data$los.days.n)  +
+  geom_abline(intercept = 0, slope = 1) +
+  labs(title='MARS model, degree 1')-> yyhat1
 
+say('MARS model, degree 2')
 earth.mod2 = earth(los.days.n ~ ., data = learning_data, degree=2)
+evimp(earth.mod2)
+summary(earth.mod2)
+qplot(predict(earth.mod2), learning_data$los.days.n)  +
+  geom_abline(intercept = 0, slope = 1) +
+  labs(title='MARS model, degree 2')-> yyhat2
 
+# todo - cross validation or train/test split?
+# todo - logistic of mortality
 
 
 
@@ -316,6 +325,12 @@ diabdens
 asthdens
 copddens
 hypertdens
+plotmo(earth.mod)
+plot(earth.mod)
+yyhat1
+plotmo(earth.mod2)
+plot(earth.mod2)
+yyhat2
 dev.off()
 
 # ggsave png here if needed
