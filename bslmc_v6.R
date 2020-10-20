@@ -21,7 +21,7 @@ df_interactive_mode = function(fn) {
 }
 
 chdate = function(x) {
-    return(as.Date(x, '%m/%d/%Y' ))
+    return(as.Date(x, '%Y-%m-%d' ))
 }
 
 chtime = function(x){
@@ -52,6 +52,18 @@ if(INTERACTIVE) {
 #    mutate_at(vars(NOTED_DATE), ~ chdate(.))
 
 say('Dimensions of pat, enc, dxs')
-dim(pat) ## currently messed up, pipe delim has too many rows. Work on others 1st.
-dim(enc)
-dim(dxs)
+dim(pat) # 1900 x 14
+dim(enc) # 13943    15
+dim(dxs) # 44816     9
+
+dxs %>%
+select(PAT_ID, DX_NAME, CURRENT_ICD10_LIST, CONTACT_DATE) %>%
+mutate_at(vars(CONTACT_DATE), ~ chdate(.)) ->
+dxs_cleaned
+
+dxs_cleaned %>%
+group_by(PAT_ID) %>%
+mutate() %>%
+summarise(comor.first.vis = min(CONTACT_DATE),
+    comor.diab.nvis = sum(grepl("diab", DX_NAME, ignore.case = TRUE))) ->
+dxs_processed
