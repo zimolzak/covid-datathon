@@ -107,7 +107,7 @@ Tables (outpatient):
 Where to look in this code
 --------
 
-High value areas would be `bslmc_v4_DataSets_pipe.R` for inpatient
+High value areas would be `bslmc_v4_DataSets_pipe.R` and `bslmc_v6.R` for inpatient
 data and `analysis_outpat.R` for outpatient. Pay the most attention to
 variables & values mentioned within `select()` and `filter()`
 statements to get a sense of how the data is structured.
@@ -116,7 +116,7 @@ Requirements for current repo
 --------
 
 - R, Rscript
-- R packages: dplyr, ggplot2, tidyr, lubridate, here
+- R packages: dplyr, ggplot2, tidyr, lubridate, here, earth, ROCR
 - make and usual UNIX-like toolchain (mv, rm, cp)
 - pandoc (only for documentation)
 
