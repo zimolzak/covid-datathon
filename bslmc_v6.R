@@ -382,7 +382,7 @@ ggplot(caldata, aes(bin, p_observed)) +
  geom_abline(intercept=0, slope=1, alpha=0.25) +
  xlim(0,1) + ylim(0,1) +
  geom_line(color='red') +
- labs(title='Calibration, logistic regression (COVID admissions)', x = 'Predicted mortality', y='Observed mortality') ->
+ labs(title='Calibration, logistic model of mortality (COVID admissions)', x = 'Predicted mortality', y='Observed mortality') ->
  calformal
 
 
@@ -403,8 +403,13 @@ death_rate_by_decade
 
 ggplot(death_rate_by_decade, aes(decade, death_rate)) + geom_point(color='red') +
 geom_line(color='red') +
-labs(title='Death rate correlated with decade of age (COVID admissions)', x='Age', y='Mortality rate') ->
+labs(title='Death rate correlated with decade of age (COVID admissions)', x='Age', y='Mortality rate') +
+scale_x_continuous(breaks=c(20,40,60,80,100)) ->
 deathvsdecade
+
+# ggplot(analytic_data, aes(x=Age, fill=died_ever)) +
+# geom_histogram(binwidth=10) +
+# scale_x_continuous(breaks=c(20,40,60,80,100))
 
 
 
