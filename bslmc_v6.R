@@ -317,6 +317,7 @@ ggplot(data = analytic_data, aes(color=died_ever, x=Age)) +
 
 
 
+
 #### Modeling
 # earth, NN, knn, adaboost, rf
 
@@ -342,8 +343,6 @@ ggplot(data=NULL, aes(predict(earth.mod2), learning_data$los.days.n)) +
   geom_point(alpha=0.2) +
   geom_abline(intercept = 0, slope = 1) +
   labs(title='MARS model, degree 2')-> yyhat2
-
-# todo - cross validation or train/test split?
 
 # logistic
 
