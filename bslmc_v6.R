@@ -309,6 +309,11 @@ ggplot(data = analytic_data, aes(x=died_ever, y=Age)) +
     	labs(subtitle=paste('p =', kw_agedied$p.value)) ->
     	died_age
 
+ggplot(data = analytic_data, aes(color=died_ever, x=Age)) +
+	    geom_density() +
+    	labs(subtitle=paste('p =', kw_agedied$p.value)) ->
+    	died_age_dens
+
 
 
 #### Modeling
@@ -449,6 +454,7 @@ asthdens
 copddens
 hypertdens
 died_age
+died_age_dens
 plotmo(earth.mod)
 plot(earth.mod)
 yyhat1
@@ -467,3 +473,8 @@ plot(earth.mort2)
 dev.off()
 
 # ggsave png here if needed
+# sex, diab, calibr, decade, "life" table
+ggsave(here('pngs-1020', 'los_sex_boxplot.png'), sexbox)
+ggsave(here('pngs-1020', 'los_diab_boxplot.png'), diabbox)
+ggsave(here('pngs-1020', 'calibration_logistic.png'), calformal)
+ggsave(here('pngs-1020', 'mort_vs_decade.png'), deathvsdecade)
