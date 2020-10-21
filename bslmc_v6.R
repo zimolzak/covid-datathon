@@ -216,6 +216,7 @@ with(pat_cleaned, table(PATIENT_RACE, ETHNIC_GROUP))
 #### plots, Bivariate
 
 los_vs_categorical = function(catvar, plottype) {
+	gen_title = 'Associations with length of stay (COVID admissions)'
 	result = kruskal.test(analytic_data$los.days.n, analytic_data[,catvar])
 	p = result$p.value
 	n_categories = dim(table(analytic_data[,catvar]))
@@ -233,13 +234,13 @@ los_vs_categorical = function(catvar, plottype) {
 		g = ggplot(data = NULL, aes(x=analytic_data[,catvar], y=analytic_data$los.days.n)) +
 	    geom_boxplot(outlier.shape = NA, notch = TRUE) +
     	geom_jitter(width=0.2, alpha = 0.2) +
-    	labs(subtitle=paste('p =', p, median_str), y = 'Length of stay (days)', x = catvar)
+    	labs(title=gen_title, subtitle=paste('p =', p, median_str), y = 'Length of stay (days)', x = catvar)
     	# todo: put medians on the plot
 	} else {
 		g = ggplot(data=NULL, aes(x= analytic_data$los.days.n, color= analytic_data[,catvar])) +
 		geom_density() +
 		scale_x_log10() +
-    	labs(subtitle=paste('p =', p, median_str), x = 'Length of stay (days)', color = catvar)
+    	labs(title=gen_title, subtitle=paste('p =', p, median_str), x = 'Length of stay (days)', color = catvar)
 	}
 	return(g)
 }
@@ -376,20 +377,14 @@ caldata
 say('Logistic model calibration')
 caldata
 
-ggplot(caldata, aes(bin, p_observed)) + geom_point(color='red') + geom_abline(intercept=0, slope=1, alpha=0.25) +
-xlim(0,1) + ylim(0,1) + geom_line(color='red') + labs(title='Calibration, logistic regression') -> calformal
+ggplot(caldata, aes(bin, p_observed)) +
+ geom_point(color='red') +
+ geom_abline(intercept=0, slope=1, alpha=0.25) +
+ xlim(0,1) + ylim(0,1) +
+ geom_line(color='red') +
+ labs(title='Calibration, logistic regression (COVID admissions)', x = 'Predicted mortality', y='Observed mortality') ->
+ calformal
 
-
-
-
-bind_cols(analytic_data, phat = logitMod$fitted.values) %>%
-select(died_ever, phat) %>%
-mutate(bin = trunc(phat * 10) / 10) %>%
-group_by(bin) %>%
-summarise(p_observed = mean(died_ever),
-    numerator = sum(died_ever),
-    denominator = n()) ->
-caldata
 
 
 
@@ -407,7 +402,9 @@ say('Death rate by decade')
 death_rate_by_decade
 
 ggplot(death_rate_by_decade, aes(decade, death_rate)) + geom_point(color='red') +
-geom_line(color='red') + labs(title='Death rate vs decade of age') -> deathvsdecade
+geom_line(color='red') +
+labs(title='Death rate correlated with decade of age (COVID admissions)', x='Age', y='Mortality rate') ->
+deathvsdecade
 
 
 
@@ -474,7 +471,7 @@ dev.off()
 
 # ggsave png here if needed
 # sex, diab, calibr, decade, "life" table
-ggsave(here('pngs-1020', 'los_sex_boxplot.png'), sexbox)
-ggsave(here('pngs-1020', 'los_diab_boxplot.png'), diabbox)
+ggsave(here('pngs-1020', 'los_sex_boxplot.png'), sexbox + labs(x='Sex'))
+ggsave(here('pngs-1020', 'los_diab_boxplot.png'), diabbox + labs(x='History of diabetes'))
 ggsave(here('pngs-1020', 'calibration_logistic.png'), calformal)
 ggsave(here('pngs-1020', 'mort_vs_decade.png'), deathvsdecade)
