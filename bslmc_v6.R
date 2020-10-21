@@ -377,6 +377,44 @@ xlim(0,1) + ylim(0,1) + geom_line(color='red') + labs(title='Calibration, logist
 
 
 
+bind_cols(analytic_data, phat = logitMod$fitted.values) %>%
+select(died_ever, phat) %>%
+mutate(bin = trunc(phat * 10) / 10) %>%
+group_by(bin) %>%
+summarise(p_observed = mean(died_ever),
+    numerator = sum(died_ever),
+    denominator = n()) ->
+caldata
+
+
+
+#### decades vs mortality
+
+analytic_data %>%
+mutate(decade = trunc(Age / 10) * 10)  %>%
+group_by(decade) %>%
+summarise(death_rate = mean(died_ever),
+    numerator = sum(died_ever),
+    denominator = n()) ->
+death_rate_by_decade
+
+say('Death rate by decade')
+death_rate_by_decade
+
+ggplot(death_rate_by_decade, aes(decade, death_rate)) + geom_point(color='red') +
+geom_line(color='red') + labs(title='Death rate vs decade of age') -> deathvsdecade
+
+
+
+
+### MARS applied to mortality
+
+
+
+    
+    
+
+
 #### write to plot files
 
 say('\n\n----\n\nEnd of text output. Now plotting.')
@@ -410,6 +448,7 @@ plot(rocr_perf, colorize=TRUE)
 cal1
 calhist
 calformal
+deathvsdecade
 dev.off()
 
 # ggsave png here if needed
