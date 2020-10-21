@@ -320,7 +320,7 @@ filter(!is.na(los.days.n)) ->
 learning_data
 
 say('MARS model, degree 1 (evimp and summary)')
-earth.mod = earth(los.days.n ~ ., data = learning_data)
+earth.mod = earth(los.days.n ~ ., data = learning_data, nfold=10)
 evimp(earth.mod)
 summary(earth.mod)
 ggplot(data=NULL, aes(predict(earth.mod), learning_data$los.days.n)) +
@@ -329,7 +329,7 @@ ggplot(data=NULL, aes(predict(earth.mod), learning_data$los.days.n)) +
   labs(title='MARS model, degree 1') -> yyhat1
 
 say('MARS model, degree 2 (evimp and summary)')
-earth.mod2 = earth(los.days.n ~ ., data = learning_data, degree=2)
+earth.mod2 = earth(los.days.n ~ ., data = learning_data, degree=2, nfold=10)
 evimp(earth.mod2)
 summary(earth.mod2)
 ggplot(data=NULL, aes(predict(earth.mod2), learning_data$los.days.n)) +
@@ -414,12 +414,12 @@ select(died_ever, Age, ETHNIC_GROUP, sex, race_aggr, comor.diab, comor.asth, com
 learning_data_mort
 
 say('MARS model, mortality')
-earth.mort1 = earth(died_ever ~ ., data = learning_data_mort)
+earth.mort1 = earth(died_ever ~ ., data = learning_data_mort, nfold=10)
 evimp(earth.mort1)
 summary(earth.mort1)
 
 say('MARS model, mortality, degree 2')
-earth.mort2 = earth(died_ever ~ ., data = learning_data_mort, degree=2)
+earth.mort2 = earth(died_ever ~ ., data = learning_data_mort, degree=2, nfold=10)
 evimp(earth.mort2)
 summary(earth.mort2)
 
