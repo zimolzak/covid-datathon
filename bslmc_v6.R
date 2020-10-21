@@ -409,6 +409,19 @@ geom_line(color='red') + labs(title='Death rate vs decade of age') -> deathvsdec
 
 ### MARS applied to mortality
 
+analytic_data %>%
+select(died_ever, Age, ETHNIC_GROUP, sex, race_aggr, comor.diab, comor.asth, comor.copd, comor.hypert) ->
+learning_data_mort
+
+say('MARS model, mortality')
+earth.mort1 = earth(died_ever ~ ., data = learning_data_mort)
+evimp(earth.mort1)
+summary(earth.mort1)
+
+say('MARS model, mortality, degree 2')
+earth.mort2 = earth(died_ever ~ ., data = learning_data_mort, degree=2)
+evimp(earth.mort2)
+summary(earth.mort2)
 
 
     
@@ -449,6 +462,10 @@ cal1
 calhist
 calformal
 deathvsdecade
+plotmo(earth.mort1)
+plot(earth.mort1)
+plotmo(earth.mort2)
+plot(earth.mort2)
 dev.off()
 
 # ggsave png here if needed
