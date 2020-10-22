@@ -12,6 +12,11 @@ comorbidity.
 3. Study the covariation in severe outcomes with treatment modalities
 to evaluate population-level changes.
 
+The file you probably want
+--------
+
+`bslmc_v6.R`
+
 Analytic data set sketch
 --------
 
