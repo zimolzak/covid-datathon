@@ -15,7 +15,9 @@ to evaluate population-level changes.
 The file you probably want
 --------
 
-`bslmc_v6.R`
+`bslmc_v6.R` (click on it up above).
+
+Also I feel the `outputs/makefile` file is useful and nifty.
 
 Analytic data set sketch
 --------
