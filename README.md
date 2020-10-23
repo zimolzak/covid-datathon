@@ -17,6 +17,9 @@ The file you probably want
 
 `bslmc_v6.R` (click on it up above).
 
+`Routputs_v6.txt` for results (although you should treat them as proof
+of concept only and not believe them. Not even hypothesis-generating.)
+
 Also I feel the `outputs/makefile` file is useful and nifty.
 
 Analytic data set sketch
