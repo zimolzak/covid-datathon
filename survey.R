@@ -23,15 +23,19 @@ firstchar2num = function(string) {
 }
 
 truefalse = function(string) {
-	if(string == "Yes"){return(1)}
-	if(string == "No"){return(0)}
-	if(string == "Checked"){return(1)}
-	if(string == "Unchecked"){return(0)}
-	if(string == "Complete"){return(1)}
-	if(string == "Incomplete"){return(0)}
-	if(string == "Partially"){return(0.5)}
-	if(string == "Planned"){return(0.5)}
-	return(NA)
+	return(
+		case_when(
+			string == "Yes" ~ 1,
+			string == "No" ~ 0,
+			string == "Checked" ~ 1,
+			string == "Unchecked" ~ 0,
+			string == "Complete" ~ 1,
+			string == "Incomplete" ~ 0,
+			string == "Partially" ~ 0.5,
+			string == "Planned" ~ 0.5
+			# NA if no match
+		)
+	)
 }
 
 
@@ -93,12 +97,10 @@ valuable = Participating.in.the.BCM.datathon.was.a.valuable.experience,
 future.datathon = I.would.participate.in.a.future.BCM.datathon,
 comment.text = What.worked.well.or.didn.t.work..or.general.comments,
 complete = Complete.
-) -> renamed
+) %>%
+mutate_at(vars(prior.hack, starts_with("role"), -role.text, completed, answered, collab.outside, collab.new, pub.abstract, pub.paper), ~ truefalse(.)) -> survey_tidy
 
-renamed %>%
-mutate_at(vars(prior.hack, starts_with("role"), -role.text, completed, answered, collab.outside, collab.new, pub.abstract, pub.paper), ~ truefalse(.)) -> zero_one
-
-renamed
+survey_tidy
 
 
 
