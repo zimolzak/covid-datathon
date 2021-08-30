@@ -18,6 +18,20 @@ say = function(s) {
 	cat(paste(sL, collapse=''))
 }
 
+firstchar2num = function(string) {
+	return(as.numeric(substr(string, 1, 1)))
+}
+
+truefalse = function(string) {
+	if(string == "Yes"){return(1)}
+	if(string == "No"){return(0)}
+	if(string == "Checked"){return(1)}
+	if(string == "Unchecked"){return(0)}
+	if(string == "Complete"){return(1)}
+	if(string == "Incomplete"){return(0)}
+	if(string == "Partially"){return(0.5)}
+	if(string == "Planned"){return(0.5)}
+}
 
 
 
@@ -40,8 +54,8 @@ id = Record.ID,
 sid = Survey.Identifier,
 time = Survey.Timestamp,
 acadRank = Academic.rank,
-acadRank.othertext = Other..specify,
-dept = Primary.department.section.research.center,
+acadRank.text = Other..specify,
+dept.text = Primary.department.section.research.center,
 years = Number.of.years.at.BCM,
 prior.hack = I.participated.previously.in.a.hackathon.datathon,
 prior.emrdata = I.had.experience.using.electronic.medical.record..EMR..data.for.research.or.quality.improvement.prior.to.this.datathon,
@@ -56,7 +70,7 @@ role.datawarehouse = Your.role.on.your.team...mark.all.that.apply...choice.Data.
 role.datamgr = Your.role.on.your.team...mark.all.that.apply...choice.Data.manager.,
 role.learner = Your.role.on.your.team...mark.all.that.apply...choice.Learner.,
 role.other = Your.role.on.your.team...mark.all.that.apply...choice.Other..please.specify..,
-role.othertext = Other..specify.1,
+role.text = Other..specify.1,
 know.avail.pre = How.knowledgeable.were.you.about.data.availability.at.BCM.prior.to.the.datathon,
 know.avail.post = How.knowledgeable.were.you.about.data.availability.at.BCM.following.the.datathon,
 know.use.pre = How.knowledgeable.were.you.about.how.to.use.the.BCM.data.warehouse.prior.to.the.datathon,
@@ -76,7 +90,7 @@ pub.abstract = Our.team.datathon.project.resulted.in.a.scientific.abstract.for.a
 pub.paper = Our.team.datathon.project.resulted.in.a.publication,
 valuable = Participating.in.the.BCM.datathon.was.a.valuable.experience,
 future.datathon = I.would.participate.in.a.future.BCM.datathon,
-commenttext = What.worked.well.or.didn.t.work..or.general.comments,
+comment.text = What.worked.well.or.didn.t.work..or.general.comments,
 complete = Complete.
 ) -> renamed
 
