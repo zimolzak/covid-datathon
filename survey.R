@@ -32,7 +32,9 @@ truefalse = function(string) {
 			string == "Complete" ~ 1,
 			string == "Incomplete" ~ 0,
 			string == "Partially" ~ 0.5,
-			string == "Planned" ~ 0.5
+			string == "Planned" ~ 0.5,
+			string == "Yes - some of the team members"  ~ 0.5,
+			string == "Yes - all of the team member" ~ 1
 			# NA if no match
 		)
 	)
@@ -98,7 +100,7 @@ future.datathon = I.would.participate.in.a.future.BCM.datathon,
 comment.text = What.worked.well.or.didn.t.work..or.general.comments,
 complete = Complete.
 ) %>%
-mutate_at(vars(prior.hack, starts_with("role"), -role.text, completed, answered, collab.outside, collab.new, pub.abstract, pub.paper), ~ truefalse(.)) -> survey_tidy
+mutate_at(vars(prior.hack, starts_with("role"), -role.text, completed, answered, collab.outside, collab.new, pub.abstract, pub.paper, complete, workedTeam), ~ truefalse(.)) -> survey_tidy
 
 survey_tidy
 
