@@ -31,6 +31,7 @@ truefalse = function(string) {
 	if(string == "Incomplete"){return(0)}
 	if(string == "Partially"){return(0.5)}
 	if(string == "Planned"){return(0.5)}
+	return(NA)
 }
 
 
@@ -93,6 +94,9 @@ future.datathon = I.would.participate.in.a.future.BCM.datathon,
 comment.text = What.worked.well.or.didn.t.work..or.general.comments,
 complete = Complete.
 ) -> renamed
+
+renamed %>%
+mutate_at(vars(prior.hack, starts_with("role"), -role.text, completed, answered, collab.outside, collab.new, pub.abstract, pub.paper), ~ truefalse(.)) -> zero_one
 
 renamed
 
