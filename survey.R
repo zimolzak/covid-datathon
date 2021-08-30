@@ -112,7 +112,8 @@ complete = Complete.
 mutate_at(vars(prior.hack, starts_with("role"), -role.text, completed, answered, collab.outside, collab.new, pub.abstract, pub.paper, complete, workedTeam), ~ truefalse(.)) %>%
 mutate_at(vars(prior.emrdata, starts_with("know"), starts_with("hard"), starts_with("future"), valuable), ~ firstchar2num(.)) -> survey_tidy
 
-survey_tidy
+say("survey_tidy")
+survey_tidy %>% select(-ends_with("text"))
 
 
 
