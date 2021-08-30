@@ -7,14 +7,14 @@ library(here)
 
 #### Functions
 
-filename2df <- function(fn) {
-    df = read.csv(here("data", "survey", fn), sep=",",
+filename2df <- function(fname) {
+    df = read.csv(here("data", "survey", fname), sep=",",
         stringsAsFactors = FALSE, na.strings="null")
     return(df)
 }
 
 say = function(s) {
-	sL = c('\n', s, '----\n')
+	sL = c('\n', s, ' ----\n')
 	cat(paste(sL, collapse=''))
 }
 
@@ -23,15 +23,24 @@ say = function(s) {
 
 #### Loading
 
-sur = filename2df('BCMDatathonSurvey_DATA_2021-08-10.csv')
+survey_in = filename2df('BCMDatathonSurvey_DATA_2021-08-10.csv')
 
-say('Dimensions of sur')
-dim(sur)
+say('Dimensions of survey_in')
+dim(survey_in)
+
+survey_in
 
 
 
 
 #### Cleaning (of dates, etc)
+
+
+
+
+
+
+#### Plot
 
 # qplot(analytic_data$los.days.n) +
 # scale_x_log10() ->

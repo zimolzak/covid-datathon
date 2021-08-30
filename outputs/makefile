@@ -1,4 +1,4 @@
-analyses = Rplots_outpat.pdf Routputs_inpat.txt Routputs_inpat_v4.txt Routputs_inpat_v5.txt Routputs_v6.txt
+analyses = Rplots_outpat.pdf Routputs_inpat.txt Routputs_inpat_v4.txt Routputs_inpat_v5.txt Routputs_v6.txt Routputs_survey.txt
 analyses_unmentioned = Routputs_outpat.txt Rplots_inpat_v4.pdf Rplots_inpat.pdf
 documents = README.pdf README.docx thoughts-notes-appendix.pdf
 
@@ -15,6 +15,9 @@ all: $(documents) $(analyses)
 	pandoc -o $@ $<
 
 #### Analyses
+
+Routputs_survey.txt: ../survey.R ../data/survey/BCMDatathonSurvey_DATA_2021-08-10.csv
+	Rscript $< > $@
 
 Rplots_outpat.pdf: ../analysis_outpat.R
 	Rscript $< > Routputs_outpat.txt
