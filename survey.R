@@ -19,7 +19,16 @@ say = function(s) {
 }
 
 firstchar2num = function(string) {
-	return(as.numeric(substr(string, 1, 1)))
+	return(
+		case_when(
+			substr(string, 1, 1) == "1" ~ 1,
+			substr(string, 1, 1) == "2" ~ 2,
+			substr(string, 1, 1) == "3" ~ 3,
+			substr(string, 1, 1) == "4" ~ 4,
+			substr(string, 1, 1) == "5" ~ 5
+			# fixme - must be better way to do this but do it vectorized
+		)
+	)
 }
 
 truefalse = function(string) {
@@ -100,7 +109,8 @@ future.datathon = I.would.participate.in.a.future.BCM.datathon,
 comment.text = What.worked.well.or.didn.t.work..or.general.comments,
 complete = Complete.
 ) %>%
-mutate_at(vars(prior.hack, starts_with("role"), -role.text, completed, answered, collab.outside, collab.new, pub.abstract, pub.paper, complete, workedTeam), ~ truefalse(.)) -> survey_tidy
+mutate_at(vars(prior.hack, starts_with("role"), -role.text, completed, answered, collab.outside, collab.new, pub.abstract, pub.paper, complete, workedTeam), ~ truefalse(.)) %>%
+mutate_at(vars(prior.emrdata, starts_with("know"), starts_with("hard"), starts_with("future"), valuable), ~ firstchar2num(.)) -> survey_tidy
 
 survey_tidy
 
