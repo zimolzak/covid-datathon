@@ -116,10 +116,13 @@ mutate_at(vars(prior.emrdata, starts_with("know"), starts_with("hard"), starts_w
 
 
 survey_tidy %>%
-gather(`know.use.pre`, `know.use.post`, key="prepost", value="know.use") -> gathered
+gather(`know.use.pre`, `know.use.post`, key="prepost", value="know.use") %>%
+mutate(numeric_prepost = case_when(prepost == "know.use.pre" ~ 0, prepost == "know.use.post" ~ 1)) -> gathered
+
 
 say("gathered")
-gathered %>% select(-ends_with("text"))
+gathered %>% select(id, prepost, know.use, numeric_prepost)
+
 
 
 
@@ -129,17 +132,18 @@ gathered %>% select(-ends_with("text"))
 # scale_x_log10() ->
 # los_histogram
 
-
+ggplot(gathered) +
+  geom_point(aes(x = numeric_prepost, y = know.use)) +
+  geom_line(aes(x = numeric_prepost, y = know.use)) -> paired
 
 
 
 
 #### write to plot files
 
-# say('\n\n----\n\nEnd of text output. Now plotting.')
-# pdf(here("outputs", "Rplots_v6.pdf"))
-# death_histogram
-# los_histogram
-# dev.off()
+say('\n\n----\n\nEnd of text output. Now plotting.')
+pdf(here("outputs", "Rplots_survey.pdf"))
+paired
+dev.off()
 
 # ggsave png here if needed
