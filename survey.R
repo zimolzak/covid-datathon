@@ -126,15 +126,16 @@ gathered %>% select(id, prepost, know.use, numeric_prepost)
 
 
 
+
 #### Plots
 
 # qplot(analytic_data$los.days.n) +
 # scale_x_log10() ->
 # los_histogram
 
-ggplot(gathered) +
-  geom_point(aes(x = numeric_prepost, y = know.use)) +
-  geom_line(aes(x = numeric_prepost, y = know.use)) -> paired
+ggplot(gathered, aes(x = numeric_prepost, y = know.use, group = id)) +   geom_point() +   geom_line() -> paired
+  
+#ggplot(survey_tidy, aes())
 
 
 
