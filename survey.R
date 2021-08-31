@@ -117,11 +117,13 @@ mutate_at(vars(prior.emrdata, starts_with("know"), starts_with("hard"), starts_w
 
 survey_tidy %>%
 gather(`know.use.pre`, `know.use.post`, key="prepost", value="know.use") %>%
-mutate(numeric_prepost = case_when(prepost == "know.use.pre" ~ 0, prepost == "know.use.post" ~ 1)) -> gathered
+mutate(numeric_prepost = case_when(prepost == "know.use.pre" ~ 0, prepost == "know.use.post" ~ 1),
+	eps_x = runif(nrow(survey_tidy) * 2, -0.1, 0.1),
+	eps_y = runif(nrow(survey_tidy) * 2, -0.1, 0.1)) -> gathered
 
 
 say("gathered")
-gathered %>% select(id, prepost, know.use, numeric_prepost)
+gathered %>% select(id, prepost, know.use, numeric_prepost, eps_x, eps_y)
 
 
 
@@ -133,7 +135,7 @@ gathered %>% select(id, prepost, know.use, numeric_prepost)
 # scale_x_log10() ->
 # los_histogram
 
-ggplot(gathered, aes(x = numeric_prepost, y = know.use, group = id)) +   geom_point() +   geom_line() -> paired
+ggplot(gathered, aes(x = numeric_prepost + eps_x, y = know.use + eps_y, group = id)) +   geom_point() +   geom_line() -> paired
   
 #ggplot(survey_tidy, aes())
 
