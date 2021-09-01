@@ -113,13 +113,15 @@ complete = Complete.
 mutate_at(vars(prior.hack, starts_with("role"), -role.text, completed, answered, collab.outside, collab.new, pub.abstract, pub.paper, complete, workedTeam), ~ truefalse(.)) %>%
 mutate_at(vars(prior.emrdata, starts_with("know"), starts_with("hard"), starts_with("future"), valuable), ~ firstchar2num(.)) -> survey_tidy
 
-
+jitter_absolute = 0.02
+jx = jitter_absolute
+jy = 5 * jitter_absolute
 
 survey_tidy %>%
 gather(`know.use.pre`, `know.use.post`, key="prepost", value="know.use") %>%
 mutate(numeric_prepost = case_when(prepost == "know.use.pre" ~ 0, prepost == "know.use.post" ~ 1),
-	eps_x = runif(nrow(survey_tidy) * 2, -0.1, 0.1),
-	eps_y = runif(nrow(survey_tidy) * 2, -0.1, 0.1)) -> gathered
+	eps_x = runif(nrow(survey_tidy) * 2, -1 * jx, jx),
+	eps_y = runif(nrow(survey_tidy) * 2, -1 * jy, jy)) -> gathered
 
 
 say("gathered")
@@ -135,7 +137,11 @@ gathered %>% select(id, prepost, know.use, numeric_prepost, eps_x, eps_y)
 # scale_x_log10() ->
 # los_histogram
 
-ggplot(gathered, aes(x = numeric_prepost + eps_x, y = know.use + eps_y, group = id)) +   geom_point() +   geom_line() -> paired
+ggplot(gathered, aes(x = numeric_prepost + eps_x, y = know.use + eps_y, group = id)) +
+ geom_point() +
+  geom_line() +
+  scale_x_continuous(breaks = c(0,1), labels = c("Pre", "Post")) +
+  labs(title="Knowledge about how to use the data warehouse", y="Likert", x="Time") -> paired
   
 #ggplot(survey_tidy, aes())
 
