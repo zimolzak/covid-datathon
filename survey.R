@@ -146,12 +146,27 @@ select(id, numeric_prepost, know.use, know.avail, know.limit)
 
 #### Plots
 
-ggplot(gathered, aes(x = numeric_prepost + eps_x, y = know.use + eps_y, group = id)) +
+ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.use + eps_y, group = id)) +
  geom_point() +
   geom_line() +
   scale_x_continuous(breaks = c(0,1), labels = c("Pre", "Post")) +
-  labs(title="Knowledge about how to use the data warehouse", y="Likert", x="Time") -> paired
-  
+  labs(title="Knowledge about how to use the data warehouse", y="Likert", x="Time") -> paired1
+
+ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.avail + eps_y, group = id)) +
+ geom_point() +
+  geom_line() +
+  scale_x_continuous(breaks = c(0,1), labels = c("Pre", "Post")) +
+  labs(title="Knowledge about data availability", y="Likert", x="Time") -> paired2
+
+ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.limit + eps_y, group = id)) +
+ geom_point() +
+  geom_line() +
+  scale_x_continuous(breaks = c(0,1), labels = c("Pre", "Post")) +
+  labs(title="Understanding of data warehouse limitations", y="Likert", x="Time") -> paired3
+
+
+
+
 #ggplot(survey_tidy, aes())
 
 
@@ -161,7 +176,9 @@ ggplot(gathered, aes(x = numeric_prepost + eps_x, y = know.use + eps_y, group = 
 
 say('\n\n----\n\nEnd of text output. Now plotting.')
 pdf(here("outputs", "Rplots_survey.pdf"))
-paired
+paired1
+paired2
+paired3
 dev.off()
 
 # ggsave png here if needed
