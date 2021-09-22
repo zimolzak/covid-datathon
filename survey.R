@@ -53,7 +53,7 @@ truefalse = function(string) {
 
 
 
-#### Loading
+#### Load data
 
 survey_in = filename2df('BCMDatathonSurvey_DATA_2021-08-10.csv')
 
@@ -63,7 +63,7 @@ dim(survey_in)
 
 
 
-#### Cleaning
+#### Shorten long column names
 
 survey_in %>%
 rename(
@@ -113,6 +113,11 @@ complete = Complete.
 mutate_at(vars(prior.hack, starts_with("role"), -role.text, completed, answered, collab.outside, collab.new, pub.abstract, pub.paper, complete, workedTeam), ~ truefalse(.)) %>%
 mutate_at(vars(prior.emrdata, starts_with("know"), starts_with("hard"), starts_with("future"), valuable), ~ firstchar2num(.)) -> survey_tidy
 
+
+
+
+#### Calculate new vars
+
 jitter_absolute = 0.02
 jx = jitter_absolute
 jy = 5 * jitter_absolute
@@ -140,6 +145,8 @@ full_join(limit, by=c("id", "numeric_prepost")) -> gathered_all
 
 
 
+#### Print samples
+
 say("SAMPLE DATA\n\ngathered_all")
 gathered_all %>%
 select(id, numeric_prepost, know.use, know.avail, know.limit) %>%
@@ -156,7 +163,6 @@ head()
 #### Univariate
 
 say("TABLES\n\n")
-
 cat("\nacadRank:"); table(survey_tidy$acadRank)
 cat("\nprior.hack:"); table(survey_tidy$prior.hack)
 cat("\nworkedTeam:"); table(survey_tidy$workedTeam)
@@ -177,16 +183,12 @@ cat("\npub.abstract:"); table(survey_tidy$pub.abstract)
 cat("\npub.paper:"); table(survey_tidy$pub.paper)
 cat("\ncomplete:"); table(survey_tidy$complete)
 
-
-
-
 qplot(survey_tidy$years, binwidth=2) -> uni_yrs
-
-qplot(survey_tidy$teamsize) -> uni_teamsize
-qplot(survey_tidy$effortHrs) -> uni_effortHrs
+qplot(survey_tidy$teamsize) -> uni_teamsize # FIXME - it is not numeric
+qplot(survey_tidy$effortHrs) -> uni_effortHrs # fixme binwidth
 qplot(survey_tidy$itpercent) -> uni_itpercent
-qplot(survey_tidy$hard.datapull) -> uni_hard.datapull
-qplot(survey_tidy$hard.datawork) -> uni_hard.datawork
+qplot(survey_tidy$hard.datapull) -> uni_hard.datapull # fixme likert range/wid
+qplot(survey_tidy$hard.datawork) -> uni_hard.datawork # all rest Likert
 qplot(survey_tidy$valuable) -> uni_valuable
 qplot(survey_tidy$future.datathon) -> uni_future.datathon
 qplot(survey_tidy$prior.emrdata) -> uni_prior.emrdata
@@ -194,7 +196,8 @@ qplot(survey_tidy$future.studies) -> uni_future.studies
 
 
 
-#### Plots
+
+#### Associations
 
 ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.use + eps_y, group = id)) +
  geom_point() +
@@ -217,12 +220,7 @@ ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.limit + eps_y, gr
 
 
 
-#ggplot(survey_tidy, aes())
-
-
-
-
-#### write to plot files
+#### Write to plot files
 
 say('\n\n----\n\nEnd of text output. Now plotting.')
 pdf(here("outputs", "Rplots_survey.pdf"))
