@@ -77,7 +77,7 @@ years = Number.of.years.at.BCM,
 prior.hack = I.participated.previously.in.a.hackathon.datathon,
 prior.emrdata = I.had.experience.using.electronic.medical.record..EMR..data.for.research.or.quality.improvement.prior.to.this.datathon,
 teamsize = Number.of.people.on.your.datathon.team,
-workedTeam = Have.you.worked.with.the.members.of.your.datathon.team.before,
+workedTeam = Have.you.worked.with.the.members.of.your.datathon.team.before, # FIXME - camelcase
 role.clinical = Your.role.on.your.team...mark.all.that.apply...choice.Content..clinical..expert.,
 role.lead = Your.role.on.your.team...mark.all.that.apply...choice.Project.lead.,
 role.reviewer = Your.role.on.your.team...mark.all.that.apply...choice.Chart.reviewer.,
@@ -155,12 +155,34 @@ head()
 
 #### Univariate
 
-say("tables")
-table(survey_tidy$acadRank)
+say("TABLES\n\n")
+
+cat("\nacadRank:"); table(survey_tidy$acadRank)
+cat("\nprior.hack:"); table(survey_tidy$prior.hack)
+cat("\nprior.emrdata:"); table(survey_tidy$prior.emrdata)
+cat("\nworkedTeam:"); table(survey_tidy$workedTeam)
+cat("\nrole.clinical:"); table(survey_tidy$role.clinical)
+cat("\nrole.lead:"); table(survey_tidy$role.lead)
+cat("\nrole.reviewer:"); table(survey_tidy$role.reviewer)
+cat("\nrole.datasci:"); table(survey_tidy$role.datasci)
+cat("\nrole.stats:"); table(survey_tidy$role.stats)
+cat("\nrole.datawarehouse:"); table(survey_tidy$role.datawarehouse)
+cat("\nrole.datamgr:"); table(survey_tidy$role.datamgr)
+cat("\nrole.learner:"); table(survey_tidy$role.learner)
+cat("\nrole.other:"); table(survey_tidy$role.other)
+cat("\ncompleted:"); table(survey_tidy$completed)
+cat("\nanswered:"); table(survey_tidy$answered)
+cat("\ncollab.outside:"); table(survey_tidy$collab.outside)
+cat("\ncollab.new:"); table(survey_tidy$collab.new)
+cat("\nfuture.studies:"); table(survey_tidy$future.studies)
+cat("\npub.abstract:"); table(survey_tidy$pub.abstract)
+cat("\npub.paper:"); table(survey_tidy$pub.paper)
+cat("\ncomplete:"); table(survey_tidy$complete)
+
+
+
 
 qplot(survey_tidy$years, binwidth=2) -> uni_yrs
-# prior hack, prior emrdata, workedteam, role(9), completed, answered,
-# collab.outside collab.new future.studies pub.abstract pub.paper, complete
 # teamsize, effortHrs, itpercent, hard.datapull, hard.datawork, valuable, future.datathon
 
 
