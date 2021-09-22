@@ -187,6 +187,11 @@ qplot(survey_tidy$years, binwidth=2) -> uni_yrs
 qplot(survey_tidy$teamsize) -> uni_teamsize # FIXME - it is not numeric
 qplot(survey_tidy$effortHrs) -> uni_effortHrs # fixme binwidth
 qplot(survey_tidy$itpercent) -> uni_itpercent
+
+ggplot(survey_tidy, aes(x = hard.datapull)) +
+ geom_bar() +
+ xlim(1,5) -> better_hist
+
 qplot(survey_tidy$hard.datapull) -> uni_hard.datapull # fixme likert range/wid
 qplot(survey_tidy$hard.datawork) -> uni_hard.datawork # all rest Likert
 qplot(survey_tidy$valuable) -> uni_valuable
@@ -229,6 +234,7 @@ uni_teamsize
 uni_effortHrs
 uni_itpercent
 uni_hard.datapull
+better_hist
 uni_hard.datawork
 uni_valuable
 uni_future.datathon
