@@ -137,9 +137,18 @@ gathered %>%
 full_join(available, by=c("id", "numeric_prepost")) %>%
 full_join(limit, by=c("id", "numeric_prepost")) -> gathered_all
 
-say("gathered_all")
+
+
+
+say("SAMPLE DATA\n\ngathered_all")
 gathered_all %>%
-select(id, numeric_prepost, know.use, know.avail, know.limit)
+select(id, numeric_prepost, know.use, know.avail, know.limit) %>%
+head()
+
+say("survey_tidy")
+survey_tidy %>%
+select(-dept.text, -comment.text) %>%
+head()
 
 
 
