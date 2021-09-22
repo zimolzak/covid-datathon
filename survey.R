@@ -153,6 +153,19 @@ head()
 
 
 
+#### Univariate
+
+say("tables")
+table(survey_tidy$acadRank)
+
+qplot(survey_tidy$years, binwidth=2) -> uni_yrs
+# prior hack, prior emrdata, workedteam, role(9), completed, answered,
+# collab.outside collab.new future.studies pub.abstract pub.paper, complete
+# teamsize, effortHrs, itpercent, hard.datapull, hard.datawork, valuable, future.datathon
+
+
+
+
 #### Plots
 
 ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.use + eps_y, group = id)) +
@@ -185,6 +198,7 @@ ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.limit + eps_y, gr
 
 say('\n\n----\n\nEnd of text output. Now plotting.')
 pdf(here("outputs", "Rplots_survey.pdf"))
+uni_yrs
 paired1
 paired2
 paired3
