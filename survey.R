@@ -159,7 +159,6 @@ say("TABLES\n\n")
 
 cat("\nacadRank:"); table(survey_tidy$acadRank)
 cat("\nprior.hack:"); table(survey_tidy$prior.hack)
-cat("\nprior.emrdata:"); table(survey_tidy$prior.emrdata)
 cat("\nworkedTeam:"); table(survey_tidy$workedTeam)
 cat("\nrole.clinical:"); table(survey_tidy$role.clinical)
 cat("\nrole.lead:"); table(survey_tidy$role.lead)
@@ -174,7 +173,6 @@ cat("\ncompleted:"); table(survey_tidy$completed)
 cat("\nanswered:"); table(survey_tidy$answered)
 cat("\ncollab.outside:"); table(survey_tidy$collab.outside)
 cat("\ncollab.new:"); table(survey_tidy$collab.new)
-cat("\nfuture.studies:"); table(survey_tidy$future.studies)
 cat("\npub.abstract:"); table(survey_tidy$pub.abstract)
 cat("\npub.paper:"); table(survey_tidy$pub.paper)
 cat("\ncomplete:"); table(survey_tidy$complete)
@@ -183,8 +181,16 @@ cat("\ncomplete:"); table(survey_tidy$complete)
 
 
 qplot(survey_tidy$years, binwidth=2) -> uni_yrs
-# teamsize, effortHrs, itpercent, hard.datapull, hard.datawork, valuable, future.datathon
 
+qplot(survey_tidy$teamsize) -> uni_teamsize
+qplot(survey_tidy$effortHrs) -> uni_effortHrs
+qplot(survey_tidy$itpercent) -> uni_itpercent
+qplot(survey_tidy$hard.datapull) -> uni_hard.datapull
+qplot(survey_tidy$hard.datawork) -> uni_hard.datawork
+qplot(survey_tidy$valuable) -> uni_valuable
+qplot(survey_tidy$future.datathon) -> uni_future.datathon
+qplot(survey_tidy$prior.emrdata) -> uni_prior.emrdata
+qplot(survey_tidy$future.studies) -> uni_future.studies
 
 
 
@@ -221,6 +227,15 @@ ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.limit + eps_y, gr
 say('\n\n----\n\nEnd of text output. Now plotting.')
 pdf(here("outputs", "Rplots_survey.pdf"))
 uni_yrs
+uni_teamsize
+uni_effortHrs
+uni_itpercent
+uni_hard.datapull
+uni_hard.datawork
+uni_valuable
+uni_future.datathon
+uni_prior.emrdata
+uni_future.studies
 paired1
 paired2
 paired3
