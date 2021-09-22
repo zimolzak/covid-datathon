@@ -50,6 +50,10 @@ truefalse = function(string) {
 	)
 }
 
+gglikert = function(a) {
+	 return(ggplot(survey_tidy, a) + geom_bar() + xlim(1,5))
+}
+
 
 
 
@@ -186,18 +190,14 @@ cat("\ncomplete:"); table(survey_tidy$complete)
 qplot(survey_tidy$years, binwidth=2) -> uni_yrs
 qplot(survey_tidy$teamsize) -> uni_teamsize # FIXME - it is not numeric
 qplot(survey_tidy$effortHrs) -> uni_effortHrs # fixme binwidth
-qplot(survey_tidy$itpercent) -> uni_itpercent
+qplot(survey_tidy$itpercent) -> uni_itpercent # fixme binwidth
 
-ggplot(survey_tidy, aes(x = hard.datapull)) +
- geom_bar() +
- xlim(1,5) -> better_hist
-
-qplot(survey_tidy$hard.datapull) -> uni_hard.datapull # fixme likert range/wid
-qplot(survey_tidy$hard.datawork) -> uni_hard.datawork # all rest Likert
-qplot(survey_tidy$valuable) -> uni_valuable
-qplot(survey_tidy$future.datathon) -> uni_future.datathon
-qplot(survey_tidy$prior.emrdata) -> uni_prior.emrdata
-qplot(survey_tidy$future.studies) -> uni_future.studies
+gglikert(aes(x = hard.datapull)) -> uni_hard.datapull
+gglikert(aes(x = hard.datawork)) -> uni_hard.datawork
+gglikert(aes(x = valuable)) -> uni_valuable
+gglikert(aes(x = future.datathon)) -> uni_future.datathon
+gglikert(aes(x = prior.emrdata)) -> uni_prior.emrdata
+gglikert(aes(x = future.studies)) -> uni_future.studies
 
 
 
@@ -234,7 +234,6 @@ uni_teamsize
 uni_effortHrs
 uni_itpercent
 uni_hard.datapull
-better_hist
 uni_hard.datawork
 uni_valuable
 uni_future.datathon
