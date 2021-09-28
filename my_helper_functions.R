@@ -40,6 +40,15 @@ truefalse = function(string) {
 	)
 }
 
+fix_teamsize = function(ts){
+	return(
+		case_when(
+			ts == "05-Mar" ~ 4,  # Curse you, MS Excel.
+			TRUE ~ as.numeric(ts)
+		)
+	)
+}
+
 gglikert = function(a) {
 	 return(ggplot(survey_tidy, a) + geom_bar() + xlim(0.4, 5.6) + ylim(0,15))
 }

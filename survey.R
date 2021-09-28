@@ -15,7 +15,7 @@ dim(survey_in)
 
 
 
-#### Shorten long column names
+#### Shorten long column names and clean several columns' contents
 
 survey_in %>%
 rename(
@@ -63,7 +63,8 @@ comment.text = What.worked.well.or.didn.t.work..or.general.comments,
 complete = Complete.
 ) %>%
 mutate_at(vars(prior.hack, starts_with("role"), -role.text, completed, answered, collab.outside, collab.new, pub.abstract, pub.paper, complete, workedTeam), ~ truefalse(.)) %>%
-mutate_at(vars(prior.emrdata, starts_with("know"), starts_with("hard"), starts_with("future"), valuable), ~ firstchar2num(.)) -> survey_tidy
+mutate_at(vars(prior.emrdata, starts_with("know"), starts_with("hard"), starts_with("future"), valuable), ~ firstchar2num(.)) %>%
+mutate_at(vars(teamsize), ~ fix_teamsize(.)) -> survey_tidy
 
 
 
@@ -136,9 +137,9 @@ cat("\npub.paper:"); table(survey_tidy$pub.paper)
 cat("\ncomplete:"); table(survey_tidy$complete)
 
 qplot(survey_tidy$years, binwidth=2) -> uni_yrs
-qplot(survey_tidy$teamsize) -> uni_teamsize # FIXME - it is not numeric
-qplot(survey_tidy$effortHrs) -> uni_effortHrs # fixme binwidth
-qplot(survey_tidy$itpercent) -> uni_itpercent # fixme binwidth
+qplot(survey_tidy$teamsize, binwidth=2) -> uni_teamsize
+qplot(survey_tidy$effortHrs, binwidth=10) -> uni_effortHrs
+qplot(survey_tidy$itpercent, binwidth=10) -> uni_itpercent
 
 gglikert(aes(x = hard.datapull)) -> uni_hard.datapull
 gglikert(aes(x = hard.datawork)) -> uni_hard.datawork
@@ -147,6 +148,7 @@ gglikert(aes(x = future.datathon)) -> uni_future.datathon
 gglikert(aes(x = prior.emrdata)) -> uni_prior.emrdata
 gglikert(aes(x = future.studies)) -> uni_future.studies
 
+# Calculate split into IT plus my hours, plot as stacked.
 
 
 
@@ -170,6 +172,8 @@ ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.limit + eps_y, gr
   scale_x_continuous(breaks = c(0,1), labels = c("Pre", "Post")) +
   labs(title="Understanding of data warehouse limitations", y="Likert", x="Time") -> paired3
 
+# candidate strata: years, effort, prior.emrdata,
+# paired test
 
 
 
