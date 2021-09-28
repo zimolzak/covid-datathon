@@ -156,29 +156,31 @@ gglikert(aes(x = future.studies)) -> uni_future.studies
 
 #### Associations
 
-say("Wilcoxon: Knowl about how to use DW")
+# exact = FALSE because cannot do exact with zeroes or ties.
+
 test_knowledge_use = wilcox.test(
     survey_tidy$know.use.pre,
     survey_tidy$know.use.post,
-    paired = TRUE, exact=TRUE, conf.int=TRUE
+    paired = TRUE, conf.int=TRUE, exact=FALSE
 )
 
-say("Wilcoxon: Knowl about dat avail")
 test_knowledge_availability = wilcox.test(
 	survey_tidy$know.avail.pre,
     survey_tidy$know.avail.post,
-    paired = TRUE, exact=TRUE, conf.int=TRUE
+    paired = TRUE, conf.int=TRUE, exact=FALSE
 )
 
-say("Wilcoxon: Underst of DW limitations")
 test_knowledge_limitations = wilcox.test(
 	survey_tidy$know.limit.pre,
     survey_tidy$know.limit.post,
-    paired = TRUE, exact=TRUE, conf.int=TRUE
+    paired = TRUE, conf.int=TRUE, exact=FALSE  # FIXME - should I use correct=FALSE?
 )
 
+say("Wilcoxon: Knowl about how to use DW")
 test_knowledge_use
+say("Wilcoxon: Knowl about dat avail")
 test_knowledge_availability
+say("Wilcoxon: Underst of DW limitations")
 test_knowledge_limitations
 
 ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.use + eps_y, group = id)) +
