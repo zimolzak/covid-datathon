@@ -155,29 +155,50 @@ gglikert(aes(x = future.studies)) -> uni_future.studies
 #### Associations
 
 say("Wilcoxon: Knowl about how to use DW")
-wilcox.test(survey_tidy$know.use.pre, survey_tidy$know.use.post, paired = TRUE, exact=TRUE, conf.int=TRUE)
+test_knowledge_use = wilcox.test(
+    survey_tidy$know.use.pre,
+    survey_tidy$know.use.post,
+    paired = TRUE, exact=TRUE, conf.int=TRUE
+)
+
 say("Wilcoxon: Knowl about dat avail")
-wilcox.test(survey_tidy$know.avail.pre, survey_tidy$know.avail.post, paired = TRUE, exact=TRUE, conf.int=TRUE)
+test_knowledge_availability = wilcox.test(
+	survey_tidy$know.avail.pre,
+    survey_tidy$know.avail.post,
+    paired = TRUE, exact=TRUE, conf.int=TRUE
+)
+
 say("Wilcoxon: Underst of DW limitations")
-wilcox.test(survey_tidy$know.limit.pre, survey_tidy$know.limit.post, paired = TRUE, exact=TRUE, conf.int=TRUE)
+test_knowledge_limitations = wilcox.test(
+	survey_tidy$know.limit.pre,
+    survey_tidy$know.limit.post,
+    paired = TRUE, exact=TRUE, conf.int=TRUE
+)
+
+test_knowledge_use
+test_knowledge_availability
+test_knowledge_limitations
 
 ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.use + eps_y, group = id)) +
  geom_point() +
   geom_line() +
   scale_x_continuous(breaks = c(0,1), labels = c("Pre", "Post")) +
-  labs(title="Knowledge about how to use the data warehouse", y="Likert", x="Time") -> paired1
+  labs(title="Knowledge about how to use the data warehouse", y="Likert", x="Time",
+      subtitle=paste('p =', test_knowledge_use$p.value)) -> paired1
 
 ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.avail + eps_y, group = id)) +
  geom_point() +
   geom_line() +
   scale_x_continuous(breaks = c(0,1), labels = c("Pre", "Post")) +
-  labs(title="Knowledge about data availability", y="Likert", x="Time") -> paired2
+  labs(title="Knowledge about data availability", y="Likert", x="Time",
+      subtitle=paste('p =', test_knowledge_availability$p.value)) -> paired2
 
 ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.limit + eps_y, group = id)) +
  geom_point() +
   geom_line() +
   scale_x_continuous(breaks = c(0,1), labels = c("Pre", "Post")) +
-  labs(title="Understanding of data warehouse limitations", y="Likert", x="Time") -> paired3
+  labs(title="Understanding of data warehouse limitations", y="Likert", x="Time",
+      subtitle=paste('p =', test_knowledge_limitations$p.value)) -> paired3
 
 # candidate strata: years, effort, prior.emrdata,
 # paired test: Wilcoxon signed-rank
