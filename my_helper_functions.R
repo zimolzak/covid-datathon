@@ -52,3 +52,8 @@ fix_teamsize = function(ts){
 gglikert = function(a) {
 	 return(ggplot(survey_tidy, a) + geom_bar() + xlim(0.4, 5.6) + ylim(0,15))
 }
+
+htest2pstring = function(ht){
+	rounded_p = round(ht$p.value, 6)
+	return(paste('Wilcoxon signed-rank p =', rounded_p))
+}

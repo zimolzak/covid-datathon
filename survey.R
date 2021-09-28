@@ -136,6 +136,8 @@ cat("\npub.abstract:"); table(survey_tidy$pub.abstract)
 cat("\npub.paper:"); table(survey_tidy$pub.paper)
 cat("\ncomplete:"); table(survey_tidy$complete)
 
+# TODO - retitle axes a lot
+
 qplot(survey_tidy$years, binwidth=2) -> uni_yrs
 qplot(survey_tidy$teamsize, binwidth=2) -> uni_teamsize
 qplot(survey_tidy$effortHrs, binwidth=10) -> uni_effortHrs
@@ -148,7 +150,7 @@ gglikert(aes(x = future.datathon)) -> uni_future.datathon
 gglikert(aes(x = prior.emrdata)) -> uni_prior.emrdata
 gglikert(aes(x = future.studies)) -> uni_future.studies
 
-# Calculate split into IT plus my hours, plot as stacked.
+# TODO - Calculate split into IT plus my hours, plot as stacked.
 
 
 
@@ -184,24 +186,23 @@ ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.use + eps_y, grou
   geom_line() +
   scale_x_continuous(breaks = c(0,1), labels = c("Pre", "Post")) +
   labs(title="Knowledge about how to use the data warehouse", y="Likert", x="Time",
-      subtitle=paste('p =', test_knowledge_use$p.value)) -> paired1
+      subtitle=htest2pstring(test_knowledge_use)) -> paired1
 
 ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.avail + eps_y, group = id)) +
  geom_point() +
   geom_line() +
   scale_x_continuous(breaks = c(0,1), labels = c("Pre", "Post")) +
   labs(title="Knowledge about data availability", y="Likert", x="Time",
-      subtitle=paste('p =', test_knowledge_availability$p.value)) -> paired2
+      subtitle=htest2pstring(test_knowledge_availability)) -> paired2
 
 ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.limit + eps_y, group = id)) +
  geom_point() +
   geom_line() +
   scale_x_continuous(breaks = c(0,1), labels = c("Pre", "Post")) +
   labs(title="Understanding of data warehouse limitations", y="Likert", x="Time",
-      subtitle=paste('p =', test_knowledge_limitations$p.value)) -> paired3
+      subtitle= htest2pstring(test_knowledge_limitations)) -> paired3
 
-# candidate strata: years, effort, prior.emrdata,
-# paired test: Wilcoxon signed-rank
+# TODO - candidate strata: years, effort, prior.emrdata,
 
 
 

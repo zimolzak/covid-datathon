@@ -16,7 +16,7 @@ all: $(documents) $(analyses)
 
 #### Analyses
 
-Routputs_survey.txt: ../survey.R ../data/survey/BCMDatathonSurvey_DATA_2021-08-10.csv
+Routputs_survey.txt: ../survey.R ../data/survey/BCMDatathonSurvey_DATA_2021-08-10.csv ../my_helper_functions.R
 	Rscript $< > $@
 
 Rplots_outpat.pdf: ../analysis_outpat.R
