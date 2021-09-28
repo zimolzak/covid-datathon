@@ -154,6 +154,13 @@ gglikert(aes(x = future.studies)) -> uni_future.studies
 
 #### Associations
 
+say("Wilcoxon: Knowl about how to use DW")
+wilcox.test(survey_tidy$know.use.pre, survey_tidy$know.use.post, paired = TRUE, exact=TRUE, conf.int=TRUE)
+say("Wilcoxon: Knowl about dat avail")
+wilcox.test(survey_tidy$know.avail.pre, survey_tidy$know.avail.post, paired = TRUE, exact=TRUE, conf.int=TRUE)
+say("Wilcoxon: Underst of DW limitations")
+wilcox.test(survey_tidy$know.limit.pre, survey_tidy$know.limit.post, paired = TRUE, exact=TRUE, conf.int=TRUE)
+
 ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.use + eps_y, group = id)) +
  geom_point() +
   geom_line() +
@@ -173,7 +180,8 @@ ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.limit + eps_y, gr
   labs(title="Understanding of data warehouse limitations", y="Likert", x="Time") -> paired3
 
 # candidate strata: years, effort, prior.emrdata,
-# paired test
+# paired test: Wilcoxon signed-rank
+
 
 
 
