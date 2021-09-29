@@ -79,7 +79,7 @@ survey_tidy %>%
 gather(`know.use.pre`, `know.use.post`, key="prepost", value="know.use") %>%
 mutate(numeric_prepost = case_when(prepost == "know.use.pre" ~ 0, prepost == "know.use.post" ~ 1),
 	eps_x = runif(nrow(survey_tidy) * 2, -1 * jx, jx),
-	eps_y = runif(nrow(survey_tidy) * 2, -1 * jy, jy)) -> gathered
+	eps_y = runif(nrow(survey_tidy) * 2, -1 * jy, jy)) -> use
 
 survey_tidy %>%
 gather(`know.avail.pre`, `know.avail.post`, key="prepost", value="know.avail") %>%
@@ -91,7 +91,7 @@ gather(`know.limit.pre`, `know.limit.post`, key="prepost", value="know.limit") %
 mutate(numeric_prepost = case_when(prepost == "know.limit.pre" ~ 0, prepost == "know.limit.post" ~ 1)) %>%
 select(id, numeric_prepost, know.limit) -> limit
 
-gathered %>%
+use %>%
 full_join(available, by=c("id", "numeric_prepost")) %>%
 full_join(limit, by=c("id", "numeric_prepost")) -> gathered_all
 
@@ -182,6 +182,11 @@ say("Wilcoxon: Knowl about dat avail")
 test_knowledge_availability
 say("Wilcoxon: Underst of DW limitations")
 test_knowledge_limitations
+
+# todo - next up t.test, catt, chi
+
+say("Other test options")
+
 
 ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.use + eps_y, group = id)) +
  geom_point() +
