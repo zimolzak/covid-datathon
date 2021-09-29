@@ -173,7 +173,7 @@ test_knowledge_availability = wilcox.test(
 test_knowledge_limitations = wilcox.test(
 	survey_tidy$know.limit.pre,
     survey_tidy$know.limit.post,
-    paired = TRUE, conf.int=TRUE, exact=FALSE  # FIXME - should I use correct=FALSE?
+    paired = TRUE, conf.int=TRUE, exact=FALSE
 )
 
 say("Wilcoxon: Knowl about how to use DW")
@@ -183,23 +183,21 @@ test_knowledge_availability
 say("Wilcoxon: Underst of DW limitations")
 test_knowledge_limitations
 
-# todo - next up t.test, catt, chi
+# todo - next up: chi
 
 say("Other test options")
+
 say("Knowl about how to use DW")
-use %>%
-group_by(numeric_prepost, know.use) %>%
-summarise(count = n()) %>%
-spread(numeric_prepost, count) %>%
-filter(!is.na(know.use)) %>%
-mutate(total_trials = `0` + `1`) -> use_vs_prepost
+gathered2chitrend(use %>% rename(score = know.use))
+t.test(survey_tidy$know.use.pre, survey_tidy$know.use.post, paired = TRUE)
+say("Knowl about dat avail")
+gathered2chitrend(available %>% rename(score = know.avail))
+t.test(survey_tidy$know.avail.pre, survey_tidy$know.avail.post, paired = TRUE)
+say("Underst of DW limitations")
+gathered2chitrend(limit %>% rename(score = know.limit))
+t.test(survey_tidy$know.limit.pre, survey_tidy$know.limit.post, paired = TRUE)
 
-prop.trend.test(use_vs_prepost $`0`, use_vs_prepost$total_trials)
-
-
-
-
-
+# todo - put new p vals on the graphs. Also interleave outputs better.
 
 
 

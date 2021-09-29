@@ -57,3 +57,15 @@ htest2pstring = function(ht){
 	rounded_p = round(ht$p.value, 6)
 	return(paste('Wilcoxon signed-rank p =', rounded_p))
 }
+
+gathered2chitrend = function(df){
+	# expects you to rename "know.use" etc. to "score" which contains the 1-5 scores
+	df %>%
+	group_by(numeric_prepost, score) %>%
+	summarise(count = n()) %>%
+	spread(numeric_prepost, count) %>%
+	filter(!is.na(score)) %>%
+	mutate(total_trials = `0` + `1`) -> table
+
+	return(prop.trend.test(table$`0`, table$total_trials))
+}
