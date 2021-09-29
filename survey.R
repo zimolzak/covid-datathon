@@ -186,16 +186,15 @@ test_knowledge_limitations
 # todo - next up t.test, catt, chi
 
 say("Other test options")
+say("Knowl about how to use DW")
 use %>%
-# mutate(prepost = case_when(numeric_prepost == 0 ~ 'a', numeric_prepost == 1 ~ 'b')) %>%
 group_by(numeric_prepost, know.use) %>%
 summarise(count = n()) %>%
 spread(numeric_prepost, count) %>%
 filter(!is.na(know.use)) %>%
-mutate(total_trials = `0` + `1`) -> score_vs_prepost
+mutate(total_trials = `0` + `1`) -> use_vs_prepost
 
-prop.trend.test(score_vs_prepost$`0`, score_vs_prepost$total_trials)
-
+prop.trend.test(use_vs_prepost $`0`, use_vs_prepost$total_trials)
 
 
 
