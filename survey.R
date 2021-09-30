@@ -136,19 +136,19 @@ cat("\npub.abstract:"); table(survey_tidy$pub.abstract)
 cat("\npub.paper:"); table(survey_tidy$pub.paper)
 cat("\ncomplete:"); table(survey_tidy$complete)
 
-# TODO - retitle the following axes a lot
+# Fixme - plot years & team size starting from 0?
 
-qplot(survey_tidy$years, binwidth=2) -> uni_yrs
-qplot(survey_tidy$teamsize, binwidth=2) -> uni_teamsize
-qplot(survey_tidy$effortHrs, binwidth=10) -> uni_effortHrs
-qplot(survey_tidy$itpercent, binwidth=10) -> uni_itpercent
+qplot(survey_tidy$years, binwidth=2) + labs(x="Number of years at BCM") -> uni_yrs
+qplot(survey_tidy$teamsize, binwidth=2) + labs(x="Number of people on datathon team") -> uni_teamsize
+qplot(survey_tidy$effortHrs, binwidth=10) + labs(x="Person-hours worked on datathon") -> uni_effortHrs
+qplot(survey_tidy$itpercent, binwidth=10) + labs(x="Percentage of time spent with BCM IT") -> uni_itpercent
 
-gglikert(aes(x = hard.datapull)) -> uni_hard.datapull
-gglikert(aes(x = hard.datawork)) -> uni_hard.datawork
-gglikert(aes(x = valuable)) -> uni_valuable
-gglikert(aes(x = future.datathon)) -> uni_future.datathon
-gglikert(aes(x = prior.emrdata)) -> uni_prior.emrdata
-gglikert(aes(x = future.studies)) -> uni_future.studies
+gglikert(aes(x = hard.datapull)) + labs(x="How difficult was obtaining data?") -> uni_hard.datapull
+gglikert(aes(x = hard.datawork)) + labs(x="How difficult was working with data?") -> uni_hard.datawork
+gglikert(aes(x = valuable)) + labs(x="Participating was a valuable experience.") -> uni_valuable
+gglikert(aes(x = future.datathon)) + labs(x="I would participate in future datathon.") -> uni_future.datathon
+gglikert(aes(x = prior.emrdata)) + labs(x="I had experience using EMR data.") -> uni_prior.emrdata
+gglikert(aes(x = future.studies)) + labs(x="I plan to conduct future studies using BCM DW.") -> uni_future.studies
 
 # TODO - Calculate split into IT plus my hours, plot as stacked.
 
