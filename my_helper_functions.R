@@ -53,9 +53,15 @@ gglikert = function(a) {
 	 return(ggplot(survey_tidy, a) + geom_bar() + xlim(0.4, 5.6) + ylim(0,15))
 }
 
-htest2pstring = function(ht){
-	rounded_p = round(ht$p.value, 6)
-	return(paste('Wilcoxon signed-rank p =', rounded_p))
+htests_to_subtitle = function(wt, ct, tt){
+	decimals = 6
+	wp = round(wt$p.value, decimals)
+	cp = round(ct$p.value, decimals)
+	tp = round(tt$p.value, decimals)
+	return(paste('Wilcoxon signed-rank p =', wp,
+		'\nChi trend p =', cp,
+		'\nPaired T p =', tp)
+	)
 }
 
 gathered2chitrend = function(df){

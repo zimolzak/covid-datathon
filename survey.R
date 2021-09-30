@@ -206,21 +206,21 @@ ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.use + eps_y, grou
   geom_line() +
   scale_x_continuous(breaks = c(0,1), labels = c("Pre", "Post")) +
   labs(title="Knowledge about how to use the data warehouse", y="Likert", x="Time",
-      subtitle=htest2pstring(w_use)) -> paired1
+      subtitle= htests_to_subtitle(w_use, c_use, t_use)) -> paired1
 
 ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.avail + eps_y, group = id)) +
  geom_point() +
   geom_line() +
   scale_x_continuous(breaks = c(0,1), labels = c("Pre", "Post")) +
   labs(title="Knowledge about data availability", y="Likert", x="Time",
-      subtitle=htest2pstring(w_avail)) -> paired2
+      subtitle= htests_to_subtitle(w_avail, c_avail, t_avail)) -> paired2
 
 ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.limit + eps_y, group = id)) +
  geom_point() +
   geom_line() +
   scale_x_continuous(breaks = c(0,1), labels = c("Pre", "Post")) +
   labs(title="Understanding of data warehouse limitations", y="Likert", x="Time",
-      subtitle= htest2pstring(w_limit)) -> paired3
+      subtitle= htests_to_subtitle(w_limit, c_limit, t_limit)) -> paired3
 
 # TODO - candidate strata: years, effort, prior.emrdata,
 
