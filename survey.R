@@ -98,7 +98,7 @@ full_join(limit, by=c("id", "numeric_prepost")) -> gathered_all
 
 
 
-#### Print samples
+#### Print sample data
 
 say("SAMPLE DATA\n\ngathered_all")
 gathered_all %>%
@@ -136,7 +136,7 @@ cat("\npub.abstract:"); table(survey_tidy$pub.abstract)
 cat("\npub.paper:"); table(survey_tidy$pub.paper)
 cat("\ncomplete:"); table(survey_tidy$complete)
 
-# TODO - retitle axes a lot
+# TODO - retitle the following axes a lot
 
 qplot(survey_tidy$years, binwidth=2) -> uni_yrs
 qplot(survey_tidy$teamsize, binwidth=2) -> uni_teamsize
@@ -156,50 +156,47 @@ gglikert(aes(x = future.studies)) -> uni_future.studies
 
 #### Associations
 
-# exact = FALSE because cannot do exact with zeroes or ties.
+# I use "exact = FALSE" because we cannot do exact with zeroes or ties.
 
-test_knowledge_use = wilcox.test(
+w_use = wilcox.test(
     survey_tidy$know.use.pre,
     survey_tidy$know.use.post,
     paired = TRUE, conf.int=TRUE, exact=FALSE
 )
 
-test_knowledge_availability = wilcox.test(
+w_avail = wilcox.test(
 	survey_tidy$know.avail.pre,
     survey_tidy$know.avail.post,
     paired = TRUE, conf.int=TRUE, exact=FALSE
 )
 
-test_knowledge_limitations = wilcox.test(
+w_limit = wilcox.test(
 	survey_tidy$know.limit.pre,
     survey_tidy$know.limit.post,
     paired = TRUE, conf.int=TRUE, exact=FALSE
 )
 
-say("Wilcoxon: Knowl about how to use DW")
-test_knowledge_use
-say("Wilcoxon: Knowl about dat avail")
-test_knowledge_availability
-say("Wilcoxon: Underst of DW limitations")
-test_knowledge_limitations
+c_use = gathered2chitrend(use %>% rename(score = know.use))
+t_use = t.test(survey_tidy$know.use.pre, survey_tidy$know.use.post, paired = TRUE)
 
-# todo - next up: chi
+c_avail = gathered2chitrend(available %>% rename(score = know.avail))
+t_avail = t.test(survey_tidy$know.avail.pre, survey_tidy$know.avail.post, paired = TRUE)
 
-say("Other test options")
+c_limit = gathered2chitrend(limit %>% rename(score = know.limit))
+t_limit = t.test(survey_tidy$know.limit.pre, survey_tidy$know.limit.post, paired = TRUE)
 
 say("Knowl about how to use DW")
-gathered2chitrend(use %>% rename(score = know.use))
-t.test(survey_tidy$know.use.pre, survey_tidy$know.use.post, paired = TRUE)
+w_use
+c_use
+t_use
 say("Knowl about dat avail")
-gathered2chitrend(available %>% rename(score = know.avail))
-t.test(survey_tidy$know.avail.pre, survey_tidy$know.avail.post, paired = TRUE)
+w_avail
+c_avail
+t_avail
 say("Underst of DW limitations")
-gathered2chitrend(limit %>% rename(score = know.limit))
-t.test(survey_tidy$know.limit.pre, survey_tidy$know.limit.post, paired = TRUE)
-
-# todo - put new p vals on the graphs. Also interleave outputs better.
-
-
+w_limit
+c_limit
+t_limit
 
 
 
@@ -209,21 +206,21 @@ ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.use + eps_y, grou
   geom_line() +
   scale_x_continuous(breaks = c(0,1), labels = c("Pre", "Post")) +
   labs(title="Knowledge about how to use the data warehouse", y="Likert", x="Time",
-      subtitle=htest2pstring(test_knowledge_use)) -> paired1
+      subtitle=htest2pstring(w_use)) -> paired1
 
 ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.avail + eps_y, group = id)) +
  geom_point() +
   geom_line() +
   scale_x_continuous(breaks = c(0,1), labels = c("Pre", "Post")) +
   labs(title="Knowledge about data availability", y="Likert", x="Time",
-      subtitle=htest2pstring(test_knowledge_availability)) -> paired2
+      subtitle=htest2pstring(w_avail)) -> paired2
 
 ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.limit + eps_y, group = id)) +
  geom_point() +
   geom_line() +
   scale_x_continuous(breaks = c(0,1), labels = c("Pre", "Post")) +
   labs(title="Understanding of data warehouse limitations", y="Likert", x="Time",
-      subtitle= htest2pstring(test_knowledge_limitations)) -> paired3
+      subtitle= htest2pstring(w_limit)) -> paired3
 
 # TODO - candidate strata: years, effort, prior.emrdata,
 
