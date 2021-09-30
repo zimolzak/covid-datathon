@@ -115,6 +115,8 @@ head()
 
 #### Univariate
 
+## FIXME - put percentages for some categories!!
+
 say("TABLES\n\n")
 cat("\nacadRank:"); table(survey_tidy$acadRank)
 cat("\nprior.hack:"); table(survey_tidy$prior.hack)
