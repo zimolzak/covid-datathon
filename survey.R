@@ -118,7 +118,7 @@ head()
 ## FIXME - put percentages for some categories!!
 
 say("TABLES\n\n")
-cat("\nacadRank:"); table(survey_tidy$acadRank)
+cat("\nacadRank:"); table(survey_tidy$acadRank)  ## FIG ??
 cat("\nprior.hack:"); table(survey_tidy$prior.hack)
 cat("\nworkedTeam:"); table(survey_tidy$workedTeam)
 cat("\nrole.clinical:"); table(survey_tidy$role.clinical)
@@ -138,6 +138,7 @@ cat("\npub.abstract:"); table(survey_tidy$pub.abstract)
 cat("\npub.paper:"); table(survey_tidy$pub.paper)
 cat("\ncomplete:"); table(survey_tidy$complete)
 
+## Plots (univar)
 # Fixme - plot years & team size starting from 0?
 
 qplot(survey_tidy$years, binwidth=2) + labs(x="Number of years at BCM") -> uni_yrs
@@ -147,10 +148,10 @@ qplot(survey_tidy$itpercent, binwidth=10) + labs(x="Percentage of time spent wit
 
 gglikert(aes(x = hard.datapull)) + labs(x="How difficult was obtaining data?") -> uni_hard.datapull
 gglikert(aes(x = hard.datawork)) + labs(x="How difficult was working with data?") -> uni_hard.datawork
-gglikert(aes(x = valuable)) + labs(x="Participating was a valuable experience.") -> uni_valuable
-gglikert(aes(x = future.datathon)) + labs(x="I would participate in future datathon.") -> uni_future.datathon
-gglikert(aes(x = prior.emrdata)) + labs(x="I had experience using EMR data.") -> uni_prior.emrdata
-gglikert(aes(x = future.studies)) + labs(x="I plan to conduct future studies using BCM DW.") -> uni_future.studies
+gglikert(aes(x = valuable)) + labs(x="Participating was a valuable experience.") -> uni_valuable  ## FIG 2
+gglikert(aes(x = future.datathon)) + labs(x="I would participate in future datathon.") -> uni_future.datathon  ## FIG 3
+gglikert(aes(x = prior.emrdata)) + labs(x="I had experience using EMR data.") -> uni_prior.emrdata  ## FIG 1
+gglikert(aes(x = future.studies)) + labs(x="I plan to conduct future studies using BCM DW.") -> uni_future.studies  ## FIG 4
 
 # TODO - Calculate split into IT plus my hours, plot as stacked.
 
@@ -202,7 +203,7 @@ t_limit
 
 
 
-
+  ## FIG 5
 ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.use + eps_y, group = id)) +
  geom_point() +
   geom_line() +
@@ -210,6 +211,7 @@ ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.use + eps_y, grou
   labs(title="Knowledge about how to use the data warehouse", y="Likert", x="Time",
       subtitle= htests_to_subtitle(w_use, c_use, t_use)) -> paired1
 
+  ## FIG 6
 ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.avail + eps_y, group = id)) +
  geom_point() +
   geom_line() +
@@ -217,6 +219,7 @@ ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.avail + eps_y, gr
   labs(title="Knowledge about data availability", y="Likert", x="Time",
       subtitle= htests_to_subtitle(w_avail, c_avail, t_avail)) -> paired2
 
+  ## FIG 7
 ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.limit + eps_y, group = id)) +
  geom_point() +
   geom_line() +
