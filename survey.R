@@ -252,3 +252,4 @@ paired3
 dev.off()
 
 # ggsave png here if needed
+ggsave(here('pngs-conf', 'test.png'), uni_prior.emrdata)
