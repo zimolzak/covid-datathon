@@ -64,12 +64,14 @@ complete = Complete.
 ) %>%
 mutate_at(vars(prior.hack, starts_with("role"), -role.text, completed, answered, collab.outside, collab.new, pub.abstract, pub.paper, complete, workedTeam), ~ truefalse(.)) %>%
 mutate_at(vars(prior.emrdata, starts_with("know"), starts_with("hard"), starts_with("future"), valuable), ~ firstchar2num(.)) %>%
-mutate_at(vars(teamsize), ~ fix_teamsize(.)) -> survey_tidy
+mutate_at(vars(teamsize), ~ fix_teamsize(.)) %>%
+mutate(n_roles = role.clinical + role.lead + role.reviewer + role.datasci +
+	role.stats + role.datawarehouse + role.datamgr + role.learner + role.other) -> survey_tidy
 
 
 
 
-#### Calculate new vars
+#### Calculate new vars (prepost "gather")
 
 jitter_absolute = 0.02
 jx = jitter_absolute
@@ -95,6 +97,11 @@ use %>%
 full_join(available, by=c("id", "numeric_prepost")) %>%
 full_join(limit, by=c("id", "numeric_prepost")) -> gathered_all
 
+#### Calc vars pertaining to team role
+
+survey_tidy %>%
+summarise_at(vars(starts_with("role."), -role.text), sum) -> sum_roles
+
 
 
 
@@ -110,6 +117,9 @@ survey_tidy %>%
 select(-dept.text, -comment.text) %>%
 head()
 
+say("sum_roles")
+sum_roles
+
 
 
 
@@ -121,7 +131,7 @@ say("TABLES\n\n")
 cat("\nacadRank:"); table(survey_tidy$acadRank)  ## FIG ??
 cat("\nprior.hack:"); table(survey_tidy$prior.hack)
 cat("\nworkedTeam:"); table(survey_tidy$workedTeam)
-cat("\nrole.clinical:"); table(survey_tidy$role.clinical)
+cat("\nrole.clinical:"); table(survey_tidy$role.clinical)   ## FIG per JD
 cat("\nrole.lead:"); table(survey_tidy$role.lead)
 cat("\nrole.reviewer:"); table(survey_tidy$role.reviewer)
 cat("\nrole.datasci:"); table(survey_tidy$role.datasci)
@@ -145,6 +155,7 @@ qplot(survey_tidy$years, binwidth=2) + labs(x="Number of years at BCM") -> uni_y
 qplot(survey_tidy$teamsize, binwidth=2) + labs(x="Number of people on datathon team") -> uni_teamsize
 qplot(survey_tidy$effortHrs, binwidth=10) + labs(x="Person-hours worked on datathon") -> uni_effortHrs
 qplot(survey_tidy$itpercent, binwidth=10) + labs(x="Percentage of time spent with BCM IT") -> uni_itpercent
+qplot(survey_tidy$n_roles, binwidth=1) + labs(x="Number of roles per participant") -> uni_nroles
 
 gglikert(aes(x = hard.datapull)) + labs(x="How difficult was obtaining data?") -> uni_hard.datapull
 gglikert(aes(x = hard.datawork)) + labs(x="How difficult was working with data?") -> uni_hard.datawork
@@ -243,6 +254,7 @@ pdf(here("outputs", "Rplots_survey.pdf"))
 uni_yrs
 acadRankPlot
 uni_teamsize
+uni_nroles
 uni_effortHrs
 uni_itpercent
 uni_hard.datapull
