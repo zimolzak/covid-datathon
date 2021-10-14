@@ -252,4 +252,7 @@ paired3
 dev.off()
 
 # ggsave png here if needed
-ggsave(here('pngs-conf', 'test.png'), uni_prior.emrdata)
+ggsave(here('pngs-conf', 'amia-fig1-priorexp.png'), uni_prior.emrdata)
+ggsave(here('pngs-conf', 'amia-fig2-valuable.png'), uni_valuable)
+ggsave(here('pngs-conf', 'amia-fig3-futurethon.png'), uni_future.datathon)
+ggsave(here('pngs-conf', 'amia-fig4-futurestud.png'), uni_future.studies)
