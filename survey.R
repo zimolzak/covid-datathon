@@ -155,7 +155,9 @@ gglikert(aes(x = future.studies)) + labs(x="I plan to conduct future studies usi
 
 # TODO - Calculate split into IT plus my hours, plot as stacked.
 
-
+qplot(factor(survey_tidy$acadRank,
+	levels=c("Student", "Fellow", "Assistant", "Associate", "Full", "Other (e.g. Staff, Instructor)"))) +
+	labs(title="Distribution of academic rank", x="Academic rank") -> acadRankPlot
 
 #### Associations
 
@@ -232,11 +234,14 @@ ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.limit + eps_y, gr
 
 
 
+
+
 #### Write to plot files
 
 say('\n\n----\n\nEnd of text output. Now plotting.')
 pdf(here("outputs", "Rplots_survey.pdf"))
 uni_yrs
+acadRankPlot
 uni_teamsize
 uni_effortHrs
 uni_itpercent
