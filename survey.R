@@ -106,6 +106,13 @@ full_join(limit, by=c("id", "numeric_prepost")) -> gathered_all
 survey_tidy %>%
 summarise_at(vars(starts_with("role."), -role.text), sum) -> sum_roles
 
+sum_roles %>%
+rename(clin=role.clinical, lead=role.lead, rev=role.reviewer, stat=role.stats,
+	dataware=role.datawarehouse, datamgr=role.datamgr,
+	learn=role.learner, other=role.other) %>%
+gather(`clin`, `lead`, `rev`, `stat`, `dataware`,
+	`datamgr`, `learn`, `other`, key="role", value="count") -> role_count_toplot
+
 
 
 
@@ -123,6 +130,8 @@ head()
 
 say("sum_roles")
 sum_roles
+
+
 
 
 #### Tables, Univariate
@@ -283,6 +292,9 @@ qplot(factor(survey_tidy$acadRank,
 	levels=c("Student", "Fellow", "Staff", "Assistant", "Associate", "Full"))) +
 	labs(title="Distribution of academic rank", x="Academic rank") -> acadRankPlot
 
+ggplot(role_count_toplot, aes(role, count)) +
+	geom_col() -> barmaybe
+
 ggplot(zero_filled_heatmap, aes(role_a, role_b, label = Count)) +
 	geom_tile(aes(fill = Count)) +
 	geom_label() +
@@ -375,6 +387,7 @@ pdf(here("outputs", "Rplots_survey.pdf"))
 uni_yrs
 acadRankPlot
 uni_teamsize
+barmaybe
 uni_nroles
 multi_role_heatmap
 uni_effortHrs
