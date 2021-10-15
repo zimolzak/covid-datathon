@@ -3,6 +3,8 @@ library(ggplot2)
 library(here)
 library(tidyr)
 
+#        #         #         #         #         #         #         #        80
+
 source(file=here("my_helper_functions.R"))
 
 #### Load data
@@ -72,6 +74,7 @@ mutate_at(vars(acadRank), ~ case_when(. == "Other (e.g. Staff, Instructor)" ~ "S
 
 
 
+
 #### Calculate new vars (prepost "gather")
 
 jitter_absolute = 0.02
@@ -118,7 +121,8 @@ survey_tidy %>%
 select(-dept.text, -comment.text) %>%
 head()
 
-
+say("sum_roles")
+sum_roles
 
 
 #### Tables, Univariate
@@ -129,7 +133,7 @@ say("TABLES\n\n")
 cat("\nacadRank:"); table(survey_tidy$acadRank)  ## FIG ??
 cat("\nprior.hack:"); table(survey_tidy$prior.hack)
 cat("\nworkedTeam:"); table(survey_tidy$workedTeam)
-cat("\nrole.clinical:"); table(survey_tidy$role.clinical)   ## FIG per JD
+cat("\nrole.clinical:"); table(survey_tidy$role.clinical)   ## FIG per JD (all roles)
 cat("\nrole.lead:"); table(survey_tidy$role.lead)
 cat("\nrole.reviewer:"); table(survey_tidy$role.reviewer)
 cat("\nrole.datasci:"); table(survey_tidy$role.datasci)
@@ -154,6 +158,57 @@ select(acadRank.text)
 
 
 
+#### Fancy combinatorics about those who checked >1 role
+
+say("Multiple team roles")
+survey_tidy %>%
+filter(n_roles > 1) %>%
+select(role.clinical, role.lead, role.reviewer, role.stats, role.datawarehouse,
+	role.datamgr, role.learner, n_roles) %>%  # no datasci/other
+rename(clin=role.clinical, lead=role.lead, rev=role.reviewer, stat=role.stats,
+	dataware=role.datawarehouse, datamgr=role.datamgr,
+	learn=role.learner) -> role_matrix
+role_matrix
+
+# 11 people * 7 roles. Looks like:
+# 0 0 0 1 0 1
+# 1 0 1 1 0 0
+
+role_matrix %>%
+transmute(clin=clin, lead=lead*2, rev=rev*3, stat=stat*4, dataware=dataware*5,
+	datamgr=datamgr*6, learn=learn*7) -> role_mat_multiplied
+
+# 0 0 0 4 0 6
+# 1 0 3 4 0 0
+
+role_ab_cooccur = data.frame(a=list(), b=list())  # empty
+
+# Fixme - could I do this cleaner with a gather() instead?
+for (i in 1:nrow(role_mat_multiplied)) {
+	myrow = role_mat_multiplied[i,]
+	data.frame(t(combn(myrow, 2))) %>%
+		rename(a=X1, b=X2) -> mycombos
+	bind_rows(role_ab_cooccur, mycombos) -> role_ab_cooccur
+}
+
+# 7 Choose 2 = 7*6/2 = 21 (n edges in complete graph K_7)
+# Therefore this comes out as 231 * 2 data.frame like:
+# 0 2
+# 0 3
+# 2 3
+# ...one row per possible role pairing in K_7, for each person.
+# Zeroes mean they didn't check that role.
+
+role_ab_cooccur %>%
+filter(a > 0) %>%
+filter(b > 0) -> role_ab_cooccur
+
+say("co-occur")
+head(role_ab_cooccur)
+
+
+
+
 #### Plots (univar)
 # Fixme - plot years & team size starting from 0?
 
@@ -174,6 +229,10 @@ gglikert(aes(x = future.studies)) + labs(x="I plan to conduct future studies usi
 qplot(factor(survey_tidy$acadRank,
 	levels=c("Student", "Fellow", "Staff", "Assistant", "Associate", "Full"))) +
 	labs(title="Distribution of academic rank", x="Academic rank") -> acadRankPlot
+
+# ggVennDiagram?
+# geombin2d ~= heatmap
+# data.frame(t(combn(c(1,2,3), 2)))
 
 
 
