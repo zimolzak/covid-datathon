@@ -170,16 +170,22 @@ rename(clin=role.clinical, lead=role.lead, rev=role.reviewer, stat=role.stats,
 	learn=role.learner) -> role_matrix
 role_matrix
 
-# 11 people * 7 roles. Looks like:
-# 0 0 0 1 0 1
-# 1 0 1 1 0 0
+# --> 11 people * 7 roles. Looks like:
+# 0 0 0 1 0 1 0
+# 1 0 1 1 0 0 0
+# ...
 
 role_matrix %>%
 transmute(clin=clin, lead=lead*2, rev=rev*3, stat=stat*4, dataware=dataware*5,
 	datamgr=datamgr*6, learn=learn*7) -> role_mat_multiplied
 
-# 0 0 0 4 0 6
-# 1 0 3 4 0 0
+# -->
+# 0 0 0 4 0 6 0
+# 1 0 3 4 0 0 0
+# ...
+
+# make this for later use
+roles_ordered = c("clin", "lead", "rev", "stat", "dataware", "datamgr", "learn")
 
 role_ab_cooccur = data.frame(a=numeric(), b=numeric())  # empty
 
@@ -191,7 +197,7 @@ for (i in 1:nrow(role_mat_multiplied)) {
 	bind_rows(role_ab_cooccur, mycombos) -> role_ab_cooccur
 }
 
-# 7 Choose 2 = 7*6/2 = 21 (n edges in complete graph K_7)
+# --> 7 Choose 2 = 7*6/2 = 21 (n edges in complete graph K_7)
 # Therefore this comes out as 231 * 2 data.frame like:
 # 0 2
 # 0 3
@@ -201,10 +207,24 @@ for (i in 1:nrow(role_mat_multiplied)) {
 
 role_ab_cooccur %>%
 filter(a > 0) %>%
-filter(b > 0) -> role_ab_cooccur
+filter(b > 0) %>%
+mutate(
+	role_a = factor(roles_ordered[a], levels=roles_ordered),
+	role_b = factor(roles_ordered[b], levels=roles_ordered)
+) -> role_ab_cooccur
 
 say("co-occur")
 head(role_ab_cooccur)
+
+say("unrolled heatmap")
+role_ab_cooccur %>%
+group_by(a,  b, role_a, role_b) %>%
+summarise(n = n()) %>%
+arrange(desc(n))
+
+# --> a max 49-row table with columns a,b,n
+# where a in 1..7, b in 1..7
+# and where n is the count, or in other words value of matrix element M_{a,b}
 
 
 
@@ -230,11 +250,12 @@ qplot(factor(survey_tidy$acadRank,
 	levels=c("Student", "Fellow", "Staff", "Assistant", "Associate", "Full"))) +
 	labs(title="Distribution of academic rank", x="Academic rank") -> acadRankPlot
 
-ggplot(role_ab_cooccur, aes(a, b)) + geom_bin2d() -> multi_role_heatmap
+ggplot(role_ab_cooccur, aes(a, b)) +
+	geom_bin2d(binwidth=c(1,1)) +
+	xlim(0, 8) + ylim(0, 8) -> multi_role_heatmap
 
 # ggVennDiagram?
-# geombin2d ~= heatmap
-# data.frame(t(combn(c(1,2,3), 2)))
+# geom_raster geom_tile?
 
 
 
