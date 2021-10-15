@@ -124,7 +124,7 @@ sum_roles
 
 
 
-#### Univariate
+#### Tables, Univariate
 
 ## FIXME - put percentages for some categories!!
 
@@ -149,13 +149,17 @@ cat("\npub.abstract:"); table(survey_tidy$pub.abstract)
 cat("\npub.paper:"); table(survey_tidy$pub.paper)
 cat("\ncomplete:"); table(survey_tidy$complete)
 
-## Plots (univar)
+
+
+
+#### Plots (univar)
 # Fixme - plot years & team size starting from 0?
 
 qplot(survey_tidy$years, binwidth=2) + labs(x="Number of years at BCM") -> uni_yrs
 qplot(survey_tidy$teamsize, binwidth=2) + labs(x="Number of people on datathon team") -> uni_teamsize
 qplot(survey_tidy$effortHrs, binwidth=10) + labs(x="Person-hours worked on datathon") -> uni_effortHrs
 qplot(survey_tidy$itpercent, binwidth=10) + labs(x="Percentage of time spent with BCM IT") -> uni_itpercent
+# TODO - maybe? Calculate split into IT plus my hours, plot as stacked.
 qplot(survey_tidy$n_roles, binwidth=1) + labs(x="Number of roles per participant") -> uni_nroles
 
 gglikert(aes(x = hard.datapull)) + labs(x="How difficult was obtaining data?") -> uni_hard.datapull
@@ -165,20 +169,19 @@ gglikert(aes(x = future.datathon)) + labs(x="I would participate in future datat
 gglikert(aes(x = prior.emrdata)) + labs(x="I had experience using EMR data.") -> uni_prior.emrdata  ## FIG 1
 gglikert(aes(x = future.studies)) + labs(x="I plan to conduct future studies using BCM DW.") -> uni_future.studies  ## FIG 4
 
-# TODO - Calculate split into IT plus my hours, plot as stacked.
-
 qplot(factor(survey_tidy$acadRank,
 	levels=c("Student", "Fellow", "Assistant", "Associate", "Full", "Other"))) +
 	labs(title="Distribution of academic rank", x="Academic rank") -> acadRankPlot
 
-#### Associations
 
-# I use "exact = FALSE" because we cannot do exact with zeroes or ties.
+
+
+#### Paired pre/post hypoth tests and plots
 
 w_use = wilcox.test(
     survey_tidy$know.use.pre,
     survey_tidy$know.use.post,
-    paired = TRUE, conf.int=TRUE, exact=FALSE
+    paired = TRUE, conf.int=TRUE, exact=FALSE  # "exact = FALSE" because can't do exact w/ zeroes or ties
 )
 
 w_avail = wilcox.test(
@@ -215,9 +218,7 @@ w_limit
 c_limit
 t_limit
 
-
-
-  ## FIG 5
+## FIG 5
 ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.use + eps_y, group = id)) +
  geom_point() +
   geom_line() +
@@ -225,7 +226,7 @@ ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.use + eps_y, grou
   labs(title="Knowledge about how to use the data warehouse", y="Likert", x="Time",
       subtitle= htests_to_subtitle(w_use, c_use, t_use)) -> paired1
 
-  ## FIG 6
+## FIG 6
 ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.avail + eps_y, group = id)) +
  geom_point() +
   geom_line() +
@@ -233,7 +234,7 @@ ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.avail + eps_y, gr
   labs(title="Knowledge about data availability", y="Likert", x="Time",
       subtitle= htests_to_subtitle(w_avail, c_avail, t_avail)) -> paired2
 
-  ## FIG 7
+## FIG 7
 ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.limit + eps_y, group = id)) +
  geom_point() +
   geom_line() +
@@ -242,8 +243,6 @@ ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.limit + eps_y, gr
       subtitle= htests_to_subtitle(w_limit, c_limit, t_limit)) -> paired3
 
 # TODO - candidate strata: years, effort, prior.emrdata,
-
-
 
 
 
@@ -269,7 +268,6 @@ paired2
 paired3
 dev.off()
 
-# ggsave png here if needed
 ggsave(here('pngs-conf', 'amia-fig1-priorexp.png'), uni_prior.emrdata)
 ggsave(here('pngs-conf', 'amia-fig2-valuable.png'), uni_valuable)
 ggsave(here('pngs-conf', 'amia-fig3-futurethon.png'), uni_future.datathon)
