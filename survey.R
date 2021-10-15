@@ -281,8 +281,14 @@ qplot(factor(survey_tidy$acadRank,
 	levels=c("Student", "Fellow", "Staff", "Assistant", "Associate", "Full"))) +
 	labs(title="Distribution of academic rank", x="Academic rank") -> acadRankPlot
 
-ggplot(zero_filled_heatmap, aes(role_a, role_b)) +
-	geom_tile(aes(fill = n)) -> multi_role_heatmap
+ggplot(zero_filled_heatmap, aes(role_a, role_b, label=n)) +
+	geom_tile(aes(fill = n)) +
+	geom_label() +
+	labs(
+		title="Co-occurrence of roles, for those with >1 role",
+		x="Role A",
+		y="Role B"
+	) -> multi_role_heatmap
 
 # ggVennDiagram?
 
