@@ -67,8 +67,8 @@ mutate_at(vars(prior.emrdata, starts_with("know"), starts_with("hard"), starts_w
 mutate_at(vars(teamsize), ~ fix_teamsize(.)) %>%
 mutate(n_roles = role.clinical + role.lead + role.reviewer + role.datasci +
 	role.stats + role.datawarehouse + role.datamgr + role.learner + role.other) %>%
-mutate_at(vars(acadRank), ~ case_when(. == "Other (e.g. Staff, Instructor)" ~ "Other", TRUE ~ .))-> survey_tidy
-
+mutate_at(vars(acadRank), ~ case_when(. == "Other (e.g. Staff, Instructor)" ~ "Staff", TRUE ~ .)) -> survey_tidy
+# Recoded as "staff" because I inspected all 7 and that's what they are.
 
 
 
@@ -118,9 +118,6 @@ survey_tidy %>%
 select(-dept.text, -comment.text) %>%
 head()
 
-say("sum_roles")
-sum_roles
-
 
 
 
@@ -149,6 +146,11 @@ cat("\npub.abstract:"); table(survey_tidy$pub.abstract)
 cat("\npub.paper:"); table(survey_tidy$pub.paper)
 cat("\ncomplete:"); table(survey_tidy$complete)
 
+say("Other ranks")
+survey_tidy %>%
+filter(acadRank == "Staff") %>%
+select(acadRank.text)
+
 
 
 
@@ -170,7 +172,7 @@ gglikert(aes(x = prior.emrdata)) + labs(x="I had experience using EMR data.") ->
 gglikert(aes(x = future.studies)) + labs(x="I plan to conduct future studies using BCM DW.") -> uni_future.studies  ## FIG 4
 
 qplot(factor(survey_tidy$acadRank,
-	levels=c("Student", "Fellow", "Assistant", "Associate", "Full", "Other"))) +
+	levels=c("Student", "Fellow", "Staff", "Assistant", "Associate", "Full"))) +
 	labs(title="Distribution of academic rank", x="Academic rank") -> acadRankPlot
 
 
