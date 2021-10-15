@@ -185,7 +185,7 @@ transmute(clin=clin, lead=lead*2, rev=rev*3, stat=stat*4, dataware=dataware*5,
 # ...
 
 # make this for later use
-roles_ordered = c("clin", "lead", "rev", "stat", "dataware", "datamgr", "learn")
+roles_ordered = c("Clinician", "Lead", "Chart rev.", "Statistics", "Data warehouse", "Data mgr.", "Learner")
 
 role_ab_cooccur = data.frame(a=numeric(), b=numeric())  # empty
 
@@ -213,17 +213,19 @@ mutate(
 	role_b = factor(roles_ordered[b], levels=roles_ordered)
 ) -> role_ab_cooccur
 
+# --> filtered to <231 * 2
+
 say("co-occur")
 head(role_ab_cooccur)
 
 say("unrolled heatmap")
 role_ab_cooccur %>%
 group_by(a,  b, role_a, role_b) %>%
-summarise(n = n()) %>%
-arrange(desc(n)) -> unrolled_heatmap
+summarise(Count = n()) %>%
+arrange(desc(Count)) -> unrolled_heatmap
 unrolled_heatmap
 
-# --> a MAX 49-row table with columns a,b,n
+# --> a MAX 49-row table with columns a,b,n (no a,b dups)
 # where a in 1..7, b in 1..7
 # and where n is the count, or in other words value of matrix element M_{a,b}
 # n ALWAYS > 0
@@ -231,14 +233,14 @@ unrolled_heatmap
 zero_heatmap = data.frame(a=numeric(), b=numeric(),
 	role_a = factor(, levels=roles_ordered),
 	role_b = factor(, levels=roles_ordered),
-	n = numeric())
+	Count = numeric())
 
 for (i in 1:length(roles_ordered)) {
 	for (j in 1:length(roles_ordered)) {
 		myrow = data.frame(a=i, b=j,
 			role_a = factor(roles_ordered[i], levels=roles_ordered),
 			role_b = factor(roles_ordered[j], levels=roles_ordered),
-			n=0
+			Count = 0
 		)
 		if (i < j) {  # force triangular matrix
 			bind_rows(zero_heatmap, myrow) -> zero_heatmap
@@ -250,7 +252,7 @@ for (i in 1:length(roles_ordered)) {
 
 bind_rows(zero_heatmap, unrolled_heatmap) %>%
 group_by(a, b, role_a, role_b) %>%
-summarise(n = sum(n)) -> zero_filled_heatmap
+summarise(Count = sum(Count)) -> zero_filled_heatmap
 
 # --> exactly 49-row df with n=whatever but allowed to be 0
 
@@ -281,8 +283,8 @@ qplot(factor(survey_tidy$acadRank,
 	levels=c("Student", "Fellow", "Staff", "Assistant", "Associate", "Full"))) +
 	labs(title="Distribution of academic rank", x="Academic rank") -> acadRankPlot
 
-ggplot(zero_filled_heatmap, aes(role_a, role_b, label=n)) +
-	geom_tile(aes(fill = n)) +
+ggplot(zero_filled_heatmap, aes(role_a, role_b, label = Count)) +
+	geom_tile(aes(fill = Count)) +
 	geom_label() +
 	labs(
 		title="Co-occurrence of roles, for those with >1 role",
