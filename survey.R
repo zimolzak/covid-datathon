@@ -66,7 +66,8 @@ mutate_at(vars(prior.hack, starts_with("role"), -role.text, completed, answered,
 mutate_at(vars(prior.emrdata, starts_with("know"), starts_with("hard"), starts_with("future"), valuable), ~ firstchar2num(.)) %>%
 mutate_at(vars(teamsize), ~ fix_teamsize(.)) %>%
 mutate(n_roles = role.clinical + role.lead + role.reviewer + role.datasci +
-	role.stats + role.datawarehouse + role.datamgr + role.learner + role.other) -> survey_tidy
+	role.stats + role.datawarehouse + role.datamgr + role.learner + role.other) %>%
+mutate_at(vars(acadRank), ~ case_when(. == "Other (e.g. Staff, Instructor)" ~ "Other", TRUE ~ .))-> survey_tidy
 
 
 
@@ -167,7 +168,7 @@ gglikert(aes(x = future.studies)) + labs(x="I plan to conduct future studies usi
 # TODO - Calculate split into IT plus my hours, plot as stacked.
 
 qplot(factor(survey_tidy$acadRank,
-	levels=c("Student", "Fellow", "Assistant", "Associate", "Full", "Other (e.g. Staff, Instructor)"))) +
+	levels=c("Student", "Fellow", "Assistant", "Associate", "Full", "Other"))) +
 	labs(title="Distribution of academic rank", x="Academic rank") -> acadRankPlot
 
 #### Associations
