@@ -220,11 +220,40 @@ say("unrolled heatmap")
 role_ab_cooccur %>%
 group_by(a,  b, role_a, role_b) %>%
 summarise(n = n()) %>%
-arrange(desc(n))
+arrange(desc(n)) -> unrolled_heatmap
+unrolled_heatmap
 
-# --> a max 49-row table with columns a,b,n
+# --> a MAX 49-row table with columns a,b,n
 # where a in 1..7, b in 1..7
 # and where n is the count, or in other words value of matrix element M_{a,b}
+# n ALWAYS > 0
+
+zero_heatmap = data.frame(a=numeric(), b=numeric(),
+	role_a = factor(, levels=roles_ordered),
+	role_b = factor(, levels=roles_ordered),
+	n = numeric())
+
+for (i in 1:length(roles_ordered)) {
+	for (j in 1:length(roles_ordered)) {
+		myrow = data.frame(a=i, b=j,
+			role_a = factor(roles_ordered[i], levels=roles_ordered),
+			role_b = factor(roles_ordered[j], levels=roles_ordered),
+			n=0
+		)
+		bind_rows(zero_heatmap, myrow) -> zero_heatmap
+	}
+}
+
+# --> 49-row df with n=0 always
+
+bind_rows(zero_heatmap, unrolled_heatmap) %>%
+group_by(a, b, role_a, role_b) %>%
+summarise(n = sum(n)) -> zero_filled_heatmap
+
+# --> exactly 49-row df with n=whatever but allowed to be 0
+
+say("zero_filled_heatmap")
+zero_filled_heatmap
 
 
 
@@ -250,12 +279,10 @@ qplot(factor(survey_tidy$acadRank,
 	levels=c("Student", "Fellow", "Staff", "Assistant", "Associate", "Full"))) +
 	labs(title="Distribution of academic rank", x="Academic rank") -> acadRankPlot
 
-ggplot(role_ab_cooccur, aes(a, b)) +
-	geom_bin2d(binwidth=c(1,1)) +
-	xlim(0, 8) + ylim(0, 8) -> multi_role_heatmap
+ggplot(zero_filled_heatmap, aes(role_a, role_b)) +
+	geom_raster(aes(fill = n)) -> multi_role_heatmap
 
 # ggVennDiagram?
-# geom_raster geom_tile?
 
 
 
