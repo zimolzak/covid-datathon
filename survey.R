@@ -181,13 +181,13 @@ transmute(clin=clin, lead=lead*2, rev=rev*3, stat=stat*4, dataware=dataware*5,
 # 0 0 0 4 0 6
 # 1 0 3 4 0 0
 
-role_ab_cooccur = data.frame(a=list(), b=list())  # empty
+role_ab_cooccur = data.frame(a=numeric(), b=numeric())  # empty
 
 # Fixme - could I do this cleaner with a gather() instead?
 for (i in 1:nrow(role_mat_multiplied)) {
 	myrow = role_mat_multiplied[i,]
-	data.frame(t(combn(myrow, 2))) %>%
-		rename(a=X1, b=X2) -> mycombos
+	data.frame(t(combn(myrow, 2))) %>%  # ea col comes out as list, not numeric
+		transmute(a=as.numeric(X1), b=as.numeric(X2)) -> mycombos
 	bind_rows(role_ab_cooccur, mycombos) -> role_ab_cooccur
 }
 
@@ -229,6 +229,8 @@ gglikert(aes(x = future.studies)) + labs(x="I plan to conduct future studies usi
 qplot(factor(survey_tidy$acadRank,
 	levels=c("Student", "Fellow", "Staff", "Assistant", "Associate", "Full"))) +
 	labs(title="Distribution of academic rank", x="Academic rank") -> acadRankPlot
+
+ggplot(role_ab_cooccur, aes(a, b)) + geom_bin2d() -> multi_role_heatmap
 
 # ggVennDiagram?
 # geombin2d ~= heatmap
@@ -316,6 +318,7 @@ uni_yrs
 acadRankPlot
 uni_teamsize
 uni_nroles
+multi_role_heatmap
 uni_effortHrs
 uni_itpercent
 uni_hard.datapull
