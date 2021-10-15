@@ -240,7 +240,9 @@ for (i in 1:length(roles_ordered)) {
 			role_b = factor(roles_ordered[j], levels=roles_ordered),
 			n=0
 		)
-		bind_rows(zero_heatmap, myrow) -> zero_heatmap
+		if (i < j) {  # force triangular matrix
+			bind_rows(zero_heatmap, myrow) -> zero_heatmap
+		}
 	}
 }
 
@@ -280,7 +282,7 @@ qplot(factor(survey_tidy$acadRank,
 	labs(title="Distribution of academic rank", x="Academic rank") -> acadRankPlot
 
 ggplot(zero_filled_heatmap, aes(role_a, role_b)) +
-	geom_raster(aes(fill = n)) -> multi_role_heatmap
+	geom_tile(aes(fill = n)) -> multi_role_heatmap
 
 # ggVennDiagram?
 
