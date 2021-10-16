@@ -199,6 +199,7 @@ roles_ordered = c("Clinician", "Lead", "Chart rev.", "Statistics", "Data warehou
 role_ab_cooccur = data.frame(a=numeric(), b=numeric())  # empty
 
 # Fixme - could I do this cleaner with a gather() instead?
+
 for (i in 1:nrow(role_mat_multiplied)) {
 	myrow = role_mat_multiplied[i,]
 	data.frame(t(combn(myrow, 2))) %>%  # ea col comes out as list, not numeric
@@ -274,8 +275,12 @@ zero_filled_heatmap
 #### Plots (univar)
 # Fixme - plot years & team size starting from 0?
 
-qplot(survey_tidy$years, binwidth=2) + labs(x="Number of years at BCM") -> uni_yrs
-qplot(survey_tidy$teamsize, binwidth=2) + labs(x="Number of people on datathon team") -> uni_teamsize
+qplot(survey_tidy$years, binwidth=2) +
+	labs(x="Number of years at BCM") +
+	xlim(0,NA) -> uni_yrs
+qplot(survey_tidy$teamsize, binwidth=2) +
+	labs(x="Number of people on datathon team") +
+	xlim(0,NA) -> uni_teamsize
 qplot(survey_tidy$effortHrs, binwidth=10) + labs(x="Person-hours worked on datathon") -> uni_effortHrs
 qplot(survey_tidy$itpercent, binwidth=10) + labs(x="Percentage of time spent with BCM IT") -> uni_itpercent
 # TODO - maybe? Calculate split into IT plus my hours, plot as stacked.
