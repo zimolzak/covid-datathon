@@ -1,21 +1,11 @@
+#        #         #         #         #         #         #         #        80
 library(dplyr)
 library(ggplot2)
 library(here)
 library(tidyr)
 
-#        #         #         #         #         #         #         #        80
-
 source(file=here("my_helper_functions.R"))
-
-
-
-
-#### Load data
-
 survey_in = filename2df('BCMDatathonSurvey_DATA_2021-08-10.csv')
-
-say('Dimensions of survey_in')
-dim(survey_in)
 
 
 
@@ -117,9 +107,7 @@ decode_role = data.frame(
 roles_ordered = decode_role$long[1:7]
 
 survey_tidy %>%
-summarise_at(vars(starts_with("role."), -role.text), sum) -> sum_roles
-
-sum_roles %>%
+summarise_at(vars(starts_with("role."), -role.text), sum) %>%
 rename(clin=role.clinical, lead=role.lead, rev=role.reviewer, stat=role.stats,
 	dataware=role.datawarehouse, datamgr=role.datamgr,
 	learn=role.learner, , datasci=role.datasci, other=role.other) %>%
@@ -187,9 +175,9 @@ mutate(
 	role_b = factor(roles_ordered[b], levels=roles_ordered)
 ) -> role_ab_cooccur
 
-# Build a MAX 49-row table with columns a,b,n (no a,b dups)
+# Build a MAX 21-row table with columns a,b,n (no a,b dups)
 # where a in 1..7, b in 1..7
-# and where n is the count, or in other words value of matrix element M_{a,b}
+# and where n is the count (value of LU triangle matrix element M_{a,b}, a<b)
 # n ALWAYS > 0 (in other words, skip all elements == 0).
 # More useful for printing than heatmap plotting.
 
@@ -216,7 +204,7 @@ for (i in 1:length(roles_ordered)) {
 	}
 }
 
-# build exactly 49-row df with n=whatever but now allowed to be 0.
+# build exactly 21-row df with n=whatever but now allowed to be 0.
 # Useful for plotting heatmap now.
 
 bind_rows(zero_heatmap, unrolled_heatmap) %>%
@@ -226,40 +214,10 @@ summarise(Count = sum(Count)) -> zero_filled_heatmap
 
 
 
-#### Print sample data
-
-say("SAMPLE DATA\n\ngathered_all")
-gathered_all %>%
-select(id, numeric_prepost, know.use, know.avail, know.limit) %>%
-head()
-
-say("survey_tidy")
-survey_tidy %>%
-select(-dept.text, -comment.text) %>%
-head()
-
-say("sum_roles")
-sum_roles
-
-say("role_count_toplot")
-role_count_toplot
-
-say("Multiple team roles (role_matrix)")
-role_matrix
-
-say("co-occur")
-head(role_ab_cooccur)
-
-say("unrolled heatmap")
-unrolled_heatmap
-
-say("zero_filled_heatmap")
-zero_filled_heatmap
-
-
-
-
 #### Tables, Univariate
+
+say('Dimensions of survey_in')
+dim(survey_in)
 
 # FIXME - put percentages for some categories!!
 say("TABLES\n\n")
@@ -274,10 +232,24 @@ cat("\npub.abstract:"); table(survey_tidy$pub.abstract)
 cat("\npub.paper:"); table(survey_tidy$pub.paper)
 cat("\ncomplete:"); table(survey_tidy$complete)
 
+say("role_count_toplot")
+role_count_toplot
+
 say("Free text ranks (other)")
 survey_tidy %>%
 filter(acadRank == "Staff") %>%
 select(acadRank.text)
+
+
+
+
+#### Tables, role co-occurence
+
+say("Multiple team roles (role_matrix)")
+role_matrix
+
+say("unrolled heatmap")
+unrolled_heatmap
 
 
 
