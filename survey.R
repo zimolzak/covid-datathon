@@ -75,7 +75,7 @@ mutate_at(vars(acadRank), ~ case_when(. == "Other (e.g. Staff, Instructor)" ~ "S
 
 
 
-#### Calculate new vars (prepost "gather")
+#### Calculate new vars about pre/post questions
 
 jitter_absolute = 0.02
 jx = jitter_absolute
@@ -101,7 +101,17 @@ use %>%
 full_join(available, by=c("id", "numeric_prepost")) %>%
 full_join(limit, by=c("id", "numeric_prepost")) -> gathered_all
 
+
+
+
 #### Calc vars pertaining to team role
+
+decode_role = data.frame(
+	long = c("Clinician", "Lead", "Chart rev.", "Statistics", "Data whse.", "Data mgr.", "Learner", "Other"),
+	abbr = c("clin", "lead", "rev", "stat", "dataware", "datamgr", "learn", "other")
+)
+
+roles_ordered = decode_role$long[1:7]
 
 survey_tidy %>%
 summarise_at(vars(starts_with("role."), -role.text), sum) -> sum_roles
@@ -111,9 +121,9 @@ rename(clin=role.clinical, lead=role.lead, rev=role.reviewer, stat=role.stats,
 	dataware=role.datawarehouse, datamgr=role.datamgr,
 	learn=role.learner, other=role.other) %>%
 gather(`clin`, `lead`, `rev`, `stat`, `dataware`,
-	`datamgr`, `learn`, `other`, key="role", value="count") -> role_count_toplot
+	`datamgr`, `learn`, `other`, key="role", value="count") %>%
+mutate(role_description = decode_role$long[decode_role$abbr == role]) -> role_count_toplot
 
-# FIXME - less abbreviated roles above!
 
 
 
@@ -131,6 +141,9 @@ head()
 
 say("sum_roles")
 sum_roles
+
+say("role_count_toplot")
+role_count_toplot
 
 
 
@@ -160,7 +173,7 @@ cat("\npub.abstract:"); table(survey_tidy$pub.abstract)
 cat("\npub.paper:"); table(survey_tidy$pub.paper)
 cat("\ncomplete:"); table(survey_tidy$complete)
 
-say("Other ranks")
+say("Free text ranks (other)")
 survey_tidy %>%
 filter(acadRank == "Staff") %>%
 select(acadRank.text)
@@ -196,9 +209,6 @@ role_matrix
 role_matrix %>%
 transmute(clin=clin, lead=lead*2, rev=rev*3, stat=stat*4, dataware=dataware*5,
 	datamgr=datamgr*6, learn=learn*7) -> role_mat_multiplied
-
-# make this for later use
-roles_ordered = c("Clinician", "Lead", "Chart rev.", "Statistics", "Data warehouse", "Data mgr.", "Learner")
 
 # Build up a data frame of role a:b pairings (edges)
 # Each subject has (7 Choose 2 = 7*6/2) = 21 edges. (Complete graph K_7)
@@ -286,7 +296,7 @@ qplot(survey_tidy$teamsize, binwidth=2) +
 	xlim(0,NA) -> uni_teamsize
 qplot(survey_tidy$effortHrs, binwidth=10) + labs(x="Person-hours worked on datathon") -> uni_effortHrs
 qplot(survey_tidy$itpercent, binwidth=10) + labs(x="Percentage of time spent with BCM IT") -> uni_itpercent
-# TODO - maybe? Calculate split into IT plus my hours, plot as stacked.
+# fixme - maybe? Calculate split into IT plus my hours, plot as stacked.
 qplot(survey_tidy$n_roles, binwidth=1) + labs(x="Number of roles per participant") -> uni_nroles
 
 gglikert(aes(x = hard.datapull)) + labs(x="How difficult was obtaining data?") -> uni_hard.datapull
@@ -300,8 +310,9 @@ qplot(factor(survey_tidy$acadRank,
 	levels=c("Student", "Fellow", "Staff", "Assistant", "Associate", "Full"))) +
 	labs(title="Distribution of academic rank", x="Academic rank") -> acadRankPlot
 
-ggplot(role_count_toplot, aes(role, count)) +
-	geom_col() -> barmaybe
+ggplot(role_count_toplot, aes(role_description, count)) +
+	geom_col() +
+	labs(x="Role on team") -> barmaybe
 
 ggplot(zero_filled_heatmap, aes(role_a, role_b, label = Count)) +
 	geom_tile(aes(fill = Count)) +
@@ -381,7 +392,7 @@ ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.limit + eps_y, gr
   labs(title="Understanding of data warehouse limitations", y="Likert", x="Time",
       subtitle= htests_to_subtitle(w_limit, c_limit, t_limit)) -> paired3
 
-# TODO - candidate strata: years, effort, prior.emrdata,
+# fixme - candidate strata: years, effort, prior.emrdata,
 
 
 
