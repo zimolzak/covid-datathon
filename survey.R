@@ -257,36 +257,36 @@ unrolled_heatmap
 #### Plots (univar)
 
 qplot(survey_tidy$years, binwidth=2) +
-	labs(x="Number of years at BCM") +
+	labs(x = "", title = "Number of years at BCM") +
 	xlim(0,NA) -> uni_yrs
 qplot(survey_tidy$teamsize, binwidth=2) +
-	labs(x="Number of people on datathon team") +
+	labs(x = "", title = "Number of people on datathon team") +
 	xlim(0,NA) -> uni_teamsize
-qplot(survey_tidy$effortHrs, binwidth=10) + labs(x="Person-hours worked on datathon") -> uni_effortHrs
-qplot(survey_tidy$itpercent, binwidth=10) + labs(x="Percentage of time spent with BCM IT") -> uni_itpercent
+qplot(survey_tidy$effortHrs, binwidth=10) + labs(x = "", title = "Person-hours worked on datathon") -> uni_effortHrs
+qplot(survey_tidy$itpercent, binwidth=10) + labs(x = "", title = "Percentage of time spent with BCM IT") -> uni_itpercent
 # fixme - maybe? Calculate split into IT plus my hours, plot as stacked.
-qplot(survey_tidy$n_roles, binwidth=1) + labs(x="Number of roles per participant") -> uni_nroles
+qplot(survey_tidy$n_roles, binwidth=1) + labs(x = "", title = "Number of roles per participant") -> uni_nroles
 
-gglikert(aes(x = hard.datapull)) + labs(x="How difficult was obtaining data?") -> uni_hard.datapull
-gglikert(aes(x = hard.datawork)) + labs(x="How difficult was working with data?") -> uni_hard.datawork
-gglikert(aes(x = valuable)) + labs(x="Participating was a valuable experience.") -> uni_valuable  ## FIG 2
-gglikert(aes(x = future.datathon)) + labs(x="I would participate in future datathon.") -> uni_future.datathon  ## FIG 3
-gglikert(aes(x = prior.emrdata)) + labs(x="I had experience using EMR data.") -> uni_prior.emrdata  ## FIG 1
-gglikert(aes(x = future.studies)) + labs(x="I plan to conduct future studies using BCM DW.") -> uni_future.studies  ## FIG 4
+gglikert(aes(x = hard.datapull)) + labs(x = "", title = "How difficult was obtaining data?") -> uni_hard.datapull
+gglikert(aes(x = hard.datawork)) + labs(x = "", title = "How difficult was working with data?") -> uni_hard.datawork
+gglikert(aes(x = valuable)) + labs(x = "", title = "\"Participating was a valuable experience.\"") -> uni_valuable  ## FIG 2
+gglikert(aes(x = future.datathon)) + labs(x = "", title = "\"I would participate in a future datathon.\"") -> uni_future.datathon  ## FIG 3
+gglikert(aes(x = prior.emrdata)) + labs(x = "", title = "\"I had prior experience using EMR data.\"") -> uni_prior.emrdata  ## FIG 1
+gglikert(aes(x = future.studies)) + labs(x = "", title = "\"I plan to conduct future studies using BCM DW.\"") -> uni_future.studies  ## FIG 4
 
 qplot(factor(survey_tidy$acadRank,
 	levels=c("Student", "Fellow", "Staff", "Assistant", "Associate", "Full"))) +
-	labs(title="Distribution of academic rank", x="Academic rank") -> acadRankPlot
+	labs(x = "", title = "Academic rank") -> acadRankPlot
 
 ggplot(role_count_toplot, aes(role_description, count)) +
 	geom_col() +
-	labs(x="Role on team") -> barmaybe
+	labs(x = "", title = "Role on team") -> barmaybe
 
 ggplot(zero_filled_heatmap, aes(role_a, role_b, label = Count)) +
 	geom_tile(aes(fill = Count)) +
 	geom_label() +
 	labs(
-		title="Co-occurrence of roles, for those with >1 role",
+		title = "Co-occurrence of roles, for those with >1 role",
 		x="Role A",
 		y="Role B"
 	) -> multi_role_heatmap
@@ -341,7 +341,7 @@ ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.use + eps_y, grou
  geom_point() +
   geom_line() +
   scale_x_continuous(breaks = c(0,1), labels = c("Pre", "Post")) +
-  labs(title="Knowledge about how to use the data warehouse", y="Likert", x="Time",
+  labs(title="Knowledge about how to use the data warehouse", y="", x="",
       subtitle= htests_to_subtitle(w_use, c_use, t_use)) -> paired1
 
 ## FIG 6
@@ -349,7 +349,7 @@ ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.avail + eps_y, gr
  geom_point() +
   geom_line() +
   scale_x_continuous(breaks = c(0,1), labels = c("Pre", "Post")) +
-  labs(title="Knowledge about data availability", y="Likert", x="Time",
+  labs(title="Knowledge about data availability", y="", x="",
       subtitle= htests_to_subtitle(w_avail, c_avail, t_avail)) -> paired2
 
 ## FIG 7
@@ -357,7 +357,7 @@ ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.limit + eps_y, gr
  geom_point() +
   geom_line() +
   scale_x_continuous(breaks = c(0,1), labels = c("Pre", "Post")) +
-  labs(title="Understanding of data warehouse limitations", y="Likert", x="Time",
+  labs(title="Understanding of data warehouse limitations", y="", x="",
       subtitle= htests_to_subtitle(w_limit, c_limit, t_limit)) -> paired3
 
 # fixme - candidate strata: years, effort, prior.emrdata,
@@ -388,10 +388,11 @@ paired2
 paired3
 dev.off()
 
-ggsave(here('pngs-conf', 'amia-fig1-priorexp.png'), uni_prior.emrdata)
-ggsave(here('pngs-conf', 'amia-fig2-valuable.png'), uni_valuable)
-ggsave(here('pngs-conf', 'amia-fig3-futurethon.png'), uni_future.datathon)
-ggsave(here('pngs-conf', 'amia-fig4-futurestud.png'), uni_future.studies)
-ggsave(here('pngs-conf', 'amia-fig5-pair1.png'), paired1)
-ggsave(here('pngs-conf', 'amia-fig6-pair2.png'), paired2)
-ggsave(here('pngs-conf', 'amia-fig7-pair3.png'), paired3)
+ggsave(here('pngs-conf', 'amia-1-acadrank.png'), acadRankPlot)
+ggsave(here('pngs-conf', 'amia-2-priorexp.png'), uni_prior.emrdata)
+ggsave(here('pngs-conf', 'amia-3-valuable.png'), uni_valuable)
+ggsave(here('pngs-conf', 'amia-4-futurethon.png'), uni_future.datathon)
+ggsave(here('pngs-conf', 'amia-5-futurestud.png'), uni_future.studies)
+ggsave(here('pngs-conf', 'amia-6-pair1.png'), paired1)
+ggsave(here('pngs-conf', 'amia-7-pair2.png'), paired2)
+ggsave(here('pngs-conf', 'amia-8-pair3.png'), paired3)
