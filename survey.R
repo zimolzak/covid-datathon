@@ -220,7 +220,7 @@ say('Dimensions of survey_in')
 dim(survey_in)
 
 # FIXME - put percentages for some categories!!
-say("TABLES\n\n")
+say("TABLES")
 cat("\nacadRank:"); table(survey_tidy$acadRank)  ## FIG ??
 cat("\nprior.hack:"); table(survey_tidy$prior.hack)
 cat("\nworkedTeam:"); table(survey_tidy$workedTeam)
@@ -367,7 +367,7 @@ ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.limit + eps_y, gr
 
 #### Write to plot files
 
-say('\n\n----\n\nEnd of text output. Now plotting.')
+say('End of text output. Now plotting.')
 pdf(here("outputs", "Rplots_survey.pdf"))
 uni_yrs
 acadRankPlot

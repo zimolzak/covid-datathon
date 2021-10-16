@@ -5,7 +5,7 @@ filename2df <- function(fname) {
 }
 
 say = function(s) {
-	sL = c('\n', s, ' ----\n')
+	sL = c('\n\n\n\n# ', s, '\n\n')
 	cat(paste(sL, collapse=''))
 }
 
