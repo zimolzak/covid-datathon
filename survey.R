@@ -113,6 +113,7 @@ rename(clin=role.clinical, lead=role.lead, rev=role.reviewer, stat=role.stats,
 gather(`clin`, `lead`, `rev`, `stat`, `dataware`,
 	`datamgr`, `learn`, `other`, key="role", value="count") -> role_count_toplot
 
+# FIXME - less abbreviated roles above!
 
 
 
@@ -169,6 +170,12 @@ select(acadRank.text)
 
 #### Fancy combinatorics about those who checked >1 role
 
+# Slice out certain survey Qs & subjects.
+# --> 11 people * 7 roles. Looks like:
+# 0 0 0 1 0 1 0
+# 1 0 1 1 0 0 0
+# ...
+
 say("Multiple team roles")
 survey_tidy %>%
 filter(n_roles > 1) %>%
@@ -179,26 +186,31 @@ rename(clin=role.clinical, lead=role.lead, rev=role.reviewer, stat=role.stats,
 	learn=role.learner) -> role_matrix
 role_matrix
 
-# --> 11 people * 7 roles. Looks like:
-# 0 0 0 1 0 1 0
-# 1 0 1 1 0 0 0
+# Encode roles as 1..7
+# -->
+# 0 0 0 4 0 6 0
+# 1 0 3 4 0 0 0
 # ...
+# Fixme - may be a less fragile way to do this 1..7 coding/decoding
 
 role_matrix %>%
 transmute(clin=clin, lead=lead*2, rev=rev*3, stat=stat*4, dataware=dataware*5,
 	datamgr=datamgr*6, learn=learn*7) -> role_mat_multiplied
 
-# -->
-# 0 0 0 4 0 6 0
-# 1 0 3 4 0 0 0
-# ...
-
 # make this for later use
 roles_ordered = c("Clinician", "Lead", "Chart rev.", "Statistics", "Data warehouse", "Data mgr.", "Learner")
 
-role_ab_cooccur = data.frame(a=numeric(), b=numeric())  # empty
-
+# Build up a data frame of role a:b pairings (edges)
+# Each subject has (7 Choose 2 = 7*6/2) = 21 edges. (Complete graph K_7)
+# Therefore for 11 Ss, this is 11*21 rows. 231 row * 2 col data.frame like:
+# 0 2
+# 0 3
+# 2 3
+# ...one row per possible role pairing in K_7, for each person.
+# Zeroes mean they didn't check that role.
 # Fixme - could I do this cleaner with a gather() instead?
+
+role_ab_cooccur = data.frame(a=numeric(), b=numeric())  # empty
 
 for (i in 1:nrow(role_mat_multiplied)) {
 	myrow = role_mat_multiplied[i,]
@@ -207,13 +219,7 @@ for (i in 1:nrow(role_mat_multiplied)) {
 	bind_rows(role_ab_cooccur, mycombos) -> role_ab_cooccur
 }
 
-# --> 7 Choose 2 = 7*6/2 = 21 (n edges in complete graph K_7)
-# Therefore this comes out as 231 * 2 data.frame like:
-# 0 2
-# 0 3
-# 2 3
-# ...one row per possible role pairing in K_7, for each person.
-# Zeroes mean they didn't check that role.
+# Filter to <<231 rows * still 2 col
 
 role_ab_cooccur %>%
 filter(a > 0) %>%
@@ -223,10 +229,14 @@ mutate(
 	role_b = factor(roles_ordered[b], levels=roles_ordered)
 ) -> role_ab_cooccur
 
-# --> filtered to <231 * 2
-
 say("co-occur")
 head(role_ab_cooccur)
+
+# Build a MAX 49-row table with columns a,b,n (no a,b dups)
+# where a in 1..7, b in 1..7
+# and where n is the count, or in other words value of matrix element M_{a,b}
+# n ALWAYS > 0 (in other words, skip all elements == 0).
+# More useful for printing than heatmap plotting.
 
 say("unrolled heatmap")
 role_ab_cooccur %>%
@@ -234,11 +244,6 @@ group_by(a,  b, role_a, role_b) %>%
 summarise(Count = n()) %>%
 arrange(desc(Count)) -> unrolled_heatmap
 unrolled_heatmap
-
-# --> a MAX 49-row table with columns a,b,n (no a,b dups)
-# where a in 1..7, b in 1..7
-# and where n is the count, or in other words value of matrix element M_{a,b}
-# n ALWAYS > 0
 
 zero_heatmap = data.frame(a=numeric(), b=numeric(),
 	role_a = factor(, levels=roles_ordered),
@@ -258,13 +263,12 @@ for (i in 1:length(roles_ordered)) {
 	}
 }
 
-# --> 49-row df with n=0 always
+# build exactly 49-row df with n=whatever but now allowed to be 0.
+# Useful for plotting heatmap now.
 
 bind_rows(zero_heatmap, unrolled_heatmap) %>%
 group_by(a, b, role_a, role_b) %>%
 summarise(Count = sum(Count)) -> zero_filled_heatmap
-
-# --> exactly 49-row df with n=whatever but allowed to be 0
 
 say("zero_filled_heatmap")
 zero_filled_heatmap
@@ -273,7 +277,6 @@ zero_filled_heatmap
 
 
 #### Plots (univar)
-# Fixme - plot years & team size starting from 0?
 
 qplot(survey_tidy$years, binwidth=2) +
 	labs(x="Number of years at BCM") +
@@ -308,8 +311,6 @@ ggplot(zero_filled_heatmap, aes(role_a, role_b, label = Count)) +
 		x="Role A",
 		y="Role B"
 	) -> multi_role_heatmap
-
-# ggVennDiagram?
 
 
 
