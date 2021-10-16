@@ -7,6 +7,9 @@ library(tidyr)
 
 source(file=here("my_helper_functions.R"))
 
+
+
+
 #### Load data
 
 survey_in = filename2df('BCMDatathonSurvey_DATA_2021-08-10.csv')
@@ -17,7 +20,7 @@ dim(survey_in)
 
 
 
-#### Shorten long column names and clean several columns' contents
+#### Shorten long column names and tidy contents
 
 survey_in %>%
 rename(
@@ -127,61 +130,7 @@ mutate(role_description = decode_role$long[decode_role$abbr == role]) -> role_co
 
 
 
-#### Print sample data
-
-say("SAMPLE DATA\n\ngathered_all")
-gathered_all %>%
-select(id, numeric_prepost, know.use, know.avail, know.limit) %>%
-head()
-
-say("survey_tidy")
-survey_tidy %>%
-select(-dept.text, -comment.text) %>%
-head()
-
-say("sum_roles")
-sum_roles
-
-say("role_count_toplot")
-role_count_toplot
-
-
-
-
-#### Tables, Univariate
-
-## FIXME - put percentages for some categories!!
-
-say("TABLES\n\n")
-cat("\nacadRank:"); table(survey_tidy$acadRank)  ## FIG ??
-cat("\nprior.hack:"); table(survey_tidy$prior.hack)
-cat("\nworkedTeam:"); table(survey_tidy$workedTeam)
-cat("\nrole.clinical:"); table(survey_tidy$role.clinical)   ## FIG per JD (all roles)
-cat("\nrole.lead:"); table(survey_tidy$role.lead)
-cat("\nrole.reviewer:"); table(survey_tidy$role.reviewer)
-cat("\nrole.datasci:"); table(survey_tidy$role.datasci)
-cat("\nrole.stats:"); table(survey_tidy$role.stats)
-cat("\nrole.datawarehouse:"); table(survey_tidy$role.datawarehouse)
-cat("\nrole.datamgr:"); table(survey_tidy$role.datamgr)
-cat("\nrole.learner:"); table(survey_tidy$role.learner)
-cat("\nrole.other:"); table(survey_tidy$role.other)
-cat("\ncompleted:"); table(survey_tidy$completed)
-cat("\nanswered:"); table(survey_tidy$answered)
-cat("\ncollab.outside:"); table(survey_tidy$collab.outside)
-cat("\ncollab.new:"); table(survey_tidy$collab.new)
-cat("\npub.abstract:"); table(survey_tidy$pub.abstract)
-cat("\npub.paper:"); table(survey_tidy$pub.paper)
-cat("\ncomplete:"); table(survey_tidy$complete)
-
-say("Free text ranks (other)")
-survey_tidy %>%
-filter(acadRank == "Staff") %>%
-select(acadRank.text)
-
-
-
-
-#### Fancy combinatorics about those who checked >1 role
+#### Calculate fancy combinatorics about those who checked >1 role
 
 # Slice out certain survey Qs & subjects.
 # --> 11 people * 7 roles. Looks like:
@@ -189,7 +138,6 @@ select(acadRank.text)
 # 1 0 1 1 0 0 0
 # ...
 
-say("Multiple team roles")
 survey_tidy %>%
 filter(n_roles > 1) %>%
 select(role.clinical, role.lead, role.reviewer, role.stats, role.datawarehouse,
@@ -197,14 +145,13 @@ select(role.clinical, role.lead, role.reviewer, role.stats, role.datawarehouse,
 rename(clin=role.clinical, lead=role.lead, rev=role.reviewer, stat=role.stats,
 	dataware=role.datawarehouse, datamgr=role.datamgr,
 	learn=role.learner) -> role_matrix
-role_matrix
 
 # Encode roles as 1..7
 # -->
 # 0 0 0 4 0 6 0
 # 1 0 3 4 0 0 0
 # ...
-# Fixme - may be a less fragile way to do this 1..7 coding/decoding
+# Fixme - may be a less fragile way to do the 1..7 coding/decoding
 
 role_matrix %>%
 transmute(clin=clin, lead=lead*2, rev=rev*3, stat=stat*4, dataware=dataware*5,
@@ -239,21 +186,16 @@ mutate(
 	role_b = factor(roles_ordered[b], levels=roles_ordered)
 ) -> role_ab_cooccur
 
-say("co-occur")
-head(role_ab_cooccur)
-
 # Build a MAX 49-row table with columns a,b,n (no a,b dups)
 # where a in 1..7, b in 1..7
 # and where n is the count, or in other words value of matrix element M_{a,b}
 # n ALWAYS > 0 (in other words, skip all elements == 0).
 # More useful for printing than heatmap plotting.
 
-say("unrolled heatmap")
 role_ab_cooccur %>%
 group_by(a,  b, role_a, role_b) %>%
 summarise(Count = n()) %>%
 arrange(desc(Count)) -> unrolled_heatmap
-unrolled_heatmap
 
 zero_heatmap = data.frame(a=numeric(), b=numeric(),
 	role_a = factor(, levels=roles_ordered),
@@ -280,8 +222,70 @@ bind_rows(zero_heatmap, unrolled_heatmap) %>%
 group_by(a, b, role_a, role_b) %>%
 summarise(Count = sum(Count)) -> zero_filled_heatmap
 
+
+
+
+#### Print sample data
+
+say("SAMPLE DATA\n\ngathered_all")
+gathered_all %>%
+select(id, numeric_prepost, know.use, know.avail, know.limit) %>%
+head()
+
+say("survey_tidy")
+survey_tidy %>%
+select(-dept.text, -comment.text) %>%
+head()
+
+say("sum_roles")
+sum_roles
+
+say("role_count_toplot")
+role_count_toplot
+
+say("Multiple team roles (role_matrix)")
+role_matrix
+
+say("co-occur")
+head(role_ab_cooccur)
+
+say("unrolled heatmap")
+unrolled_heatmap
+
 say("zero_filled_heatmap")
 zero_filled_heatmap
+
+
+
+
+#### Tables, Univariate
+
+# FIXME - put percentages for some categories!!
+say("TABLES\n\n")
+cat("\nacadRank:"); table(survey_tidy$acadRank)  ## FIG ??
+cat("\nprior.hack:"); table(survey_tidy$prior.hack)
+cat("\nworkedTeam:"); table(survey_tidy$workedTeam)
+cat("\nrole.clinical:"); table(survey_tidy$role.clinical)   ## FIG per JD (all roles)
+cat("\nrole.lead:"); table(survey_tidy$role.lead)
+cat("\nrole.reviewer:"); table(survey_tidy$role.reviewer)
+cat("\nrole.datasci:"); table(survey_tidy$role.datasci)
+cat("\nrole.stats:"); table(survey_tidy$role.stats)
+cat("\nrole.datawarehouse:"); table(survey_tidy$role.datawarehouse)
+cat("\nrole.datamgr:"); table(survey_tidy$role.datamgr)
+cat("\nrole.learner:"); table(survey_tidy$role.learner)
+cat("\nrole.other:"); table(survey_tidy$role.other)
+cat("\ncompleted:"); table(survey_tidy$completed)
+cat("\nanswered:"); table(survey_tidy$answered)
+cat("\ncollab.outside:"); table(survey_tidy$collab.outside)
+cat("\ncollab.new:"); table(survey_tidy$collab.new)
+cat("\npub.abstract:"); table(survey_tidy$pub.abstract)
+cat("\npub.paper:"); table(survey_tidy$pub.paper)
+cat("\ncomplete:"); table(survey_tidy$complete)
+
+say("Free text ranks (other)")
+survey_tidy %>%
+filter(acadRank == "Staff") %>%
+select(acadRank.text)
 
 
 
