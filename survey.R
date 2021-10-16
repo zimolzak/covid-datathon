@@ -110,8 +110,8 @@ full_join(limit, by=c("id", "numeric_prepost")) -> gathered_all
 #### Calc vars pertaining to team role
 
 decode_role = data.frame(
-	long = c("Clinician", "Lead", "Chart rev.", "Statistics", "Data whse.", "Data mgr.", "Learner", "Other"),
-	abbr = c("clin", "lead", "rev", "stat", "dataware", "datamgr", "learn", "other")
+	long = c("Clinician", "Lead", "Chart rev.", "Statistics", "Data whse.", "Data mgr.", "Learner", "Data sci.", "Other"),
+	abbr = c("clin", "lead", "rev", "stat", "dataware", "datamgr", "learn", "datasci", "other")
 )
 
 roles_ordered = decode_role$long[1:7]
@@ -122,9 +122,10 @@ summarise_at(vars(starts_with("role."), -role.text), sum) -> sum_roles
 sum_roles %>%
 rename(clin=role.clinical, lead=role.lead, rev=role.reviewer, stat=role.stats,
 	dataware=role.datawarehouse, datamgr=role.datamgr,
-	learn=role.learner, other=role.other) %>%
-gather(`clin`, `lead`, `rev`, `stat`, `dataware`,
-	`datamgr`, `learn`, `other`, key="role", value="count") %>%
+	learn=role.learner, , datasci=role.datasci, other=role.other) %>%
+gather(`clin`, `lead`, `rev`, `stat`,
+	`dataware`,	`datamgr`,
+	`learn`, `datasci`, `other`, key="role", value="count") %>%
 mutate(role_description = decode_role$long[decode_role$abbr == role]) -> role_count_toplot
 
 
