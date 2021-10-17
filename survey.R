@@ -240,6 +240,9 @@ survey_tidy %>%
 filter(acadRank == "Staff") %>%
 select(acadRank.text)
 
+say("Team size distrib/quantiles")
+quantile(survey_tidy$teamsize, na.rm=TRUE)
+
 
 
 
@@ -388,7 +391,13 @@ paired2
 paired3
 dev.off()
 
-ggsave(here('pngs-conf', 'amia-1-acadrank.png'), acadRankPlot)
+
+
+
+ggsave(here('pngs-conf', 'amia-1-acadrank-20.png'), acadRankPlot + gfontsize(20))
+ggsave(here('pngs-conf', 'amia-1-acadrank-30.png'), acadRankPlot + gfontsize(30))
+ggsave(here('pngs-conf', 'amia-1-acadrank-40.png'), acadRankPlot + gfontsize(40))
+
 ggsave(here('pngs-conf', 'amia-2-priorexp.png'), uni_prior.emrdata)
 ggsave(here('pngs-conf', 'amia-3-valuable.png'), uni_valuable)
 ggsave(here('pngs-conf', 'amia-4-futurethon.png'), uni_future.datathon)

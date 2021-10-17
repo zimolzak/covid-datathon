@@ -75,3 +75,13 @@ gathered2chitrend = function(df){
 
 	return(prop.trend.test(table$`0`, table$total_trials))
 }
+
+gfontsize <- function(x) {
+	return(
+		theme(
+		    plot.title = element_text(size = x),
+		    axis.title = element_text(size = x),
+			axis.text = element_text(size = x)
+		)
+	)
+}
