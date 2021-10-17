@@ -58,9 +58,9 @@ htests_to_subtitle = function(wt, ct, tt){
 	wp = round(wt$p.value, decimals)
 	cp = round(ct$p.value, decimals)
 	tp = round(tt$p.value, decimals)
-	return(paste('Wilcoxon signed-rank p =', wp,
-		'\nChi trend p =', cp,
-		'\nPaired T p =', tp)
+	return(paste('Wilco sgn-rank p =', wp,
+		'; Chi trend p =', cp,
+		'; Paired T test p =', tp)
 	)
 }
 
