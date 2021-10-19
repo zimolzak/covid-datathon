@@ -221,7 +221,7 @@ dim(survey_in)
 
 # FIXME - put percentages for some categories!!
 say("TABLES")
-cat("\nacadRank:"); table(survey_tidy$acadRank)  ## FIG ??
+cat("\nacadRank:"); table(survey_tidy$acadRank)
 cat("\nprior.hack:"); table(survey_tidy$prior.hack)
 cat("\nworkedTeam:"); table(survey_tidy$workedTeam)
 cat("\ncompleted:"); table(survey_tidy$completed)
@@ -272,14 +272,14 @@ qplot(survey_tidy$n_roles, binwidth=1) + labs(x = NULL, title = "Number of roles
 
 gglikert(aes(x = hard.datapull)) + labs(x = NULL, y = NULL, title = "How difficult was obtaining data?") -> uni_hard.datapull
 gglikert(aes(x = hard.datawork)) + labs(x = NULL, y = NULL, title = "How difficult was working with data?") -> uni_hard.datawork
-gglikert(aes(x = valuable)) + labs(x = NULL, y = NULL, title = "\"Participating was a valuable\nexperience.\"") -> uni_valuable  ## FIG 2
-gglikert(aes(x = future.datathon)) + labs(x = NULL, y = NULL, title = "\"I would participate in a future\ndatathon.\"") -> uni_future.datathon  ## FIG 3
-gglikert(aes(x = prior.emrdata)) + labs(x = NULL, y = NULL, title = "\"I had prior experience using\nEMR data.\"") -> uni_prior.emrdata  ## FIG 1
-gglikert(aes(x = future.studies)) + labs(x = NULL, y = NULL, title = "\"I plan to conduct future studies\nusing BCM DW.\"") -> uni_future.studies  ## FIG 4
+gglikert(aes(x = valuable)) + labs(x = NULL, y = NULL, title = "\"Participating was a valuable\nexperience.\"") -> uni_valuable
+gglikert(aes(x = future.datathon)) + labs(x = "Level of agreement", y = "Count", title = "\"I would participate in a future\ndatathon.\"") -> uni_future.datathon  ## pptx
+gglikert(aes(x = prior.emrdata)) + labs(x = "Level of experience", y = "Count", title = "\"I had prior experience using\nEMR data.\"") -> uni_prior.emrdata  ## pptx
+gglikert(aes(x = future.studies)) + labs(x = "Level of agreement", y = "Count", title = "\"I plan to conduct future studies\nusing BCM DW.\"") -> uni_future.studies  ## pptx
 
 qplot(factor(survey_tidy$acadRank,
 	levels=c("Student", "Fellow", "Staff", "Assistant", "Associate", "Full"))) +
-	labs(x = NULL, title = "Academic rank") -> acadRankPlot
+	labs(x = "Rank", y="Count", title = "Academic rank") -> acadRankPlot  # pptx
 
 ggplot(role_count_toplot, aes(role_description, count)) +
 	geom_col() +
@@ -339,7 +339,7 @@ w_limit
 c_limit
 t_limit
 
-## FIG 5
+## pptx
 ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.use + eps_y, group = id)) +
  geom_point() +
   geom_line() +
@@ -347,7 +347,7 @@ ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.use + eps_y, grou
   labs(title="Knowledge about how to use\nthe data warehouse", y=NULL, x=NULL,
       subtitle= htests_to_subtitle(w_use, c_use, t_use)) -> paired1
 
-## FIG 6
+## pptx
 ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.avail + eps_y, group = id)) +
  geom_point() +
   geom_line() +
@@ -355,7 +355,7 @@ ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.avail + eps_y, gr
   labs(title="Knowledge about data\navailability", y=NULL, x=NULL,
       subtitle= htests_to_subtitle(w_avail, c_avail, t_avail)) -> paired2
 
-## FIG 7
+## pptx
 ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.limit + eps_y, group = id)) +
  geom_point() +
   geom_line() +
@@ -402,7 +402,6 @@ ranktheme = 		theme(
 
 ggsave(here('pngs-conf', 'amia-1-acadrank.png'), acadRankPlot + ranktheme)
 ggsave(here('pngs-conf', 'amia-2-priorexp.png'), uni_prior.emrdata + gfontsize(30))
-ggsave(here('pngs-conf', 'amia-3-valuable.png'), uni_valuable + gfontsize(30))
 ggsave(here('pngs-conf', 'amia-4-futurethon.png'), uni_future.datathon + gfontsize(30))
 ggsave(here('pngs-conf', 'amia-5-futurestud.png'), uni_future.studies + gfontsize(30))
 ggsave(here('pngs-conf', 'amia-6-pair1.png'), paired1 + gfontsize(30))
