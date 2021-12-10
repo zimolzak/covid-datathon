@@ -99,8 +99,12 @@ gathered_all %>%
 mutate(use = know.use + eps_y, avail = know.avail + eps_y, limit = know.limit + eps_y,
 	nprepost = numeric_prepost + eps_x) %>%
 select(id, nprepost, use, avail, limit) %>%
-gather(`use`, `avail`, `limit`, key="dimension", value="knowledge") -> double_gathered
-
+gather(`use`, `avail`, `limit`, key="dimension", value="knowledge") %>%
+mutate_at(vars(dimension), ~ case_when(. == "use" ~ "How to use data warehouse",
+	. == "avail" ~ "Data availability",
+	. == "limit" ~ "Data warehouse limitations",
+	TRUE ~ .)) -> double_gathered
+# mutate_at(vars(acadRank), ~ case_when(. == "Other (e.g. Staff, Instructor)" ~ "Staff", TRUE ~ .))
 
 
 
@@ -407,8 +411,9 @@ ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.limit + eps_y, gr
 ggplot(double_gathered, aes(x = nprepost, y = knowledge, group = id)) +
  geom_point() +
   geom_line() +
-  scale_x_continuous(breaks = c(0,1), labels = c("Pre", "Post")) +
-  facet_wrap(vars(dimension)) -> facet
+  scale_x_continuous(breaks = c(0,1), labels = c("Before", "After")) +
+  labs(x = NULL, y = "Self-reported knowledge") +
+  facet_wrap(vars(dimension), nrow = 2) -> facet
 
 # fixme - candidate strata: years, effort, prior.emrdata,
 
