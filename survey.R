@@ -240,9 +240,20 @@ survey_tidy %>%
 filter(acadRank == "Staff") %>%
 select(acadRank.text)
 
-say("Team size distrib/quantiles")
+
+# years, team size, effort, pct IT.
+
+say("Years at BCM, quantiles")
+quantile(survey_tidy$years, na.rm=TRUE)
+
+say("Team size, quantiles")
 quantile(survey_tidy$teamsize, na.rm=TRUE)
 
+say("Person-hours spent, quantiles")
+quantile(survey_tidy$effortHrs, na.rm=TRUE)
+
+say("Percent time spent with IT, quantiles")
+quantile(survey_tidy$itpercent, na.rm=TRUE)
 
 
 
