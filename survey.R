@@ -241,25 +241,25 @@ filter(acadRank == "Staff") %>%
 select(acadRank.text)
 
 
-# years, team size, effort, pct IT.
 
-say("Years at BCM, quantiles")
+
+say("Quantiles")
+cat("\nYears at BCM")
 quantile(survey_tidy$years, na.rm=TRUE)
 
-say("Team size, quantiles")
+cat("\nTeam size, quantiles")
 quantile(survey_tidy$teamsize, na.rm=TRUE)
 
-say("Person-hours spent, quantiles")
+cat("\nPerson-hours spent, quantiles")
 quantile(survey_tidy$effortHrs, na.rm=TRUE)
 
-say("Percent time spent with IT, quantiles")
+cat("\nPercent time spent with IT, quantiles")
 quantile(survey_tidy$itpercent, na.rm=TRUE)
 
 
 
 
 say("Selected Likert tables")
-
 cat("\nvaluable")
 table(survey_tidy$valuable)
 round(prop.table(table(survey_tidy$valuable)) * 100, 1)
