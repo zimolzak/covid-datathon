@@ -1,19 +1,14 @@
 library(dplyr)
+library(here)
 
 # onedrive --> files / covid-19 / covid_datathon / HospitalAdmissionCovid
-
-SETWDPATH = "/Users/ajz/Desktop/aa-git/covid-datathon/"
-DATADIR = "data/HospitalAdmissionCovid/"
-DATAPATH = paste(SETWDPATH, DATADIR, sep='')
-
-setwd(SETWDPATH)
 
 dimlf = 'BSLMC_COVID_LABS_Tests.txt'
 hospf = 'PHI_DATA_BSLMC Hsp Admission_COVID 01-01-2020 to 06-30-2020.txt'
 probf = 'PHI_DATA_BSLMC PROBLEM LIST_DM.COPD.ASTHMA.HTN_COVID 01-01-2020 to 06-30-2020.txt'
 
 str2df <- function(s) {
-    d = read.csv(paste(DATAPATH, s, sep=''), sep="\t",
+    d = read.csv(here('data', 'HospitalAdmissionCovid', s), sep="\t",
         stringsAsFactors = FALSE, na.strings="NULL")
     return(d)
 }
