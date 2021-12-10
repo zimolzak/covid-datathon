@@ -92,9 +92,8 @@ select(id, numeric_prepost, know.limit) -> limit
 
 use %>%
 full_join(available, by=c("id", "numeric_prepost")) %>%
-full_join(limit, by=c("id", "numeric_prepost")) -> gathered_all
+full_join(limit, by=c("id", "numeric_prepost")) -> gathered_all   # this goes into individual paired plots
 
-say("GATHERED_ALL")
 gathered_all %>%
 mutate(use = know.use + eps_y, avail = know.avail + eps_y, limit = know.limit + eps_y,
 	nprepost = numeric_prepost + eps_x) %>%
@@ -103,8 +102,8 @@ gather(`use`, `avail`, `limit`, key="dimension", value="knowledge") %>%
 mutate_at(vars(dimension), ~ case_when(. == "use" ~ "How to use data warehouse",
 	. == "avail" ~ "Data availability",
 	. == "limit" ~ "Data warehouse limitations",
-	TRUE ~ .)) -> double_gathered
-# mutate_at(vars(acadRank), ~ case_when(. == "Other (e.g. Staff, Instructor)" ~ "Staff", TRUE ~ .))
+	TRUE ~ .)) -> double_gathered   # goes into one big facetted paired plot
+
 
 
 
@@ -225,6 +224,18 @@ summarise(Count = sum(Count)) -> zero_filled_heatmap
 
 
 
+
+#### Calculate new dataframe about:
+#### workedTeam, collab.outside, collab.new, completed, answered, pub.abstract, pub.paper
+survey_tidy %>%
+select(id, workedTeam, collab.outside, collab.new, completed, answered, pub.abstract, pub.paper) %>%
+mutate(workedTeamReverse = 1 - workedTeam) %>%
+gather(`workedTeamReverse`, `collab.outside`, `collab.new`, `completed`,
+	`answered`, `pub.abstract`, `pub.paper`, key = "Dimension", value = "Success") -> collab_success
+
+
+
+
 #### Tables, Univariate
 
 say('Dimensions of survey_in')
@@ -338,6 +349,9 @@ ggplot(zero_filled_heatmap, aes(role_a, role_b, label = Count)) +
 		y="Role B"
 	) -> multi_role_heatmap
 
+ggplot(collab_success, aes(Dimension)) +
+	geom_bar() -> success_stack
+
 
 
 
@@ -442,6 +456,7 @@ paired1
 paired2
 paired3
 facet
+success_stack
 dev.off()
 
 # PNGs for AMIA talk slides
@@ -463,3 +478,4 @@ ggsave(here('pngs-conf', 'amia-8-pair3.png'), paired3 + gfontsize(30))
 
 # paper
 ggsave(here('pngs-paper', 'facet.png'), facet)
+ggsave(here('pngs-paper', 'success_stack.png'), success_stack)
