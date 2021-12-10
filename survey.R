@@ -350,7 +350,7 @@ ggplot(zero_filled_heatmap, aes(role_a, role_b, label = Count)) +
 	) -> multi_role_heatmap
 
 ggplot(collab_success, aes(Dimension)) +
-	geom_bar() -> success_stack
+	geom_bar(aes(fill = as.factor(Success))) -> success_stack
 
 
 
