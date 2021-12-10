@@ -1,0 +1,399 @@
+
+Dimensions of pat, enc, dxs, prb, lab----
+[1] 1900   14
+[1] 13943    15
+[1] 44816     9
+[1] 16628     7
+
+ER discharge disposition----
+
+                                  Cancer Center/Children's Hospital 
+                               31                                 2 
+         Critical Access Hospital    ED Dismiss - Left After Triage 
+                                2                                 9 
+  ED Dismiss - Left Before Triage        ED Dismiss - Never Arrived 
+                                3                                 2 
+                          Expired                 Home or Self Care 
+                                2                              1443 
+             Home-Health Care Svc                      Hospice/Home 
+                                2                                 1 
+         Hospice/Medical Facility        Intermediate Care Facility 
+                                2                                 1 
+      Left Against Medical Advice                  Nursing Facility 
+                                8                                 3 
+             Psychiatric Hospital                    Rehab Facility 
+                                1                                 3 
+              Short Term Hospital          Skilled Nursing Facility 
+                               18                                 2 
+
+Tables of ethnicity/race----
+
+              Declined     Hispanic or Latino Not Hispanic or Latino 
+                     2                    608                   1259 
+   Unable to Determine 
+                    31 
+
+         American Indian or Alaska Native 
+                                        8 
+                                    Asian 
+                                       53 
+                Black or African American 
+                                      766 
+                                 Declined 
+                                       24 
+Native Hawaiian or Other Pacific Islander 
+                                       11 
+                                    Other 
+                                       84 
+                      Unable to Determine 
+                                      140 
+                       White or Caucasian 
+                                      814 
+
+Crosstab of race, ethnicity----
+                                           ETHNIC_GROUP
+PATIENT_RACE                                Declined Hispanic or Latino
+  American Indian or Alaska Native                 0                  1
+  Asian                                            0                  0
+  Black or African American                        0                  5
+  Declined                                         1                 19
+  Native Hawaiian or Other Pacific Islander        0                  4
+  Other                                            0                 78
+  Unable to Determine                              0                 96
+  White or Caucasian                               1                405
+                                           ETHNIC_GROUP
+PATIENT_RACE                                Not Hispanic or Latino
+  American Indian or Alaska Native                               7
+  Asian                                                         53
+  Black or African American                                    761
+  Declined                                                       2
+  Native Hawaiian or Other Pacific Islander                      7
+  Other                                                          6
+  Unable to Determine                                           18
+  White or Caucasian                                           405
+                                           ETHNIC_GROUP
+PATIENT_RACE                                Unable to Determine
+  American Indian or Alaska Native                            0
+  Asian                                                       0
+  Black or African American                                   0
+  Declined                                                    2
+  Native Hawaiian or Other Pacific Islander                   0
+  Other                                                       0
+  Unable to Determine                                        26
+  White or Caucasian                                          3
+
+bivariate, mortality versus X----
+         sex
+died_ever   F   M
+    FALSE 494 578
+    TRUE  128 183
+[1] 0.1364922
+         ETHNIC_GROUP
+died_ever Declined Hispanic or Latino Not Hispanic or Latino
+    FALSE        1                435                    613
+    TRUE         0                140                    156
+         ETHNIC_GROUP
+died_ever Unable to Determine
+    FALSE                  23
+    TRUE                   15
+[1] 0.01512935
+         race_aggr
+died_ever Asian Black or African American Declined/unknown Other
+    FALSE    19                       329              111    66
+    TRUE      5                        65               34    18
+         race_aggr
+died_ever White or Caucasian
+    FALSE                547
+    TRUE                 189
+[1] 0.01108018
+         comor.diab
+died_ever FALSE TRUE
+    FALSE   648  424
+    TRUE    161  150
+[1] 0.007315527
+         comor.asth
+died_ever FALSE TRUE
+    FALSE  1027   45
+    TRUE    296   15
+[1] 0.6360821
+         comor.copd
+died_ever FALSE TRUE
+    FALSE  1013   59
+    TRUE    299   12
+[1] 0.3068375
+         comor.hypert
+died_ever FALSE TRUE
+    FALSE   478  594
+    TRUE    143  168
+[1] 0.6977452
+# A tibble: 2 x 2
+  died_ever median_age
+  <lgl>          <dbl>
+1 FALSE             60
+2 TRUE              66
+
+	Kruskal-Wallis rank sum test
+
+data:  analytic_data$Age and analytic_data$died_ever
+Kruskal-Wallis chi-squared = 49.881, df = 1, p-value = 1.633e-12
+
+
+MARS model, degree 1 (evimp and summary)----
+                                   nsubsets   gcv    rss
+sexM                                     10 100.0  100.0
+Age                                      10  90.6   94.3
+ETHNIC_GROUPUnable to Determine           6  48.9   61.3
+race_aggrBlack or African American        6  45.2   59.6
+comor.hypertTRUE                          4  35.2   47.7
+comor.copdTRUE                            3  25.5   39.2
+Call: earth(formula=los.days.n~., data=learning_data, keepxy=TRUE, nfold=10)
+
+                                   coefficients
+(Intercept)                          14.5047981
+ETHNIC_GROUPUnable to Determine      -6.7151600
+sexM                                  2.9927822
+race_aggrBlack or African American   -2.3290993
+comor.copdTRUE                       -4.5158318
+comor.hypertTRUE                      1.8731040
+h(Age-66)                            -5.8644508
+h(Age-67)                            21.7814186
+h(Age-68)                           -21.8460100
+h(Age-71)                            11.5650865
+h(Age-73)                            -6.3016957
+h(74-Age)                            -0.1040894
+
+Selected 12 of 15 terms, and 6 of 13 predictors
+Termination condition: Reached nk 27
+Importance: sexM, Age, ETHNIC_GROUPUnable to Determine, ...
+Number of terms at each degree of interaction: 1 11 (additive model)
+GCV 183.1503  RSS 244941.9  GRSq 0.04769183  RSq 0.07777001  CVRSq 0.03374251
+
+Note: the cross-validation sd's below are standard deviations across folds
+
+Cross validation:   nterms 11.50 sd 1.35    nvars 5.40 sd 0.84
+
+     CVRSq   sd     MaxErr   sd
+     0.034 0.03       66.9 8.32
+
+MARS model, degree 2 (evimp and summary)----
+                                   nsubsets   gcv    rss
+Age                                      10 100.0  100.0
+race_aggrBlack or African American       10 100.0  100.0
+sexM                                      9  78.9   85.8
+ETHNIC_GROUPUnable to Determine           6  52.0   63.6
+comor.hypertTRUE                          5  42.7   55.8
+comor.copdTRUE                            2  13.1   30.3
+race_aggrOther                            1   4.5   20.6
+Call: earth(formula=los.days.n~., data=learning_data, keepxy=TRUE, degree=2,
+            nfold=10)
+
+                                               coefficients
+(Intercept)                                      14.7040769
+sexM                                              3.2359410
+h(Age-70)                                        -7.7624578
+h(Age-71)                                        13.2045725
+h(Age-73)                                        -6.0816267
+h(74-Age)                                        -0.1214054
+ETHNIC_GROUPUnable to Determine * sexM           -9.3423054
+h(74-Age) * race_aggrBlack or African American   -0.1834549
+h(74-Age) * race_aggrOther                        0.1773445
+h(74-Age) * comor.copdTRUE                       -0.3458736
+h(74-Age) * comor.hypertTRUE                      0.1412350
+
+Selected 11 of 16 terms, and 7 of 13 predictors
+Termination condition: Reached nk 27
+Importance: Age, race_aggrBlack or African American, sexM, ...
+Number of terms at each degree of interaction: 1 5 5
+GCV 183.071  RSS 243757  GRSq 0.04810399  RSq 0.08223157  CVRSq 0.04771863
+
+Note: the cross-validation sd's below are standard deviations across folds
+
+Cross validation:   nterms 10.30 sd 1.16    nvars 6.10 sd 0.32
+
+     CVRSq   sd     MaxErr   sd
+     0.048 0.04       66.3 4.79
+
+Logistic regression of mortality----
+
+Call:
+glm(formula = died_ever ~ Age + ETHNIC_GROUP + sex + race_aggr + 
+    comor.diab + comor.asth + comor.copd + comor.hypert, family = binomial(link = "logit"), 
+    data = analytic_data)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.2816  -0.7591  -0.5757  -0.3589   2.3359  
+
+Coefficients:
+                                    Estimate Std. Error z value Pr(>|z|)    
+(Intercept)                        -14.56904  324.74421  -0.045 0.964216    
+Age                                  0.03908    0.00498   7.847 4.25e-15 ***
+ETHNIC_GROUPHispanic or Latino      10.79662  324.74375   0.033 0.973478    
+ETHNIC_GROUPNot Hispanic or Latino  10.51247  324.74376   0.032 0.974176    
+ETHNIC_GROUPUnable to Determine     11.56512  324.74399   0.036 0.971591    
+sexM                                 0.11855    0.13790   0.860 0.389963    
+race_aggrBlack or African American  -0.13564    0.53772  -0.252 0.800849    
+race_aggrDeclined/unknown           -0.01250    0.58436  -0.021 0.982936    
+race_aggrOther                      -0.02001    0.60271  -0.033 0.973510    
+race_aggrWhite or Caucasian          0.28348    0.53288   0.532 0.594747    
+comor.diabTRUE                       0.50128    0.14194   3.532 0.000413 ***
+comor.asthTRUE                       0.44583    0.32733   1.362 0.173193    
+comor.copdTRUE                      -0.54151    0.34742  -1.559 0.119079    
+comor.hypertTRUE                    -0.34414    0.14669  -2.346 0.018977 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 1474.3  on 1382  degrees of freedom
+Residual deviance: 1375.2  on 1369  degrees of freedom
+AIC: 1403.2
+
+Number of Fisher Scoring iterations: 11
+
+
+AUC----
+An object of class "performance"
+Slot "x.name":
+[1] "None"
+
+Slot "y.name":
+[1] "Area under the ROC curve"
+
+Slot "alpha.name":
+[1] "none"
+
+Slot "x.values":
+list()
+
+Slot "y.values":
+[[1]]
+[1] 0.6784941
+
+
+Slot "alpha.values":
+list()
+
+
+Logistic model calibration----
+# A tibble: 7 x 4
+    bin p_observed numerator denominator
+  <dbl>      <dbl>     <int>       <int>
+1   0       0.0862        15         174
+2   0.1     0.146         70         478
+3   0.2     0.253         99         392
+4   0.3     0.354         81         229
+5   0.4     0.376         32          85
+6   0.5     0.5           11          22
+7   0.6     1              3           3
+
+Death rate by decade----
+# A tibble: 10 x 4
+   decade death_rate numerator denominator
+    <dbl>      <dbl>     <int>       <int>
+ 1     10     0              0           1
+ 2     20     0.0476         2          42
+ 3     30     0.0619         6          97
+ 4     40     0.0671        11         164
+ 5     50     0.238         76         319
+ 6     60     0.255         89         349
+ 7     70     0.285         74         260
+ 8     80     0.364         48         132
+ 9     90     0.176          3          17
+10    100     1              2           2
+
+MARS model, mortality----
+                                          nsubsets   gcv    rss
+Age                                              8 100.0  100.0
+race_aggrBlack or African American-unused        4  51.6   57.1
+comor.diabTRUE                                   4  36.3   47.4
+comor.hypertTRUE                                 3  32.9   41.8
+ETHNIC_GROUPUnable to Determine                  2  21.6   31.3
+race_aggrWhite or Caucasian                      2  21.6   31.3
+Call: earth(formula=died_ever~., data=learning_data_mort, keepxy=TRUE,
+            nfold=10)
+
+                                coefficients
+(Intercept)                      -0.01951536
+ETHNIC_GROUPUnable to Determine   0.20298565
+race_aggrWhite or Caucasian       0.08123097
+comor.diabTRUE                    0.07785127
+comor.hypertTRUE                 -0.07555812
+h(Age-43)                         0.02025698
+h(Age-51)                         0.10542579
+h(Age-53)                        -0.18230941
+h(Age-57)                         0.06166961
+
+Selected 9 of 15 terms, and 5 of 13 predictors
+Termination condition: Reached nk 27
+Importance: Age, race_aggrBlack or African American-unused, comor.diabTRUE, ...
+Number of terms at each degree of interaction: 1 8 (additive model)
+GCV 0.163605  RSS 220.7373  GRSq 0.06274583  RSq 0.08432218  CVRSq 0.05697418
+
+Note: the cross-validation sd's below are standard deviations across folds
+
+Cross validation:   nterms 10.50 sd 1.84    nvars 5.00 sd 0.67
+
+     CVRSq    sd     ClassRate    sd     MaxErr     sd
+     0.057 0.043         0.774 0.009       1.02 0.0498
+
+MARS model, mortality, degree 2----
+                                   nsubsets   gcv    rss
+Age                                       9 100.0  100.0
+ETHNIC_GROUPUnable to Determine           7  61.2   70.6
+sexM                                      6  50.2   61.6
+race_aggrBlack or African American        6  50.2   61.6
+comor.hypertTRUE                          5  40.5   53.3
+comor.diabTRUE                            4  36.6   47.8
+comor.asthTRUE                            1  12.9   21.3
+Call: earth(formula=died_ever~., data=learning_data_mort, keepxy=TRUE,
+            degree=2, nfold=10)
+
+                                                    coefficients
+(Intercept)                                          0.002628651
+sexM                                                 0.068681855
+h(Age-43)                                            0.030468751
+h(Age-53)                                           -0.050971975
+h(Age-58)                                            0.025553168
+sexM * race_aggrBlack or African American           -0.166991622
+race_aggrBlack or African American * comor.asthTRUE  0.219651591
+h(Age-53) * ETHNIC_GROUPUnable to Determine          0.014221662
+h(Age-53) * comor.diabTRUE                           0.006087917
+h(Age-43) * comor.hypertTRUE                        -0.003734690
+
+Selected 10 of 15 terms, and 7 of 13 predictors
+Termination condition: Reached nk 27
+Importance: Age, ETHNIC_GROUPUnable to Determine, sexM, ...
+Number of terms at each degree of interaction: 1 4 5
+GCV 0.1629127  RSS 217.7164  GRSq 0.06671184  RSq 0.09685373  CVRSq 0.06584907
+
+Note: the cross-validation sd's below are standard deviations across folds
+
+Cross validation:   nterms 10.50 sd 1.35    nvars 6.30 sd 1.25
+
+     CVRSq    sd     ClassRate    sd     MaxErr     sd
+     0.066 0.028         0.778 0.014      0.996 0.0468
+
+
+
+----
+
+End of text output. Now plotting.----
+ plotmo grid:    Age           ETHNIC_GROUP sex          race_aggr comor.diab
+                  61 Not Hispanic or Latino   M White or Caucasian      FALSE
+ comor.asth comor.copd comor.hypert
+      FALSE      FALSE         TRUE
+ plotmo grid:    Age           ETHNIC_GROUP sex          race_aggr comor.diab
+                  61 Not Hispanic or Latino   M White or Caucasian      FALSE
+ comor.asth comor.copd comor.hypert
+      FALSE      FALSE         TRUE
+ plotmo grid:    Age           ETHNIC_GROUP sex          race_aggr comor.diab
+                  61 Not Hispanic or Latino   M White or Caucasian      FALSE
+ comor.asth comor.copd comor.hypert
+      FALSE      FALSE         TRUE
+ plotmo grid:    Age           ETHNIC_GROUP sex          race_aggr comor.diab
+                  61 Not Hispanic or Latino   M White or Caucasian      FALSE
+ comor.asth comor.copd comor.hypert
+      FALSE      FALSE         TRUE
+null device 
+          1 
