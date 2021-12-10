@@ -257,6 +257,28 @@ quantile(survey_tidy$itpercent, na.rm=TRUE)
 
 
 
+
+say("Selected Likert tables")
+
+cat("\nvaluable")
+table(survey_tidy$valuable)
+round(prop.table(table(survey_tidy$valuable)) * 100, 1)
+
+cat("\nfuture.datathon")
+table(survey_tidy$future.datathon)
+round(prop.table(table(survey_tidy$future.datathon)) * 100, 1)
+
+cat("\nprior.emrdata")
+table(survey_tidy$prior.emrdata)
+round(prop.table(table(survey_tidy$prior.emrdata)) * 100, 1)
+
+cat("\nfuture.studies")
+table(survey_tidy$future.studies)
+round(prop.table(table(survey_tidy$future.studies)) * 100, 1)
+
+
+
+
 #### Tables, role co-occurence
 
 say("Multiple team roles (role_matrix)")
