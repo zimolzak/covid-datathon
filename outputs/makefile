@@ -21,7 +21,7 @@ Routputs_survey.txt: ../survey.R ../data/survey/BCMDatathonSurvey_DATA_2021-08-1
 
 Rplots_outpat.pdf: ../analysis_outpat.R
 	Rscript $< > Routputs_outpat.txt
-	mv -f ../data/2020-06-08/Rplots.pdf ./Rplots_outpat.pdf
+	mv -f Rplots.pdf Rplots_outpat.pdf
 
 Routputs_inpat.txt: ../analysis_inpat.R # COVID_1....
 	Rscript $< > $@

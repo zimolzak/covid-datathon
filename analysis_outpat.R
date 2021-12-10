@@ -1,8 +1,6 @@
 library(ggplot2)
 library(dplyr)
-
-PATH = "/Users/ajz/Desktop/aa-git/covid-datathon/data/2020-06-08/"
-setwd(PATH)
+library(here)
 
 f_patient = "PATIENT.txt"
 f_problems = "PAT_PRBL_LIST.txt"
@@ -16,11 +14,11 @@ f_tests = "PAT_ORDERS_PROCEDURES.txt"
 # Pat_FlowSheet_PulseOx.txt # id, value, time, name (survey question or SpO2)
 # PAT_ORDERS_PROCEDURES.txt # id, date, proc name, result date, ORDER_COMPONENT, ORD_VALUE_TEXT, ord val numeric
 
-patient   = read.csv(paste(PATH, f_patient,   sep=''), sep="\t", stringsAsFactors = FALSE) # unused so far
-problems  = read.csv(paste(PATH, f_problems,  sep=''), sep="\t", stringsAsFactors = FALSE) # unused so far
-visits    = read.csv(paste(PATH, f_visits,    sep=''), sep="\t", stringsAsFactors = FALSE) # unused so far
-flowsheet = read.csv(paste(PATH, f_flowsheet, sep=''), sep="\t", stringsAsFactors = FALSE)
-tests     = read.csv(paste(PATH, f_tests,     sep=''), sep="\t", stringsAsFactors = FALSE)
+patient   = read.csv(here("data", "2020-06-08", f_patient  ), sep="\t", stringsAsFactors = FALSE) # unused so far
+problems  = read.csv(here("data", "2020-06-08", f_problems ), sep="\t", stringsAsFactors = FALSE) # unused so far
+visits    = read.csv(here("data", "2020-06-08", f_visits   ), sep="\t", stringsAsFactors = FALSE) # unused so far
+flowsheet = read.csv(here("data", "2020-06-08", f_flowsheet), sep="\t", stringsAsFactors = FALSE)
+tests     = read.csv(here("data", "2020-06-08", f_tests    ), sep="\t", stringsAsFactors = FALSE)
 
 cat("raw input----\n")
 tests %>% select(-PAT_ID, -ORDER_DATE, -PROC_CAT_NAME, -ORDER_RESULT_LINE, -ORD_VALUE_NUMERIC, -LAB_STATUS) %>% head(n=10)
@@ -79,7 +77,8 @@ ggplot(covids, aes(x=covid_ord_dt, color=as.factor(covid_result))) +
     geom_freqpoly(binwidth=7) +
     scale_y_continuous(breaks = seq(0,10,2)) +
     labs(title="COVID result by date", x='Order date', y='Count', color="Result", subtitle='Outpatient (Baylor Clinic / FGP)')
-ggsave('../../pngs/fig1-result-vs-date.png')
+ggsave(here('pngs', 'fig1-result-vs-date.png'))
+
 
 cat("confirm that numeric is useless----")
 table(covids$ORD_VALUE_NUMERIC) # confirm that numeric is useless
@@ -92,7 +91,7 @@ table(covids$covid_result)
 
 qplot(data=covids, x=covid_ord_dt, y=latency) +
     labs(title="High COVID test latency early in the pandemic", x="Order date", subtitle='Outpatient (Baylor Clinic / FGP)')
-ggsave('../../pngs/fig2-latency-vs-time.png')
+ggsave(here('pngs', 'fig2-latency-vs-time.png'))
 
 
 
@@ -137,7 +136,7 @@ ggplot(nearby, aes(x=spo2_value_numeric, color=as.factor(covid_result))) +
     geom_freqpoly(binwidth=1) +
     labs(x='Pulse oximetry (%)', y='Count', title="Minimally lower SpO2 in COVID+ outpatients", color='COVID result', subtitle = paste("P =", p_str)) +
     scale_x_continuous(breaks = seq(90,100,2))
-ggsave('../../pngs/fig3-spo2-vs-result.png')
+ggsave(here('pngs', 'fig3-spo2-vs-result.png'))
 
 
 
