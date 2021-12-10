@@ -2,11 +2,16 @@ library(dplyr)
 library(ggplot2)
 library(lubridate)
 library(tidyr)
+library(here)
 
-PATH = "/Users/ajz/Desktop/aa-git/covid-datathon/data/DataSets/" # end with slash
-SETWDPATH = "/Users/ajz/Desktop/aa-git/covid-datathon/"
 
-setwd(SETWDPATH)
+
+
+# READ IN FILES
+
+# /Users/ajz/Documents/local-git/covid-datathon/data/DataSets/PROBLEM
+# -->
+# here(                                        'data', 'DataSets', 'PROBLEM' fname)
 
 prl = c('PROBLEM/PROBLEM_GRP_3 20200814 1855.csv',
     'PROBLEM/PROBLEM_GRP_2 20200814 1854.csv',
@@ -26,13 +31,22 @@ enl = c('ENC_DX/ENC_DX_GRP_2 20200814 1710.csv',
 
 # onedrive --> files / covid-19 / covid_datathon / data / DataSets / DATA_HSP_LAB_PROC
 
+str2here <- function(s) {
+	charvec = strsplit(s, '/')[[1]]
+	dir = charvec[1]
+	file = charvec[2]
+	return(here('data', 'DataSets', dir, file))
+}
+
 list2df <- function(L) {
     # todo - check about length & class of L
-    d = read.csv(paste(PATH, L[1], sep=''), sep="|",
+    # Construct data frame 1, which we will add to incrementally.
+    d = read.csv(str2here(L[1]), sep="|",
         stringsAsFactors = FALSE, na.strings="null")
+    # Bind data frames 2 through n to data frame 1.
     for (i in seq(2,length(L))) {
-        di = read.csv(paste(PATH, L[i], sep=''), sep="|",
-	        stringsAsFactors = FALSE, na.strings="null")
+        di = read.csv(str2here(L[i]), sep="|",
+            stringsAsFactors = FALSE, na.strings="null")
         d %>% bind_rows(di) -> d
     }
     return(d)
@@ -67,6 +81,12 @@ hosp = list2df(hsl) %>%
     distinct()
 enc = list2df(enl) %>%
     select(-ENC_TYPE_C, -enc_dx_id)
+
+
+
+
+
+# START PROCESSING
 
 #### deident output
 cat('\nDeidentified examples----\n')
@@ -568,7 +588,7 @@ pred12 = los_vs_contin(ggplot(covid_inp_stays_d, aes(max_los * 24, los)))
 #
 
 cat('\n\n----\n\nEnd of text output. Now plotting.\n\n')
-pdf("outputs/Rplots_inpat_v4.pdf")
+pdf(here("outputs", "Rplots_inpat_v4.pdf"))
 dmage
 htnage
 astage
@@ -621,11 +641,11 @@ pred11
 pred12
 dev.off()
 
-ggsave('new-pngs/1-latency.png', facetlatency)
-ggsave('new-pngs/2-covid-by-date.png', posnegdate)
-ggsave('new-pngs/3-los-by-covid.png', los4_hist)
-ggsave('new-pngs/4-race.png', pred01)
-ggsave('new-pngs/5-dm.png', pred02)
-ggsave('new-pngs/6-htn.png', pred05)
-ggsave('new-pngs/7-sex.png', pred07)
-ggsave('new-pngs/8-age.png', pred08)
+ggsave(here('pngs-v4', '1-latency.png'), facetlatency)
+ggsave(here('pngs-v4', '2-covid-by-date.png'), posnegdate)
+ggsave(here('pngs-v4', '3-los-by-covid.png'), los4_hist)
+ggsave(here('pngs-v4', '4-race.png'), pred01)
+ggsave(here('pngs-v4', '5-dm.png'), pred02)
+ggsave(here('pngs-v4', '6-htn.png'), pred05)
+ggsave(here('pngs-v4', '7-sex.png'), pred07)
+ggsave(here('pngs-v4', '8-age.png'), pred08)
