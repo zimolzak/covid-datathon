@@ -1,13 +1,11 @@
 library(dplyr)
 library(ggplot2)
-#library(tidyr)
+library(here)
 
-PATH = "/Users/ajz/Desktop/aa-git/covid-datathon/data/2020-07-31/"
 FILE = "COVID_1_SLH.tab"
 # onedrive --> files / covid-19 / covid_datathon / data / slh_data
 
-setwd(PATH)
-stluke_lab = read.csv(paste(PATH, FILE,   sep=''), sep="\t", stringsAsFactors = FALSE)
+stluke_lab = read.csv(here('data', '2020-07-31', FILE), sep="\t", stringsAsFactors = FALSE)
 
 cat('Raw input-----\n')
 stluke_lab %>% select(PROC_NAME, CURRENT_ICD10_LIST, ORD_VALUE, NAME) %>% head(n=20)
@@ -356,7 +354,9 @@ po2_covid_box
 pfr_covid_box
 dev.off()
 
-ggsave('../../pngs/fig4-odds-vs-comorb.png', plot=odds_plot)
-ggsave('../../pngs/fig5-ards-vs-result.png', plot=ards_scatter_shape)
-ggsave('../../pngs/fig6-po2-vs-result.png', plot=po2_covid_box)
-ggsave('../../pngs/fig7-pfr-vs-result.png', plot=pfr_covid_box)
+# here('pngs', '
+
+ggsave(here('pngs', 'fig4-odds-vs-comorb.png'), plot=odds_plot)
+ggsave(here('pngs', 'fig5-ards-vs-result.png'), plot=ards_scatter_shape)
+ggsave(here('pngs', 'fig6-po2-vs-result.png'), plot=po2_covid_box)
+ggsave(here('pngs', 'fig7-pfr-vs-result.png'), plot=pfr_covid_box)
