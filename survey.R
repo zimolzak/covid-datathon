@@ -231,10 +231,8 @@ survey_tidy %>%
 select(id, workedTeam, collab.outside, collab.new, completed, answered, pub.abstract, pub.paper) %>%
 mutate(workedTeamReverse = 1 - workedTeam) %>%
 gather(`workedTeamReverse`, `collab.outside`, `collab.new`, `completed`,
-	`answered`, `pub.abstract`, `pub.paper`, key = "Dimension", value = "Success") -> collab_success
-
-collab_success %>%
-filter(!is.na(Success)) -> collab_success_no_na
+	`answered`, `pub.abstract`, `pub.paper`, key = "Dimension", value = "Success") %>%
+filter(!is.na(Success)) -> collab_success
 
 
 
