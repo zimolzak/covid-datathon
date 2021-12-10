@@ -94,6 +94,13 @@ use %>%
 full_join(available, by=c("id", "numeric_prepost")) %>%
 full_join(limit, by=c("id", "numeric_prepost")) -> gathered_all
 
+say("GATHERED_ALL")
+gathered_all %>%
+mutate(use = know.use + eps_y, avail = know.avail + eps_y, limit = know.limit + eps_y,
+	nprepost = numeric_prepost + eps_x) %>%
+select(id, nprepost, use, avail, limit) %>%
+gather(`use`, `avail`, `limit`, key="dimension", value="knowledge") -> double_gathered
+
 
 
 
@@ -244,7 +251,7 @@ select(acadRank.text)
 
 
 say("Quantiles")
-cat("\nYears at BCM")
+cat("\nYears at BCM\n")
 quantile(survey_tidy$years, na.rm=TRUE)
 
 cat("\nTeam size, quantiles")
@@ -260,19 +267,19 @@ quantile(survey_tidy$itpercent, na.rm=TRUE)
 
 
 say("Selected Likert tables")
-cat("\nvaluable")
+cat("\nvaluable ----")
 table(survey_tidy$valuable)
 round(prop.table(table(survey_tidy$valuable)) * 100, 1)
 
-cat("\nfuture.datathon")
+cat("\nfuture.datathon ----")
 table(survey_tidy$future.datathon)
 round(prop.table(table(survey_tidy$future.datathon)) * 100, 1)
 
-cat("\nprior.emrdata")
+cat("\nprior.emrdata ----")
 table(survey_tidy$prior.emrdata)
 round(prop.table(table(survey_tidy$prior.emrdata)) * 100, 1)
 
-cat("\nfuture.studies")
+cat("\nfuture.studies ----")
 table(survey_tidy$future.studies)
 round(prop.table(table(survey_tidy$future.studies)) * 100, 1)
 
@@ -396,6 +403,13 @@ ggplot(gathered_all, aes(x = numeric_prepost + eps_x, y = know.limit + eps_y, gr
   labs(title="Understanding of data\nwarehouse limitations", y=NULL, x=NULL,
       subtitle= htests_to_subtitle(w_limit, c_limit, t_limit)) -> paired3
 
+## facet
+ggplot(double_gathered, aes(x = nprepost, y = knowledge, group = id)) +
+ geom_point() +
+  geom_line() +
+  scale_x_continuous(breaks = c(0,1), labels = c("Pre", "Post")) +
+  facet_wrap(vars(dimension)) -> facet
+
 # fixme - candidate strata: years, effort, prior.emrdata,
 
 
@@ -422,6 +436,7 @@ uni_future.studies
 paired1
 paired2
 paired3
+facet
 dev.off()
 
 # PNGs for AMIA talk slides
@@ -440,3 +455,6 @@ ggsave(here('pngs-conf', 'amia-5-futurestud.png'), uni_future.studies + gfontsiz
 ggsave(here('pngs-conf', 'amia-6-pair1.png'), paired1 + gfontsize(30))
 ggsave(here('pngs-conf', 'amia-7-pair2.png'), paired2 + gfontsize(30))
 ggsave(here('pngs-conf', 'amia-8-pair3.png'), paired3 + gfontsize(30))
+
+# paper
+ggsave(here('pngs-paper', 'facet.png'), facet)
