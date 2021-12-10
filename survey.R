@@ -233,6 +233,9 @@ mutate(workedTeamReverse = 1 - workedTeam) %>%
 gather(`workedTeamReverse`, `collab.outside`, `collab.new`, `completed`,
 	`answered`, `pub.abstract`, `pub.paper`, key = "Dimension", value = "Success") -> collab_success
 
+collab_success %>%
+filter(!is.na(Success)) -> collab_success_no_na
+
 
 
 
@@ -243,16 +246,16 @@ dim(survey_in)
 
 # FIXME - put percentages for some categories!!
 say("TABLES")
-cat("\nacadRank:"); table(survey_tidy$acadRank)
-cat("\nprior.hack:"); table(survey_tidy$prior.hack)
-cat("\nworkedTeam:"); table(survey_tidy$workedTeam)
-cat("\ncompleted:"); table(survey_tidy$completed)
-cat("\nanswered:"); table(survey_tidy$answered)
-cat("\ncollab.outside:"); table(survey_tidy$collab.outside)
-cat("\ncollab.new:"); table(survey_tidy$collab.new)
-cat("\npub.abstract:"); table(survey_tidy$pub.abstract)
-cat("\npub.paper:"); table(survey_tidy$pub.paper)
-cat("\ncomplete:"); table(survey_tidy$complete)
+cat("\nacadRank:");			addmargins(table(survey_tidy$acadRank))
+cat("\nprior.hack:");		addmargins(table(survey_tidy$prior.hack))
+cat("\nworkedTeam:");		addmargins(table(survey_tidy$workedTeam))
+cat("\ncompleted:");		addmargins(table(survey_tidy$completed))
+cat("\nanswered:");			addmargins(table(survey_tidy$answered))
+cat("\ncollab.outside:");	addmargins(table(survey_tidy$collab.outside))
+cat("\ncollab.new:");		addmargins(table(survey_tidy$collab.new))
+cat("\npub.abstract:");		addmargins(table(survey_tidy$pub.abstract))
+cat("\npub.paper:");		addmargins(table(survey_tidy$pub.paper))
+cat("\ncomplete:");			addmargins(table(survey_tidy$complete))
 
 say("role_count_toplot")
 role_count_toplot
@@ -269,13 +272,13 @@ say("Quantiles")
 cat("\nYears at BCM\n")
 quantile(survey_tidy$years, na.rm=TRUE)
 
-cat("\nTeam size, quantiles")
+cat("\nTeam size, quantiles\n")
 quantile(survey_tidy$teamsize, na.rm=TRUE)
 
-cat("\nPerson-hours spent, quantiles")
+cat("\nPerson-hours spent, quantiles\n")
 quantile(survey_tidy$effortHrs, na.rm=TRUE)
 
-cat("\nPercent time spent with IT, quantiles")
+cat("\nPercent time spent with IT, quantiles\n")
 quantile(survey_tidy$itpercent, na.rm=TRUE)
 
 
@@ -283,19 +286,19 @@ quantile(survey_tidy$itpercent, na.rm=TRUE)
 
 say("Selected Likert tables")
 cat("\nvaluable ----")
-table(survey_tidy$valuable)
+addmargins(table(survey_tidy$valuable))
 round(prop.table(table(survey_tidy$valuable)) * 100, 1)
 
 cat("\nfuture.datathon ----")
-table(survey_tidy$future.datathon)
+addmargins(table(survey_tidy$future.datathon))
 round(prop.table(table(survey_tidy$future.datathon)) * 100, 1)
 
 cat("\nprior.emrdata ----")
-table(survey_tidy$prior.emrdata)
+addmargins(table(survey_tidy$prior.emrdata))
 round(prop.table(table(survey_tidy$prior.emrdata)) * 100, 1)
 
 cat("\nfuture.studies ----")
-table(survey_tidy$future.studies)
+addmargins(table(survey_tidy$future.studies))
 round(prop.table(table(survey_tidy$future.studies)) * 100, 1)
 
 
