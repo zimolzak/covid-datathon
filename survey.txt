@@ -1,0 +1,28 @@
+Academic rank.
+Primary department/section/research center.
+Number of years at BCM.
+I participated previously in a hackathon/datathon.
+I had experience using EMR data for research or quality improvement prior to this datathon.
+Number of people on your datathon team.
+Have you worked with the members of your datathon team before?
+Role (mark all that apply): Content clinical expert, Project lead, Chart reviewer, Data scientist, Statistical analyst, Data warehouse expert, Data manager, Learner, Other.
+How knowledgeable were you about data availability at BCM prior to the datathon?
+How knowledgeable were you about data availability at BCM following the datathon?
+How knowledgeable were you about how to use the BCM data warehouse prior to the datathon?
+How knowledgeable were you about how to use the BCM data warehouse following the datathon?
+What was your understanding of BCM data warehouse limitations prior to the datathon?
+What was your understanding of BCM data warehouse limitations following the datathon?
+Estimate how many person hours you personally spent on datathon work including time spent with BCM IT.
+What percentage of the time spent on datathon work was with BCM IT?
+How difficult was obtaining information from the BCM Data warehouse?
+How difficult was working with BCM Data warehouse files?
+I completed my project by the end of the datathon.
+I successfully answered my clinical question.
+I collaborated with individuals outside of my department.
+I collaborated with new individuals as part of the datathon.
+I plan to conduct future studies using data from the BCM warehouse.
+Our team datathon project resulted in a scientific abstract for a local or national meeting.
+Our team datathon project resulted in a publication.
+Participating in the BCM datathon was a valuable experience.
+I would participate in a future BCM datathon.
+What worked well or didn't work or general comments?
