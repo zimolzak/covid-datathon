@@ -225,7 +225,6 @@ summarise(Count = sum(Count)) -> zero_filled_heatmap
 
 
 
-
 #### Calculate new dataframe about:
 #### workedTeam, collab.outside, collab.new, completed, answered, pub.abstract, pub.paper
 survey_tidy %>%
@@ -239,20 +238,15 @@ mutate_at(vars(Success_nonfactor), ~ case_when(
 	. == 0.5 ~ "Partially",
 	. == 0 ~ "None")) %>%
 mutate_at(vars(Dimension), ~ case_when(
-	. == "workedTeamReverse" ~ "Worked w/\nnew team",
+	. == "workedTeamReverse" ~ "Collab. totally\nnew team",
 	. == "collab.outside" ~ "Collaborated\noutside",
-	. == "collab.new" ~ "Collab. w/\nnew people",
+	. == "collab.new" ~ "Collab. w/\nany new",
 	. == "completed" ~ "Completed\nproject",
 	. == "answered" ~ "Answered\nquestion",
 	. == "pub.abstract" ~ "Published\nabstract",
 	. == "pub.paper" ~ "Published\npaper",
 	TRUE ~ .)) %>%
 mutate(Success = factor(Success_nonfactor, levels=c("Fully","Partially","None"), ordered=TRUE)) -> collab_success
-
-
-
-
-
 
 
 
@@ -371,7 +365,8 @@ ggplot(zero_filled_heatmap, aes(role_a, role_b, label = Count)) +
 	) -> multi_role_heatmap
 
 ggplot(collab_success, aes(Dimension)) +
-	geom_bar(aes(fill = Success)) -> success_stack
+	geom_bar(aes(fill = Success)) +
+	labs(x="Datathon goal")-> success_stack
 
 
 
