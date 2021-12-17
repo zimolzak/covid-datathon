@@ -3,6 +3,7 @@ library(dplyr)
 library(ggplot2)
 library(here)
 library(tidyr)
+library(Hmisc)
 
 source(file=here("my_helper_functions.R"))
 survey_in = filename2df('BCMDatathonSurvey_DATA_2021-08-10.csv')
@@ -231,8 +232,27 @@ survey_tidy %>%
 select(id, workedTeam, collab.outside, collab.new, completed, answered, pub.abstract, pub.paper) %>%
 mutate(workedTeamReverse = 1 - workedTeam) %>%
 gather(`workedTeamReverse`, `collab.outside`, `collab.new`, `completed`,
-	`answered`, `pub.abstract`, `pub.paper`, key = "Dimension", value = "Success") %>%
-filter(!is.na(Success)) -> collab_success
+	`answered`, `pub.abstract`, `pub.paper`, key = "Dimension", value = "Success_nonfactor") %>%
+filter(!is.na(Success_nonfactor)) %>%
+mutate_at(vars(Success_nonfactor), ~ case_when(
+	. == 1 ~ "Fully",
+	. == 0.5 ~ "Partially",
+	. == 0 ~ "None")) %>%
+mutate_at(vars(Dimension), ~ case_when(
+	. == "workedTeamReverse" ~ "Worked w/\nnew team",
+	. == "collab.outside" ~ "Collaborated\noutside",
+	. == "collab.new" ~ "Collab. w/\nnew people",
+	. == "completed" ~ "Completed\nproject",
+	. == "answered" ~ "Answered\nquestion",
+	. == "pub.abstract" ~ "Published\nabstract",
+	. == "pub.paper" ~ "Published\npaper",
+	TRUE ~ .)) %>%
+mutate(Success = factor(Success_nonfactor, levels=c("Fully","Partially","None"), ordered=TRUE)) -> collab_success
+
+
+
+
+
 
 
 
@@ -351,7 +371,7 @@ ggplot(zero_filled_heatmap, aes(role_a, role_b, label = Count)) +
 	) -> multi_role_heatmap
 
 ggplot(collab_success, aes(Dimension)) +
-	geom_bar(aes(fill = as.factor(Success))) -> success_stack
+	geom_bar(aes(fill = Success)) -> success_stack
 
 
 
