@@ -258,8 +258,8 @@ say('Dimensions of survey_in')
 dim(survey_in)
 
 say("TABLES")
-cat("\nacadRank:\n");		table_pct(survey_tidy$acadRank)
-cat("\nprior.hack:\n");		table_pct(survey_tidy$prior.hack)
+cat("\nacadRank: *t1\n");		table_pct(survey_tidy$acadRank)
+cat("\nprior.hack: *t1\n");		table_pct(survey_tidy$prior.hack)
 
 
 cat("\nworkedTeam:");		addmargins(table(survey_tidy$workedTeam))
@@ -271,7 +271,7 @@ cat("\npub.abstract:");		addmargins(table(survey_tidy$pub.abstract))
 cat("\npub.paper:");		addmargins(table(survey_tidy$pub.paper))
 cat("\ncomplete:");			addmargins(table(survey_tidy$complete))
 
-say("role_count_toplot")
+say("role_count_toplot  *t1")
 role_count_toplot
 
 say("Free text ranks (other)")
@@ -283,37 +283,26 @@ select(acadRank.text)
 
 
 say("Quantiles")
-cat("\nYears at BCM\n")
+cat("\nYears at BCM *t1\n")
 quantile(survey_tidy$years, na.rm=TRUE)
 
-cat("\nTeam size, quantiles\n")
+cat("\nTeam size, quantiles *t1\n")
 quantile(survey_tidy$teamsize, na.rm=TRUE)
 
-cat("\nPerson-hours spent, quantiles\n")
+cat("\nPerson-hours spent, quantiles *t1\n")
 quantile(survey_tidy$effortHrs, na.rm=TRUE)
 
-cat("\nPercent time spent with IT, quantiles\n")
+cat("\nPercent time spent with IT, quantiles *t1\n")
 quantile(survey_tidy$itpercent, na.rm=TRUE)
 
 
 
 
 say("Selected Likert tables")
-cat("\nvaluable ----")
-addmargins(table(survey_tidy$valuable))
-round(prop.table(table(survey_tidy$valuable)) * 100, 1)
-
-cat("\nfuture.datathon ----")
-addmargins(table(survey_tidy$future.datathon))
-round(prop.table(table(survey_tidy$future.datathon)) * 100, 1)
-
-cat("\nprior.emrdata ----")
-addmargins(table(survey_tidy$prior.emrdata))
-round(prop.table(table(survey_tidy$prior.emrdata)) * 100, 1)
-
-cat("\nfuture.studies ----")
-addmargins(table(survey_tidy$future.studies))
-round(prop.table(table(survey_tidy$future.studies)) * 100, 1)
+cat("\nvaluable ----\n");			table_pct(survey_tidy$valuable)
+cat("\nfuture.datathon ----\n");		table_pct(survey_tidy$future.datathon)
+cat("\nprior.emrdata ----  *t1\n");		table_pct(survey_tidy$prior.emrdata)
+cat("\nfuture.studies ----\n");	table_pct(survey_tidy$future.studies)
 
 
 
