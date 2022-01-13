@@ -69,7 +69,7 @@ mutate_at(vars(acadRank), ~ case_when(. == "Other (e.g. Staff, Instructor)" ~ "S
 
 
 
-#### Calculate new vars about pre/post questions
+#### Calculate new gathered data frames about pre/post questions
 
 jitter_absolute = 0.02
 jx = jitter_absolute
@@ -108,7 +108,7 @@ mutate_at(vars(dimension), ~ case_when(. == "use" ~ "How to use data warehouse",
 
 
 
-#### Calc vars pertaining to team role
+#### Calc data frame pertaining to team role plotting
 
 decode_role = data.frame(
 	long = c("Clinician", "Lead", "Chart rev.", "Statistics", "Data whse.", "Data mgr.", "Learner", "Data sci.", "Other"),
@@ -225,7 +225,7 @@ summarise(Count = sum(Count)) -> zero_filled_heatmap
 
 
 
-#### Calculate new dataframe about:
+#### Calculate new dataframe about datathon goals/success:
 #### workedTeam, collab.outside, collab.new, completed, answered, pub.abstract, pub.paper
 survey_tidy %>%
 select(id, workedTeam, collab.outside, collab.new, completed, answered, pub.abstract, pub.paper) %>%
@@ -258,7 +258,7 @@ dim(survey_in)
 
 # FIXME - put percentages for some categories!!
 say("TABLES")
-cat("\nacadRank:");			addmargins(table(survey_tidy$acadRank))
+cat("\nacadRank:\n");		table_pct(survey_tidy$acadRank)
 cat("\nprior.hack:");		addmargins(table(survey_tidy$prior.hack))
 cat("\nworkedTeam:");		addmargins(table(survey_tidy$workedTeam))
 cat("\ncompleted:");		addmargins(table(survey_tidy$completed))

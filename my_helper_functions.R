@@ -85,3 +85,12 @@ gfontsize <- function(x) {
 		)
 	)
 }
+
+table_pct = function(df_column) {
+	c = table(df_column)
+	p = round(prop.table(c) * 100, 1)
+	Count = addmargins(c)
+	Percent = addmargins(p)
+	result = rbind(Count, Percent)
+	return(result)
+}
