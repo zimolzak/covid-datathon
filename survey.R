@@ -125,7 +125,8 @@ rename(clin=role.clinical, lead=role.lead, rev=role.reviewer, stat=role.stats,
 gather(`clin`, `lead`, `rev`, `stat`,
 	`dataware`,	`datamgr`,
 	`learn`, `datasci`, `other`, key="role", value="count") %>%
-mutate(role_description = decode_role$long[decode_role$abbr == role]) -> role_count_toplot
+mutate(role_description = decode_role$long[decode_role$abbr == role],
+	percent = round(100 * count / nrow(survey_in), 1)) -> role_count_toplot
 
 
 
@@ -256,10 +257,11 @@ mutate(Success = factor(Success_nonfactor, levels=c("Fully","Partially","None"),
 say('Dimensions of survey_in')
 dim(survey_in)
 
-# FIXME - put percentages for some categories!!
 say("TABLES")
 cat("\nacadRank:\n");		table_pct(survey_tidy$acadRank)
-cat("\nprior.hack:");		addmargins(table(survey_tidy$prior.hack))
+cat("\nprior.hack:\n");		table_pct(survey_tidy$prior.hack)
+
+
 cat("\nworkedTeam:");		addmargins(table(survey_tidy$workedTeam))
 cat("\ncompleted:");		addmargins(table(survey_tidy$completed))
 cat("\nanswered:");			addmargins(table(survey_tidy$answered))
