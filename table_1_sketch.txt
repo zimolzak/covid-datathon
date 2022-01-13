@@ -2,20 +2,31 @@
 
 ## Categorical
 
-- ranks +
-- prior experience datathon +
-- team roles (already figure) +
+- ranks ++
+- prior experience datathon ++
+- team roles (already figure) ++
 
 ## Ordinal
 
-- prior emr + (Likert)
+- prior emr ++ (Likert)
 
 ## Continuous: look for "Quantiles" in output txt
 
-- years +
-- team size +
-- effort +
-- pct IT +
+- years ++
+- team size ++
+- effort ++
+- pct IT ++
+
+
+
+
+
+# Shell
+
+rank
+  a   n(%)
+  b   n(%)
+  c   n(%)
 
 
 
