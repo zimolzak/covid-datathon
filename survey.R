@@ -260,6 +260,7 @@ dim(survey_in)
 say("TABLES")
 cat("\nacadRank: *t1\n");		table_pct(survey_tidy$acadRank)
 cat("\nprior.hack: *t1\n");		table_pct(survey_tidy$prior.hack)
+cat("\nt1*\n")
 
 
 cat("\nworkedTeam:");		addmargins(table(survey_tidy$workedTeam))
@@ -274,6 +275,8 @@ cat("\ncomplete:");			addmargins(table(survey_tidy$complete))
 say("role_count_toplot  *t1")
 role_count_toplot %>%
 arrange(desc(count))
+cat("\nt1*\n")
+
 
 say("Free text ranks (other)")
 survey_tidy %>%
@@ -296,6 +299,8 @@ quantile(survey_tidy$effortHrs, na.rm=TRUE)
 cat("\nPercent time spent with IT, quantiles *t1\n")
 quantile(survey_tidy$itpercent, na.rm=TRUE)
 
+cat("\nt1*\n")
+
 
 
 
@@ -303,6 +308,7 @@ say("Selected Likert tables")
 cat("\nvaluable ----\n");			table_pct(survey_tidy$valuable)
 cat("\nfuture.datathon ----\n");		table_pct(survey_tidy$future.datathon)
 cat("\nprior.emrdata ----  *t1\n");		table_pct(survey_tidy$prior.emrdata)
+cat("\nt1*\n")
 cat("\nfuture.studies ----\n");	table_pct(survey_tidy$future.studies)
 
 
