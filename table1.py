@@ -1,12 +1,16 @@
 import sys
 
+START = "*t1"
+END = "t1*"
+
 with open(sys.argv[1]) as file:
     printing = False
     for L in file:
-        if "*t1" in L:
+        if START in L:
             printing = True
-        if "t1*" in L:
+            L = L.replace(START, '')
+        if END in L:
             printing = False
-            print(L)
+            print("...\n")
         if printing:
             print(L, end='')
