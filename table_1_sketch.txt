@@ -1,0 +1,30 @@
+# Table 1
+
+## Categorical
+
+- ranks +
+- prior experience datathon +
+- team roles (already figure) +
+
+## Ordinal
+
+- prior emr + (Likert)
+
+## Continuous: look for "Quantiles" in output txt
+
+- years +
+- team size +
+- effort +
+- pct IT +
+
+
+
+
+# Table 2: post-datathon?
+
+- difficulty obt
+- difficulty work
+- valuable +
+- intent future thon +
+- intent bcm data +
+- collab results (many, already figure)
