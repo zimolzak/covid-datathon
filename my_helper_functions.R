@@ -91,6 +91,6 @@ table_pct = function(df_column) {
 	p = round(prop.table(c) * 100, 1)
 	Count = addmargins(c)
 	Percent = addmargins(p)
-	result = rbind(Count, Percent)
+	result = t(rbind(Count, Percent))
 	return(result)
 }

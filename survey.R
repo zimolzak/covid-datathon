@@ -272,7 +272,8 @@ cat("\npub.paper:");		addmargins(table(survey_tidy$pub.paper))
 cat("\ncomplete:");			addmargins(table(survey_tidy$complete))
 
 say("role_count_toplot  *t1")
-role_count_toplot
+role_count_toplot %>%
+arrange(desc(count))
 
 say("Free text ranks (other)")
 survey_tidy %>%
