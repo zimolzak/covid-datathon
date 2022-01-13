@@ -20,13 +20,36 @@
 
 
 
-
 # Shell
 
-rank
-  a   n(%)
-  b   n(%)
-  c   n(%)
+Will need to be 26 x 3 including header.
+
+Characteristic,Sub-category,Measure
+Academic rank,Student,
+,Fellow,
+,Staff,
+,Assistant,
+,Associate,
+,Full,
+Prior datathon,,
+Role,Lead,
+,Clinician,
+,Chart reviewer,
+,Statistics,
+,Data manager,
+,Data warehouse,
+,Learner,
+,Data scientist,
+,Other,
+Years at BCM, median (Q1–Q3),,
+Team size, median (Q1–Q3),,
+Person-hours effort, median (Q1–Q3),,
+Percent spent with IT, median (Q1–Q3),,
+Prior EMR experience,1,
+,2,
+,3,
+,4,
+,5,
 
 
 
