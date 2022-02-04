@@ -364,7 +364,8 @@ ggplot(zero_filled_heatmap, aes(role_a, role_b, label = Count)) +
 
 ggplot(collab_success, aes(Dimension)) +
 	geom_bar(aes(fill = Success)) +
-	labs(x="Datathon goal")-> success_stack
+	labs(x="Datathon goal") +
+	scale_fill_grey() -> success_stack
 
 
 
