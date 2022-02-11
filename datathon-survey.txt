@@ -6,17 +6,22 @@
 1. *Primary* department/section/research center: **fill-in-text**
 1. Number of years at BCM: **number**
 
+
+
+
 ## Prior Datathon Experience
 
 1. I participated previously in a hackathon/datathon at another institution: **yes/no**
 1. I had experience using electronic medical record (EMR) data for research or quality improvement prior to the datathon: **1 (very little)/2/3 (moderate)/4/5 (great deal)**
 
+
+
+
 ## About your Datathon Team
 
 1. Number of people on your datathon team: **number**
-
-
-1. Your role on your team:
+1. Have you worked with the members of your datathon team before: **yes - all of the team members/yes - some of the team members/no**
+1. Your role on your team (mark all that apply):
     - content (clinical) expert
     - project lead
     - chart reviewer
@@ -25,28 +30,37 @@
     - data warehouse expert
     - data manager
     - learner
-    - other
+    - other (please specify)
+
+
+
 
 ## Pre/post knowledge
 
-1. My knowledge about data availability at BCM prior to the datathon: **1/2/3/4/5**
-1. My knowledge about data availability at BCM following the datathon: **1/2/3/4/5**
-1. My knowledge about how to use the BCM data warehouse prior to the datathon: **1/2/3/4/5**
-1. My knowledge about how to use the BCM data warehouse following the datathon: **1/2/3/4/5**
-1. My understanding of BCM data warehouse limitations prior to the datathon: **1/2/3/4/5**
-1. My understanding of BCM data warehouse limitations following the datathon: **1/2/3/4/5**
+1. How knowledgeable were you about data availability at BCM prior to the datathon: **1/2/3/4/5**
+1. How knowledgeable were you about data availability at BCM following the datathon: **1/2/3/4/5**
+1. How knowledgeable were you about how to use the BCM data warehouse prior to the datathon: **1/2/3/4/5**
+1. How knowledgeable were you about how to use the BCM data warehouse following the datathon: **1/2/3/4/5**
+1. What was your understanding of BCM data warehouse limitations prior to the datathon: **1/2/3/4/5**
+1. What was your understanding of BCM data warehouse limitations following the datathon: **1/2/3/4/5**
+
+
+
 
 ## Experience during datathon
 
-1. Estimate how many person-hours you spent on datathon work, inclusive of time spent with BCM information technology: **number**
+1. Estimate how many person-hours you spent on datathon work, including time spent with BCM information technology (IT): **number**
 1. What percentage of time spent on datathon work was work with BCM IT: **number**
-1. Difficulty of obtaining information from the BCM Data warehouse: **1/2/3/4/5**
-1. Difficulty of working with the BCM Data warehouse files: **1/2/3/4/5**
+1. How difficult was obtaining information from the BCM Data warehouse: **1/2/3/4/5**
+1. How difficult was working with BCM Data warehouse files: **1/2/3/4/5**
+
+
+
 
 ## Outcomes
 
-1. I was able to complete my project by the end of the datathon: **yes/no**
-1. I was successfully able to answer my clinical question: **1/2/3/4/5**
+1. I completed my project by the end of the datathon: **yes/partially/no**
+1. I successfully answered my clinical question: **yes/partially/no**
 1. I collaborated with individuals outside of my department: **1/2/3/4/5**
 1. I collaborated with new individuals as part of the datathon: **1/2/3/4/5**
 1. I want to conduct future studies using data from the BCM warehouse: **1/2/3/4/5**
