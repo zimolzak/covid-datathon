@@ -1,0 +1,58 @@
+# BCM Datathon Survey
+
+## Background
+
+1. Academic rank: **student/fellow/non-faculty/assistant/assoc/full/other (specify)**
+1. *Primary* department/section/research center: **fill-in-text**
+1. Number of years at BCM: **number**
+
+## Prior Datathon Experience
+
+1. I participated previously in a hackathon/datathon at another institution: **yes/no**
+1. I had experience using electronic medical record (EMR) data for research or quality improvement prior to the datathon: **1 (very little)/2/3 (moderate)/4/5 (great deal)**
+
+## About your Datathon Team
+
+1. Number of people on your datathon team: **number**
+
+
+1. Your role on your team:
+    - content (clinical) expert
+    - project lead
+    - chart reviewer
+    - data scientist
+    - statistical analyst
+    - data warehouse expert
+    - data manager
+    - learner
+    - other
+
+## Pre/post knowledge
+
+1. My knowledge about data availability at BCM prior to the datathon: **1/2/3/4/5**
+1. My knowledge about data availability at BCM following the datathon: **1/2/3/4/5**
+1. My knowledge about how to use the BCM data warehouse prior to the datathon: **1/2/3/4/5**
+1. My knowledge about how to use the BCM data warehouse following the datathon: **1/2/3/4/5**
+1. My understanding of BCM data warehouse limitations prior to the datathon: **1/2/3/4/5**
+1. My understanding of BCM data warehouse limitations following the datathon: **1/2/3/4/5**
+
+## Experience during datathon
+
+1. Estimate how many person-hours you spent on datathon work, inclusive of time spent with BCM information technology: **number**
+1. What percentage of time spent on datathon work was work with BCM IT: **number**
+1. Difficulty of obtaining information from the BCM Data warehouse: **1/2/3/4/5**
+1. Difficulty of working with the BCM Data warehouse files: **1/2/3/4/5**
+
+## Outcomes
+
+1. I was able to complete my project by the end of the datathon: **yes/no**
+1. I was successfully able to answer my clinical question: **1/2/3/4/5**
+1. I collaborated with individuals outside of my department: **1/2/3/4/5**
+1. I collaborated with new individuals as part of the datathon: **1/2/3/4/5**
+1. I want to conduct future studies using data from the BCM warehouse: **1/2/3/4/5**
+1. Our team datathon project resulted in a scientific abstract for a local or national meeting: **yes/planned/no**
+1. Our team datathon project resulted in a publication: **yes/planned/no**
+1. Participating in the BCM datathon was a valuable experience: **1/2/3/4/5**
+1. I would participate in a future BCM datathon: **1/2/3/4/5**
+1. What worked well or didn't work, or general comments: **fill-in-text**
+

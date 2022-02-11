@@ -21,3 +21,5 @@ Routputs*
 .DS_Store
 analysis-PHI.R
 .Rapp.history
+.RData
+.Rhistory
