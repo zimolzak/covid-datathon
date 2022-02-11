@@ -51,8 +51,8 @@
 
 1. Estimate how many person-hours you spent on datathon work, including time spent with BCM information technology (IT): **number**
 1. What percentage of time spent on datathon work was work with BCM IT: **number**
-1. How difficult was obtaining information from the BCM Data warehouse: **1/2/3/4/5**
-1. How difficult was working with BCM Data warehouse files: **1/2/3/4/5**
+1. How difficult was obtaining information from the BCM Data warehouse: **1 (easy)/2/3 (moderate)/4/5 (difficult)**
+1. How difficult was working with BCM Data warehouse files: **1 (easy)/2/3 (moderate)/4/5 (difficult)**
 
 
 
@@ -61,12 +61,11 @@
 
 1. I completed my project by the end of the datathon: **yes/partially/no**
 1. I successfully answered my clinical question: **yes/partially/no**
-1. I collaborated with individuals outside of my department: **1/2/3/4/5**
-1. I collaborated with new individuals as part of the datathon: **1/2/3/4/5**
-1. I want to conduct future studies using data from the BCM warehouse: **1/2/3/4/5**
+1. I collaborated with individuals outside of my department: **yes/no**
+1. I collaborated with new individuals as part of the datathon: **yes/no**
+1. I plan to conduct future studies using data from the BCM warehouse: **1 (disagree)/2/3 (neutral)/4/5 (agree)**
 1. Our team datathon project resulted in a scientific abstract for a local or national meeting: **yes/planned/no**
 1. Our team datathon project resulted in a publication: **yes/planned/no**
-1. Participating in the BCM datathon was a valuable experience: **1/2/3/4/5**
-1. I would participate in a future BCM datathon: **1/2/3/4/5**
+1. Participating in the BCM datathon was a valuable experience: **1 (disagree)/2/3 (neutral)/4/5 (agree)**
+1. I would participate in a future BCM datathon: **1 (disagree)/2/3 (neutral)/4/5 (agree)**
 1. What worked well or didn't work, or general comments: **fill-in-text**
-
