@@ -37,12 +37,12 @@
 
 ## Pre/post knowledge
 
-1. How knowledgeable were you about data availability at BCM prior to the datathon: **1/2/3/4/5**
-1. How knowledgeable were you about data availability at BCM following the datathon: **1/2/3/4/5**
-1. How knowledgeable were you about how to use the BCM data warehouse prior to the datathon: **1/2/3/4/5**
-1. How knowledgeable were you about how to use the BCM data warehouse following the datathon: **1/2/3/4/5**
-1. What was your understanding of BCM data warehouse limitations prior to the datathon: **1/2/3/4/5**
-1. What was your understanding of BCM data warehouse limitations following the datathon: **1/2/3/4/5**
+1. How knowledgeable were you about data availability at BCM prior to the datathon: **1 (very little)/2/3 (moderate)/4/5 (great deal)**
+1. How knowledgeable were you about data availability at BCM following the datathon: **1 (very little)/2/3 (moderate)/4/5 (great deal)**
+1. How knowledgeable were you about how to use the BCM data warehouse prior to the datathon: **1 (very little)/2/3 (moderate)/4/5 (great deal)**
+1. How knowledgeable were you about how to use the BCM data warehouse following the datathon: **1 (very little)/2/3 (moderate)/4/5 (great deal)**
+1. What was your understanding of BCM data warehouse limitations prior to the datathon: **1 (very little)/2/3 (moderate)/4/5 (great deal)**
+1. What was your understanding of BCM data warehouse limitations following the datathon: **1 (very little)/2/3 (moderate)/4/5 (great deal)**
 
 
 
