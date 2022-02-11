@@ -495,3 +495,7 @@ ggsave(here('pngs-conf', 'amia-8-pair3.png'), paired3 + gfontsize(30))
 ggsave(here('pngs-paper', 'facet.png'), facet)
 ggsave(here('pngs-paper', 'success_stack.png'), success_stack)
 ggsave(here('pngs-paper', 'roles.png'), barmaybe + labs(x="Role", title=NULL))
+
+ggsave(here('pngs-paper', 'facet.eps'), facet)
+ggsave(here('pngs-paper', 'success_stack.eps'), success_stack)
+ggsave(here('pngs-paper', 'roles.eps'), barmaybe + labs(x="Role", title=NULL))

@@ -13,6 +13,7 @@ data/
 *.png
 *.docx
 Routputs*
+*.eps
 
 
 #### doots/misc.
