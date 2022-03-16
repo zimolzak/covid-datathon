@@ -1,0 +1,106 @@
+# Knowl about how to use DW
+
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  survey_tidy$know.use.pre and survey_tidy$know.use.post
+W = 191, p-value = 0.01493
+alternative hypothesis: true location shift is not equal to 0
+95 percent confidence interval:
+ -1.999994e+00 -1.469088e-05
+sample estimates:
+difference in location 
+            -0.9999737 
+
+
+	Chi-squared Test for Trend in Proportions
+
+data:  table$`0` out of table$total_trials ,
+ using scores: 1 2 3 4 5
+X-squared = 5.8681, df = 1, p-value = 0.01542
+
+
+	Welch Two Sample t-test
+
+data:  survey_tidy$know.use.pre and survey_tidy$know.use.post
+t = -2.5263, df = 47.925, p-value = 0.01488
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -1.5803914 -0.1796086
+sample estimates:
+mean of x mean of y 
+     2.04      2.92 
+
+
+
+
+
+# Knowl about dat avail
+
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  survey_tidy$know.avail.pre and survey_tidy$know.avail.post
+W = 159.5, p-value = 0.002291
+alternative hypothesis: true location shift is not equal to 0
+95 percent confidence interval:
+ -1.999970e+00 -3.680695e-05
+sample estimates:
+difference in location 
+             -1.000027 
+
+
+	Chi-squared Test for Trend in Proportions
+
+data:  table$`0` out of table$total_trials ,
+ using scores: 1 2 3 4 5
+X-squared = 8.7024, df = 1, p-value = 0.003178
+
+
+	Welch Two Sample t-test
+
+data:  survey_tidy$know.avail.pre and survey_tidy$know.avail.post
+t = -3.1804, df = 47.829, p-value = 0.002582
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -1.6975517 -0.3824483
+sample estimates:
+mean of x mean of y 
+     2.40      3.44 
+
+
+
+
+
+# Underst of DW limitations
+
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  survey_tidy$know.limit.pre and survey_tidy$know.limit.post
+W = 184.5, p-value = 0.01059
+alternative hypothesis: true location shift is not equal to 0
+95 percent confidence interval:
+ -2.000060e+00 -4.501756e-05
+sample estimates:
+difference in location 
+             -1.000058 
+
+
+	Chi-squared Test for Trend in Proportions
+
+data:  table$`0` out of table$total_trials ,
+ using scores: 1 2 3 4 5
+X-squared = 6.6082, df = 1, p-value = 0.01015
+
+
+	Welch Two Sample t-test
+
+data:  survey_tidy$know.limit.pre and survey_tidy$know.limit.post
+t = -2.7037, df = 47.548, p-value = 0.009483
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -1.7438457 -0.2561543
+sample estimates:
+mean of x mean of y 
+     2.28      3.28 

@@ -375,29 +375,29 @@ ggplot(collab_success, aes(Dimension)) +
 w_use = wilcox.test(
     survey_tidy$know.use.pre,
     survey_tidy$know.use.post,
-    paired = TRUE, conf.int=TRUE, exact=FALSE  # "exact = FALSE" because can't do exact w/ zeroes or ties
+    paired = FALSE, conf.int=TRUE, exact=FALSE  # "exact = FALSE" because can't do exact w/ zeroes or ties
 )
 
 w_avail = wilcox.test(
 	survey_tidy$know.avail.pre,
     survey_tidy$know.avail.post,
-    paired = TRUE, conf.int=TRUE, exact=FALSE
+    paired = FALSE, conf.int=TRUE, exact=FALSE
 )
 
 w_limit = wilcox.test(
 	survey_tidy$know.limit.pre,
     survey_tidy$know.limit.post,
-    paired = TRUE, conf.int=TRUE, exact=FALSE
+    paired = FALSE, conf.int=TRUE, exact=FALSE
 )
 
 c_use = gathered2chitrend(use %>% rename(score = know.use))
-t_use = t.test(survey_tidy$know.use.pre, survey_tidy$know.use.post, paired = TRUE)
+t_use = t.test(survey_tidy$know.use.pre, survey_tidy$know.use.post, paired = FALSE)
 
 c_avail = gathered2chitrend(available %>% rename(score = know.avail))
-t_avail = t.test(survey_tidy$know.avail.pre, survey_tidy$know.avail.post, paired = TRUE)
+t_avail = t.test(survey_tidy$know.avail.pre, survey_tidy$know.avail.post, paired = FALSE)
 
 c_limit = gathered2chitrend(limit %>% rename(score = know.limit))
-t_limit = t.test(survey_tidy$know.limit.pre, survey_tidy$know.limit.post, paired = TRUE)
+t_limit = t.test(survey_tidy$know.limit.pre, survey_tidy$know.limit.post, paired = FALSE)
 
 say("Knowl about how to use DW")
 w_use
