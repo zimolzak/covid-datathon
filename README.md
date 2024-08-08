@@ -1,5 +1,7 @@
 # Lessons learned from an enterprise-wide clinical datathon
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.13261085.svg)](https://doi.org/10.5281/zenodo.13261085)
+
 This repository contains code that was used in the research reported
 in the following journal article:
 
