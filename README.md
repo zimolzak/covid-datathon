@@ -1,3 +1,30 @@
+# Lessons learned from an enterprise-wide clinical datathon
+
+This repository contains code that was used in the research reported
+in the following journal article:
+
+Zimolzak AJ, Davila JA, Punugoti V, et al. Lessons learned from an
+enterprise-wide clinical datathon. J Clin Transl Sci. 2022;6(1):e125.
+Published 2022 Aug 24.
+[doi:10.1017/cts.2022.450](https://doi.org/10.1017/cts.2022.450)
+
+- [PMID 36590351](https://pubmed.ncbi.nlm.nih.gov/36590351/)
+
+- Free full text at [PMCID PMC9794964](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9794964/)
+
+- Direct [link to
+  paper](https://www.cambridge.org/core/journals/journal-of-clinical-and-translational-science/article/lessons-learned-from-an-enterprisewide-clinical-datathon/A399543C00670D6A43F1911D28A111ED)
+  at *Journal of Clinical and Translational Science* and
+  [PDF](https://www.cambridge.org/core/services/aop-cambridge-core/content/view/A399543C00670D6A43F1911D28A111ED/S2059866122004502a.pdf/lessons-learned-from-an-enterprise-wide-clinical-datathon.pdf)
+  from the journal. (Paper is licensed CC BY-NC-SA 4.0.)
+
+
+
+
+~~~~~~~~
+
+Items from my own datathon project below this line.
+
 Datathon: Predictors of severe COVID-19 outcomes
 ========
 
