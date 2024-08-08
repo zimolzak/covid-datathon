@@ -1,4 +1,6 @@
-# Lessons learned from an enterprise-wide clinical datathon
+Lessons learned from an enterprise-wide clinical datathon
+========
+
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.13261085.svg)](https://doi.org/10.5281/zenodo.13261085)
 
